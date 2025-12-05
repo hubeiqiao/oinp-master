@@ -275,6 +275,76 @@
     }
 
     // ==========================================================================
+    // Comment Template Copy
+    // ==========================================================================
+
+    /**
+     * Enable copy buttons for the comment template
+     */
+    function initTemplateCopy() {
+        const copyButtons = document.querySelectorAll('[data-copy-target]');
+        if (!copyButtons.length) return;
+
+        copyButtons.forEach(button => {
+            const defaultLabel = button.textContent;
+            const statusId = button.dataset.statusTarget;
+            const statusElement = statusId ? document.getElementById(statusId) : null;
+
+            button.addEventListener('click', () => {
+                const targetId = button.dataset.copyTarget;
+                const targetElement = document.getElementById(targetId);
+
+                if (!targetElement) return;
+
+                const textToCopy = targetElement.value;
+
+                const showSuccess = () => {
+                    button.textContent = 'Copied';
+                    button.classList.add('copied');
+                    if (statusElement) {
+                        statusElement.textContent = 'Copied';
+                        statusElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--color-green') || '#2D9D5D';
+                    }
+                    setTimeout(() => {
+                        button.textContent = defaultLabel;
+                        button.classList.remove('copied');
+                        if (statusElement) {
+                            statusElement.textContent = '';
+                            statusElement.style.color = '';
+                        }
+                    }, 2500);
+                };
+
+                const showFallback = () => {
+                    if (statusElement) {
+                        statusElement.textContent = 'Press Cmd/Ctrl+C after selecting';
+                        statusElement.style.color = getComputedStyle(document.documentElement).getPropertyValue('--color-red') || '#C13838';
+                    }
+                };
+
+                const fallbackCopy = () => {
+                    targetElement.focus();
+                    targetElement.select();
+                    const successful = document.execCommand && document.execCommand('copy');
+                    if (successful) {
+                        showSuccess();
+                    } else {
+                        showFallback();
+                    }
+                };
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textToCopy)
+                        .then(showSuccess)
+                        .catch(fallbackCopy);
+                } else {
+                    fallbackCopy();
+                }
+            });
+        });
+    }
+
+    // ==========================================================================
     // Initialize All Features
     // ==========================================================================
 
@@ -295,6 +365,7 @@
         initFAB();
         initParallax();
         initShareButtons();
+        initTemplateCopy();
 
         // Log initialization
         console.log('OINP Proposal Comment page initialized');
