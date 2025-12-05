@@ -1135,6 +1135,53 @@ section {
     height: 24px;
 }
 
+.pathway-date {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+}
+
+.situation-body {
+    max-width: 860px;
+    margin: 0 auto var(--space-2xl);
+    font-size: 1.05rem;
+    color: var(--color-text-light);
+}
+
+.situation-brief {
+    font-weight: 600;
+    color: var(--color-navy);
+    margin-bottom: var(--space-md);
+}
+
+.situation-flow .pathway-label {
+    text-align: center;
+}
+
+.situation-risks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-md);
+    margin-top: var(--space-lg);
+}
+
+.situation-risk-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: rgba(193, 56, 56, 0.08);
+    color: var(--color-red);
+    border: 1px solid rgba(193, 56, 56, 0.25);
+    border-radius: var(--radius-full);
+    font-weight: 600;
+}
+
+.situation-risk-chip svg {
+    width: 18px;
+    height: 18px;
+}
+
 @media (max-width: 768px) {
     .pathway-arrow {
         transform: rotate(90deg);
