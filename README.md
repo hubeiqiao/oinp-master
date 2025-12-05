@@ -4,7 +4,7 @@ This site is a public comment on Proposal 25-MLITSD019. It explains why Ontario 
 
 ## Why this matters
 - Ontario invested in graduate talent; closing the pathway forces them to leave.
-- BC and the USA keep doors open, pulling away people trained here.
+- Without an independent Ontario pathway, graduates drift to jurisdictions that keep clear post-graduation routes.
 - Federal direction prioritizes graduates; provincial policy should match.
 
 ## What we’re asking
