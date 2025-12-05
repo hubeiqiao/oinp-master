@@ -1,7 +1,6 @@
 name = "oinp-static"
+main = "worker.js"
 compatibility_date = "2025-12-05"
 
-[assets]
-# Serve the static site from the repo root (index.html, styles, assets)
-directory = "."
-binding = "ASSETS"
+# Serve static files from the repo root
+assets = { directory = ".", binding = "ASSETS" }
