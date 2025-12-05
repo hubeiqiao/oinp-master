@@ -1,0 +1,7 @@
+name = "oinp-static"
+compatibility_date = "2025-12-05"
+
+[assets]
+# Serve the static site from the repo root (index.html, styles, assets)
+directory = "."
+binding = "ASSETS"
