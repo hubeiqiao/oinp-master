@@ -2994,8 +2994,26 @@ section {
 }
 
 @media (max-width: 640px) {
+    .request-item-with-tool .mpp-tool {
+        margin-top: var(--space-md);
+    }
+    .mpp-tool {
+        padding: var(--space-lg);
+        margin-top: var(--space-lg);
+    }
+    .mpp-card {
+        padding: var(--space-lg);
+        margin-top: var(--space-lg);
+    }
+    .mpp-card-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
     .mpp-card-body {
         grid-template-columns: 1fr;
+        gap: var(--space-md);
+        text-align: center;
     }
     .mpp-input-row {
         flex-direction: column;
@@ -3003,6 +3021,30 @@ section {
     }
     .mpp-submit {
         width: 100%;
+    }
+    .mpp-template summary {
+        padding: var(--space-md);
+    }
+    .mpp-template-body {
+        padding: 0 var(--space-md) var(--space-md);
+    }
+    .mpp-template textarea {
+        min-height: 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    .request-item-with-tool {
+        flex-direction: column;
+        align-items: stretch;
+        gap: var(--space-md);
+    }
+    .request-item-with-tool .request-number {
+        align-self: flex-start;
+    }
+    .request-item-with-tool .mpp-tool {
+        width: 100%;
+        margin-top: var(--space-md);
     }
 }
 
@@ -3023,7 +3065,9 @@ section {
 
 /* CTA Countdown */
 .cta-countdown {
+    margin-top: var(--space-2xl);
     margin-bottom: var(--space-2xl);
+    text-align: center;
 }
 
 .countdown-small .countdown-value {
