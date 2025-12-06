@@ -2713,6 +2713,10 @@ section {
     min-width: 0;
 }
 
+.request-item-with-tool .mpp-tool {
+    margin-top: var(--space-lg);
+}
+
 .request-item a {
     display: inline-block;
     color: inherit;
@@ -3023,7 +3027,9 @@ section {
 
 /* CTA Countdown */
 .cta-countdown {
+    margin-top: var(--space-2xl);
     margin-bottom: var(--space-2xl);
+    text-align: center;
 }
 
 .countdown-small .countdown-value {

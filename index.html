@@ -1238,68 +1238,66 @@ Thank you for considering this feedback before January 1, 2026.</textarea>
                             <p><strong>Tell your classmates and peers</strong> so this does not stay invisible.</p>
                         </div>
                     </div>
-                    <div class="request-item">
+                    <div class="request-item request-item-with-tool">
                         <span class="request-number">3</span>
                         <div>
-                            <p><strong>Email your program and the Ministry (minister.mlitsd@ontario.ca)</strong> with a short 1–2 paragraph cover note plus your full submission pasted or attached. CC <strong>your local MPP</strong> (find them with the tool below) and your university’s international office or graduate dean.</p>
-                        </div>
-                    </div>
-                    <div class="mpp-tool" data-animate="fade-up" data-delay="100" id="mpp-tool">
-                        <div class="mpp-tool-header">
-                            <div>
-                                <h3>Find your local MPP (Member of Provincial Parliament)</h3>
-                                <p>Enter your postal code to fetch your MPP, copy their email, and generate a personalized draft.</p>
-                            </div>
-                        </div>
-                        <form class="mpp-form" id="mpp-form" novalidate>
-                            <label class="mpp-label" for="postalCodeInput">Postal Code</label>
-                            <div class="mpp-input-row">
-                                <input id="postalCodeInput" name="postalCodeInput" type="text" inputmode="text" autocomplete="postal-code" placeholder="K1S 5B6" aria-label="Enter your postal code" required>
-                                <button type="submit" class="btn btn-primary mpp-submit" id="findMppButton">Find MPP</button>
-                            </div>
-                            <p class="mpp-help">Ontario postal code format only. Example: K1S 5B6.</p>
-                            <div id="mppStatus" class="mpp-status" role="status" aria-live="polite"></div>
-                        </form>
+                            <p><strong>Email your program and the Ministry (minister.mlitsd@ontario.ca)</strong> with a short 1–2 paragraph cover note plus your full submission pasted or attached. CC <strong>your local MPP</strong> and your university’s international office or graduate dean.</p>
+                            <div class="mpp-tool" data-animate="fade-up" data-delay="100" id="mpp-tool">
+                                <div class="mpp-tool-header">
+                                    <div>
+                                        <h3>Find your local MPP (Member of Provincial Parliament)</h3>
+                                        <p>Enter your postal code to fetch your MPP, copy their email, and generate a personalized draft.</p>
+                                    </div>
+                                </div>
+                                <form class="mpp-form" id="mpp-form" novalidate>
+                                    <label class="mpp-label" for="postalCodeInput">Postal Code</label>
+                                    <div class="mpp-input-row">
+                                        <input id="postalCodeInput" name="postalCodeInput" type="text" inputmode="text" autocomplete="postal-code" placeholder="K1S 5B6" aria-label="Enter your postal code" required>
+                                        <button type="submit" class="btn btn-primary mpp-submit" id="findMppButton">Find MPP</button>
+                                    </div>
+                                    <p class="mpp-help">Ontario postal code format only. Example: K1S 5B6.</p>
+                                    <div id="mppStatus" class="mpp-status" role="status" aria-live="polite"></div>
+                                </form>
 
-                        <div class="mpp-card" id="mppCard" aria-live="polite">
-                            <div class="mpp-card-header">
-                                <div class="mpp-card-icon" aria-hidden="true">🏛️</div>
-                                <div>
-                                    <p class="mpp-card-label">Your Local MPP</p>
-                                    <h4 id="mppName">—</h4>
-                                    <p class="mpp-riding" id="mppRiding">—</p>
-                                </div>
-                            </div>
-                            <div class="mpp-card-body">
-                                <div class="mpp-photo">
-                                    <img id="mppPhoto" src="" alt="MPP portrait" loading="lazy">
-                                </div>
-                                <div class="mpp-contact">
-                                    <div class="mpp-email">
-                                        <span class="mpp-email-label">Email</span>
-                                        <div class="mpp-email-row">
-                                            <span id="mppEmail">—</span>
-                                            <button class="btn btn-secondary btn-compact" type="button" data-copy-target="mppEmailCopyValue" data-status-target="mppEmailCopyStatus">Copy</button>
-                                            <input id="mppEmailCopyValue" class="sr-only" type="text" readonly aria-hidden="true">
-                                            <span id="mppEmailCopyStatus" class="copy-status-inline" aria-live="polite"></span>
+                                <div class="mpp-card" id="mppCard" aria-live="polite">
+                                    <div class="mpp-card-header">
+                                        <div class="mpp-card-icon" aria-hidden="true">🏛️</div>
+                                        <div>
+                                            <p class="mpp-card-label">Your Local MPP</p>
+                                            <h4 id="mppName">—</h4>
+                                            <p class="mpp-riding" id="mppRiding">—</p>
                                         </div>
                                     </div>
-                                    <div class="mpp-verify" id="mppVerify" aria-live="polite">
-                                        <a id="mppLink" href="#" target="_blank" rel="noopener">Verify on official profile</a>
+                                    <div class="mpp-card-body">
+                                        <div class="mpp-photo">
+                                            <img id="mppPhoto" src="" alt="MPP portrait" loading="lazy">
+                                        </div>
+                                        <div class="mpp-contact">
+                                            <div class="mpp-email">
+                                                <span class="mpp-email-label">Email</span>
+                                                <div class="mpp-email-row">
+                                                    <span id="mppEmail">—</span>
+                                                    <button class="btn btn-secondary btn-compact" type="button" data-copy-target="mppEmailCopyValue" data-status-target="mppEmailCopyStatus">Copy</button>
+                                                    <input id="mppEmailCopyValue" class="sr-only" type="text" readonly aria-hidden="true">
+                                                    <span id="mppEmailCopyStatus" class="copy-status-inline" aria-live="polite"></span>
+                                                </div>
+                                            </div>
+                                            <div class="mpp-verify" id="mppVerify" aria-live="polite">
+                                                <a id="mppLink" href="#" target="_blank" rel="noopener">Verify on official profile</a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <details class="mpp-template" id="mppTemplate">
-                            <summary>Click here to copy the email template</summary>
-                            <div class="mpp-template-body">
-                                <div class="mpp-template-header">
-                                    <p class="mpp-template-subject">Subject: Urgent: OINP Changes - Proposal 25-MLITSD019</p>
-                                    <button class="btn btn-primary template-copy" type="button" data-copy-target="emailTemplateText" data-status-target="mppTemplateCopyStatus">Copy to Clipboard</button>
-                                    <span id="mppTemplateCopyStatus" class="copy-status-inline" aria-live="polite"></span>
-                                </div>
-                                <textarea id="emailTemplateText" rows="14" aria-label="Email template to your MPP">Subject: Urgent Comment on Proposal 25-MLITSD019
+                                <details class="mpp-template" id="mppTemplate">
+                                    <summary>Click here to copy the email template</summary>
+                                    <div class="mpp-template-body">
+                                        <div class="mpp-template-header">
+                                            <p class="mpp-template-subject">Subject: Urgent: OINP Changes - Proposal 25-MLITSD019</p>
+                                            <button class="btn btn-primary template-copy" type="button" data-copy-target="emailTemplateText" data-status-target="mppTemplateCopyStatus">Copy to Clipboard</button>
+                                            <span id="mppTemplateCopyStatus" class="copy-status-inline" aria-live="polite"></span>
+                                        </div>
+                                        <textarea id="emailTemplateText" rows="14" aria-label="Email template to your MPP">Subject: Urgent Comment on Proposal 25-MLITSD019
 
 To: minister.mlitsd@ontario.ca
 CC: [Your local MPP]; [Your program/international office]
@@ -1320,10 +1318,11 @@ Sincerely,
 [Your Name]
 Address: [Your address]
 Postal Code: [Your postal code]</textarea>
+                                    </div>
+                                </details>
                             </div>
-                        </details>
+                        </div>
                     </div>
-                </div>
 
                 <!-- Countdown (duplicated) -->
                 <div class="cta-countdown">
