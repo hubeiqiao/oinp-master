@@ -98,6 +98,18 @@ a {
     text-decoration: none;
 }
 
+.proposal-link {
+    color: var(--color-gold);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    font-weight: 600;
+}
+
+.proposal-link:hover {
+    color: var(--color-gold-light);
+}
+
 button {
     font-family: inherit;
     cursor: pointer;

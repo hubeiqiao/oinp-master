@@ -1,6 +1,6 @@
 # Your Voice Matters: Ontario Needs Its Graduates
 
-This site is a public comment on Proposal 25-MLITSD019. It explains why Ontario should keep an independent pathway for master's and PhD graduates and asks readers to act before January 1, 2026.
+This site is a public comment on [Proposal 25-MLITSD019](https://www.regulatoryregistry.gov.on.ca/proposal/52773). It explains why Ontario should keep an independent pathway for master's and PhD graduates and asks readers to act before January 1, 2026.
 
 ## What’s happening
 - Ontario is considering folding the dedicated OINP stream for master’s and PhD graduates into broader employer-driven programs.
