@@ -121,6 +121,18 @@ ul, ol {
     list-style: none;
 }
 
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* --------------------------------------------------------------------------
    Typography
    -------------------------------------------------------------------------- */
@@ -482,7 +494,7 @@ section {
 }
 
 .hero-subtitle .subtitle-line.secondary {
-    white-space: nowrap;
+    white-space: normal;
     font-size: clamp(1rem, 2.4vw, 1.35rem);
     line-height: 1.35;
     text-align: center;
@@ -2728,6 +2740,270 @@ section {
     font-size: 1rem;
     line-height: 1.5;
     color: rgba(248, 246, 241, 0.9);
+}
+
+.mpp-tool {
+    margin-top: var(--space-2xl);
+    padding: var(--space-2xl);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-xl);
+    color: var(--color-cream);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.mpp-tool h3 {
+    color: var(--color-cream);
+    margin-bottom: var(--space-xs);
+}
+
+.mpp-tool p {
+    color: rgba(248, 246, 241, 0.82);
+    margin-bottom: 0;
+}
+
+.mpp-form {
+    margin-top: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.mpp-label {
+    font-weight: 600;
+    color: var(--color-cream);
+}
+
+.mpp-input-row {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.mpp-input-row input {
+    flex: 1;
+    min-width: 200px;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-cream);
+    font-size: 1rem;
+}
+
+.mpp-input-row input::placeholder {
+    color: rgba(248, 246, 241, 0.6);
+}
+
+.mpp-input-row input:focus {
+    outline: 2px solid var(--color-gold);
+    border-color: var(--color-gold);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.mpp-submit {
+    white-space: nowrap;
+}
+
+.mpp-help {
+    font-size: 0.9rem;
+    color: rgba(248, 246, 241, 0.7);
+}
+
+.mpp-status {
+    min-height: 1.4em;
+    font-size: 0.95rem;
+    color: rgba(248, 246, 241, 0.9);
+}
+
+.mpp-status.error {
+    color: var(--color-red-light);
+}
+
+.mpp-status.success {
+    color: var(--color-green);
+}
+
+.mpp-card {
+    margin-top: var(--space-xl);
+    padding: var(--space-xl);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-xl);
+    display: none;
+    gap: var(--space-lg);
+}
+
+.mpp-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.mpp-card-icon {
+    font-size: 1.5rem;
+}
+
+.mpp-card-label {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.8rem;
+    color: rgba(248, 246, 241, 0.7);
+}
+
+.mpp-card h4 {
+    margin: 0;
+    color: var(--color-cream);
+}
+
+.mpp-riding {
+    margin: 0;
+    color: rgba(248, 246, 241, 0.8);
+    font-size: 0.95rem;
+}
+
+.mpp-card-body {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-lg);
+    align-items: center;
+}
+
+.mpp-photo {
+    width: 96px;
+    height: 96px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mpp-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.mpp-email-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(248, 246, 241, 0.7);
+}
+
+.mpp-email-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-top: var(--space-xs);
+}
+
+.mpp-email-row span#mppEmail {
+    font-size: 1rem;
+    color: var(--color-cream);
+    word-break: break-word;
+}
+
+.mpp-verify {
+    margin-top: var(--space-sm);
+}
+
+.mpp-verify a {
+    color: var(--color-gold);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    font-weight: 600;
+}
+
+.mpp-verify a:hover {
+    color: var(--color-gold-light);
+}
+
+.btn-compact {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.9rem;
+}
+
+.copy-status-inline {
+    font-size: 0.85rem;
+    min-height: 1.2em;
+    color: var(--color-green);
+}
+
+.mpp-template {
+    margin-top: var(--space-xl);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+}
+
+.mpp-template summary {
+    cursor: pointer;
+    padding: var(--space-md) var(--space-lg);
+    color: var(--color-cream);
+    font-weight: 600;
+}
+
+.mpp-template summary:hover {
+    color: var(--color-gold);
+}
+
+.mpp-template-body {
+    padding: 0 var(--space-lg) var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.mpp-template-header {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mpp-template-subject {
+    margin: 0;
+    color: rgba(248, 246, 241, 0.85);
+    font-weight: 600;
+}
+
+.mpp-template textarea {
+    width: 100%;
+    min-height: 260px;
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--color-cream);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.mpp-template textarea:focus {
+    outline: 2px solid var(--color-gold);
+    border-color: var(--color-gold);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+@media (max-width: 640px) {
+    .mpp-card-body {
+        grid-template-columns: 1fr;
+    }
+    .mpp-input-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .mpp-submit {
+        width: 100%;
+    }
 }
 
 .request-media {

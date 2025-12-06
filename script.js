@@ -348,6 +348,142 @@
     // Initialize All Features
     // ==========================================================================
 
+    /**
+     * MPP lookup via OpenNorth
+     */
+    function initMppLookup() {
+        const form = document.getElementById('mpp-form');
+        const postalInput = document.getElementById('postalCodeInput');
+        const statusEl = document.getElementById('mppStatus');
+        const card = document.getElementById('mppCard');
+        const nameEl = document.getElementById('mppName');
+        const ridingEl = document.getElementById('mppRiding');
+        const emailEl = document.getElementById('mppEmail');
+        const emailCopyInput = document.getElementById('mppEmailCopyValue');
+        const photoEl = document.getElementById('mppPhoto');
+        const templateEl = document.getElementById('emailTemplateText');
+        const templateDetails = document.getElementById('mppTemplate');
+        const submitButton = document.getElementById('findMppButton');
+        const verifyWrap = document.getElementById('mppVerify');
+        const verifyLink = document.getElementById('mppLink');
+
+        if (!form || !postalInput || !statusEl || !card || !nameEl || !ridingEl || !emailEl || !emailCopyInput || !photoEl || !templateEl || !submitButton || !verifyWrap || !verifyLink) {
+            return;
+        }
+
+        const DEFAULT_PHOTO = 'https://placehold.co/160x160?text=MPP';
+
+        const setStatus = (message, type = '') => {
+            statusEl.textContent = message;
+            statusEl.classList.remove('error', 'success');
+            if (type) statusEl.classList.add(type);
+        };
+
+        const setLoading = (isLoading) => {
+            submitButton.disabled = isLoading;
+            submitButton.textContent = isLoading ? 'Finding…' : 'Find MPP';
+        };
+
+        const normalizePostal = (value) => value.replace(/\s+/g, '').toUpperCase();
+        const isValidPostal = (value) => /^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(value);
+
+        const clearCard = () => {
+            card.style.display = 'none';
+            nameEl.textContent = '—';
+            ridingEl.textContent = '—';
+            emailEl.textContent = '—';
+            emailCopyInput.value = '';
+            photoEl.src = DEFAULT_PHOTO;
+            verifyWrap.style.display = 'none';
+            verifyLink.removeAttribute('href');
+        };
+
+        const buildTemplate = (mpp, cleanCode) => {
+            const lastName = mpp.last_name || mpp.name || 'MPP';
+            const district = mpp.district_name || 'your riding';
+            const mppName = mpp.name || 'Your local MPP';
+            const mppEmail = mpp.email || 'their official email';
+            return `Subject: Urgent Comment on Proposal 25-MLITSD019
+
+To: minister.mlitsd@ontario.ca
+CC: ${mppName} (${mppEmail}); your program/international office
+
+Dear Minister,
+
+I am a graduate student residing in Ontario. I am writing to express my deep concern regarding the proposed elimination of the OINP Masters and PhD graduate streams.
+
+[Add 1–2 sentences about your program, graduation timing, and local contributions.]
+
+Key requests:
+- Preserve an independent graduate pathway.
+- Grandfather current students who started under the existing rules.
+
+Thank you for your attention. I would welcome a brief conversation to discuss.
+
+Sincerely,
+[Your Name]`;
+        };
+
+        clearCard();
+        setStatus('');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const cleanCode = normalizePostal(postalInput.value || '');
+
+            clearCard();
+            setStatus('');
+
+            if (!cleanCode || !isValidPostal(cleanCode)) {
+                setStatus('Please enter a valid Ontario postal code (e.g., K1R0G6).', 'error');
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                const response = await fetch(`https://represent.opennorth.ca/postcodes/${cleanCode}/`);
+                if (!response.ok) throw new Error('Invalid Postal Code');
+
+                const data = await response.json();
+                const mpp = data?.representatives_centroid?.find(rep => rep.elected_office === 'MPP');
+
+                if (!mpp) {
+                    setStatus('Could not find MPP for this postal code. Please double-check and try again.', 'error');
+                    return;
+                }
+
+                const email = mpp.email || 'Not provided';
+                nameEl.textContent = mpp.name || 'Your MPP';
+                ridingEl.textContent = mpp.district_name || '';
+                emailEl.textContent = email;
+                emailCopyInput.value = email;
+
+                photoEl.src = mpp.photo_url || DEFAULT_PHOTO;
+                photoEl.alt = mpp.name ? `${mpp.name} portrait` : 'MPP portrait';
+
+                const profileUrl = mpp.url || mpp.personal_url || null;
+                if (profileUrl) {
+                    verifyLink.href = profileUrl;
+                    verifyWrap.style.display = 'block';
+                } else {
+                    verifyWrap.style.display = 'none';
+                }
+
+                card.style.display = 'block';
+                templateEl.value = buildTemplate(mpp, cleanCode);
+                templateDetails.removeAttribute('open');
+
+                setStatus('Found your MPP. Copy their email or open the draft below.', 'success');
+            } catch (error) {
+                setStatus('Error finding MPP. Please try again.', 'error');
+                console.error('MPP lookup failed:', error);
+            } finally {
+                setLoading(false);
+            }
+        });
+    }
+
     function init() {
         // Wait for DOM to be fully loaded
         if (document.readyState === 'loading') {
@@ -366,6 +502,7 @@
         initParallax();
         initShareButtons();
         initTemplateCopy();
+        initMppLookup();
 
         // Log initialization
         console.log('OINP Proposal Comment page initialized');
