@@ -386,6 +386,7 @@
 
         const normalizePostal = (value) => value.replace(/\s+/g, '').toUpperCase();
         const isValidPostal = (value) => /^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(value);
+        const formatPostal = (value) => value ? value.replace(/^([A-Z]\d[A-Z])(\d[A-Z]\d)$/, '$1 $2') : '';
 
         const clearCard = () => {
             card.style.display = 'none';
@@ -403,6 +404,7 @@
             const district = mpp.district_name || 'your riding';
             const mppName = mpp.name || 'Your local MPP';
             const mppEmail = mpp.email || 'their official email';
+            const formattedPostal = formatPostal(cleanCode);
             return `Subject: Urgent Comment on Proposal 25-MLITSD019
 
 To: minister.mlitsd@ontario.ca
@@ -421,7 +423,9 @@ Key requests:
 Thank you for your attention. I would welcome a brief conversation to discuss.
 
 Sincerely,
-[Your Name]`;
+[Your Name]
+Address: [Your address]
+Postal Code: ${formattedPostal || cleanCode || '[Postal code]'}`;
         };
 
         clearCard();
