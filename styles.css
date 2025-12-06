@@ -482,7 +482,7 @@ section {
 }
 
 .hero-subtitle .subtitle-line.secondary {
-    white-space: nowrap;
+    white-space: normal;
     font-size: clamp(1rem, 2.4vw, 1.35rem);
     line-height: 1.35;
     text-align: center;
