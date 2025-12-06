@@ -2730,6 +2730,21 @@ section {
     color: rgba(248, 246, 241, 0.9);
 }
 
+.request-media {
+    margin-top: var(--space-md);
+    width: min(540px, 100%);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.request-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
 /* CTA Countdown */
 .cta-countdown {
     margin-bottom: var(--space-2xl);
