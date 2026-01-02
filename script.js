@@ -23,6 +23,15 @@
         const now = new Date().getTime();
         const distance = DEADLINE - now;
 
+        // If countdown is over
+        if (distance < 0) {
+            clearInterval(countdownInterval);
+            document.querySelectorAll('.countdown').forEach(el => {
+                el.innerHTML = '<p style="font-size: 1.5rem; color: var(--color-red);">Deadline Passed</p>';
+            });
+            return;
+        }
+
         // Time calculations
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -43,14 +52,6 @@
         updateElement('hours-footer', format(hours));
         updateElement('minutes-footer', format(minutes));
         updateElement('seconds-footer', format(seconds));
-
-        // If countdown is over
-        if (distance < 0) {
-            clearInterval(countdownInterval);
-            document.querySelectorAll('.countdown').forEach(el => {
-                el.innerHTML = '<p style="font-size: 1.5rem; color: var(--color-red);">Deadline Passed</p>';
-            });
-        }
     }
 
     /**
