@@ -16,6 +16,10 @@
 
     const DEADLINE = new Date('January 1, 2026 00:00:00 EST').getTime();
 
+    // Declare interval variable first to avoid temporal dead zone error
+    // when updateCountdown() is called and deadline has passed
+    let countdownInterval = null;
+
     /**
      * Update countdown display
      */
@@ -25,7 +29,11 @@
 
         // If countdown is over
         if (distance < 0) {
-            clearInterval(countdownInterval);
+            // Guard: only clear interval if it's been set
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
             document.querySelectorAll('.countdown').forEach(el => {
                 el.innerHTML = '<p style="font-size: 1.5rem; color: var(--color-red);">Deadline Passed</p>';
             });
@@ -69,9 +77,12 @@
         }
     }
 
-    // Start countdown
+    // Start countdown - call first to show initial state immediately
     updateCountdown();
-    const countdownInterval = setInterval(updateCountdown, 1000);
+    // Only start interval if deadline hasn't passed yet
+    if (new Date().getTime() < DEADLINE) {
+        countdownInterval = setInterval(updateCountdown, 1000);
+    }
 
     // ==========================================================================
     // Scroll-Triggered Animations

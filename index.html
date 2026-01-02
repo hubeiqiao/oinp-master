@@ -196,8 +196,39 @@
       ]
     }
     </script>
+    <!-- JavaScript Detection: Add class immediately to enable animations only when JS works -->
+    <script>
+        document.documentElement.classList.add('js-enabled');
+    </script>
 </head>
 <body>
+    <!-- Fallback message when JavaScript fails -->
+    <noscript>
+        <style>
+            /* Ensure content is visible when JS is disabled */
+            [data-animate] {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .noscript-banner {
+                background: linear-gradient(90deg, #C13838, #E74C4C);
+                color: white;
+                padding: 1rem;
+                text-align: center;
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                font-size: 0.9rem;
+            }
+            .noscript-banner a {
+                color: #F8F6F1;
+                text-decoration: underline;
+            }
+        </style>
+        <div class="noscript-banner">
+            ⚠️ JavaScript is disabled or blocked. The page content is still readable, but some interactive features may not work.
+            <a href="https://www.regulatoryregistry.gov.on.ca/proposal/52773" target="_blank" rel="noopener">Submit your comment directly →</a>
+        </div>
+    </noscript>
+
     <!-- Floating Action Button -->
     <a href="https://www.regulatoryregistry.gov.on.ca/proposal/52773" target="_blank" rel="noopener" class="fab" aria-label="Submit Comment">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

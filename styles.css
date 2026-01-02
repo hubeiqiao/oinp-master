@@ -3522,28 +3522,41 @@ section {
 /* --------------------------------------------------------------------------
    Animations
    -------------------------------------------------------------------------- */
+
+/* 
+ * IMPORTANT: Animation hidden states only apply when JavaScript is confirmed working.
+ * This ensures content remains visible if JS fails to load (CORS, network, etc).
+ * The .js-enabled class is added by an inline script in <head>.
+ */
+
+/* Default: content is visible */
 [data-animate] {
-    opacity: 0;
-    transform: translateY(30px);
     transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
+/* Only hide elements when JS is confirmed working */
+.js-enabled [data-animate] {
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+.js-enabled [data-animate="fade-right"] {
+    transform: translateX(-30px);
+}
+
+.js-enabled [data-animate="fade-left"] {
+    transform: translateX(30px);
+}
+
+/* Animated state - reveal elements */
 [data-animate="fade-up"].animated {
     opacity: 1;
     transform: translateY(0);
 }
 
-[data-animate="fade-right"] {
-    transform: translateX(-30px);
-}
-
 [data-animate="fade-right"].animated {
     opacity: 1;
     transform: translateX(0);
-}
-
-[data-animate="fade-left"] {
-    transform: translateX(30px);
 }
 
 [data-animate="fade-left"].animated {
