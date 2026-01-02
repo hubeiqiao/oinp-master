@@ -16,12 +16,29 @@
 
     const DEADLINE = new Date('January 1, 2026 00:00:00 EST').getTime();
 
+    // Declare interval variable first to avoid temporal dead zone error
+    // when updateCountdown() is called and deadline has passed
+    let countdownInterval = null;
+
     /**
      * Update countdown display
      */
     function updateCountdown() {
         const now = new Date().getTime();
         const distance = DEADLINE - now;
+
+        // If countdown is over
+        if (distance < 0) {
+            // Guard: only clear interval if it's been set
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+                countdownInterval = null;
+            }
+            document.querySelectorAll('.countdown').forEach(el => {
+                el.innerHTML = '<p style="font-size: 1.5rem; color: var(--color-red);">Deadline Passed</p>';
+            });
+            return;
+        }
 
         // Time calculations
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -43,14 +60,6 @@
         updateElement('hours-footer', format(hours));
         updateElement('minutes-footer', format(minutes));
         updateElement('seconds-footer', format(seconds));
-
-        // If countdown is over
-        if (distance < 0) {
-            clearInterval(countdownInterval);
-            document.querySelectorAll('.countdown').forEach(el => {
-                el.innerHTML = '<p style="font-size: 1.5rem; color: var(--color-red);">Deadline Passed</p>';
-            });
-        }
     }
 
     /**
@@ -68,9 +77,12 @@
         }
     }
 
-    // Start countdown
+    // Start countdown - call first to show initial state immediately
     updateCountdown();
-    const countdownInterval = setInterval(updateCountdown, 1000);
+    // Only start interval if deadline hasn't passed yet
+    if (new Date().getTime() < DEADLINE) {
+        countdownInterval = setInterval(updateCountdown, 1000);
+    }
 
     // ==========================================================================
     // Scroll-Triggered Animations
@@ -86,27 +98,37 @@
 
         const observerOptions = {
             root: null,
-            rootMargin: '0px 0px -50px 0px',
-            threshold: 0.1
+            rootMargin: '0px',
+            threshold: 0.01
+        };
+
+        const animateElement = (element) => {
+            const delay = element.dataset.delay || 0;
+            setTimeout(() => {
+                element.classList.add('animated');
+            }, parseInt(delay));
         };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Get delay from data attribute or default to 0
-                    const delay = entry.target.dataset.delay || 0;
-
-                    setTimeout(() => {
-                        entry.target.classList.add('animated');
-                    }, parseInt(delay));
-
-                    // Optionally unobserve after animation
+                    animateElement(entry.target);
                     observer.unobserve(entry.target);
                 }
             });
         }, observerOptions);
 
-        animatedElements.forEach(el => observer.observe(el));
+        // Check elements already in viewport immediately
+        animatedElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const isInViewport = rect.top < window.innerHeight && rect.bottom > 0;
+            
+            if (isInViewport) {
+                animateElement(el);
+            } else {
+                observer.observe(el);
+            }
+        });
     }
 
     // ==========================================================================
