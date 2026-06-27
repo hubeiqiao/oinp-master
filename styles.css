@@ -240,12 +240,16 @@ html.video-fallback .hero-video { display: none !important; }
 @media (min-width: 1025px) {
     .hero-content {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         justify-content: space-between;
         gap: 40px;
     }
     .hero-copy { max-width: 460px; }
-    .hero-actions { margin-top: 0; flex: none; }
+    .hero-actions {
+        margin-top: 0;
+        flex: none;
+        transform: translateY(10px);
+    }
 }
 
 /* ---------- Tablet down ---------- */
