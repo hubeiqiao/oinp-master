@@ -29,24 +29,14 @@
     <meta name="twitter:image:alt" content="Canada helped me become a builder. A personal story from Joe Hu.">
 
     <link rel="canonical" href="https://oinp.hubeiqiao.com/">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header class="hero" id="hero">
-        <nav class="site-nav" aria-label="Primary navigation">
-            <a class="brand" href="#hero" aria-label="Joe Hu home">Joe Hu</a>
-            <button class="menu-button" type="button" aria-label="Open navigation">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <div class="nav-links" aria-label="Page sections">
-                <a href="#video">Video</a>
-                <a href="#message">Message</a>
-                <a href="#support">Support</a>
-            </div>
-        </nav>
-
         <div class="hero-media" aria-hidden="true">
             <video
                 class="hero-video"
@@ -55,96 +45,40 @@
                 loop
                 playsinline
                 preload="auto"
+                disablepictureinpicture
+                disableremoteplayback
+                controlslist="nodownload noplaybackrate noremoteplayback nofullscreen"
+                tabindex="-1"
                 poster="media/hero-hook-poster.jpg"
             >
-                <source src="media/hero-hook.mp4" type="video/mp4">
+                <source src="media/hero-hook.mp4?v=3956c729" type="video/mp4">
             </video>
         </div>
 
         <div class="hero-scrim" aria-hidden="true"></div>
 
-        <div class="story-rail" aria-hidden="true">
-            <span class="rail-word">Personal Story</span>
-            <span class="rail-dots"></span>
-            <span class="rail-line"></span>
-            <span class="rail-index">01</span>
-            <span class="rail-caption">A short story about building here.</span>
-        </div>
-
-        <div class="annotation annotation-one" aria-hidden="true">
-            <span class="annotation-number">01</span>
-            <span class="annotation-label">Studied here</span>
-        </div>
-
-        <div class="annotation annotation-two" aria-hidden="true">
-            <span class="annotation-number">02</span>
-            <span class="annotation-label">Built from here</span>
-        </div>
-
-        <div class="annotation annotation-three" aria-hidden="true">
-            <span class="annotation-number">03</span>
-            <span class="annotation-label">Hoping to keep contributing</span>
-        </div>
-
-        <section class="hero-note" aria-labelledby="hero-title">
-            <div class="mobile-spine" aria-hidden="true">Personal Story</div>
-            <p class="eyebrow">A personal story from Joe Hu</p>
+        <div class="hero-content">
             <h1 class="sr-only" id="hero-title">A personal story about building in Canada</h1>
-            <p class="context-copy">
-                I came to Canada to study, build, and contribute. This is a short story about building here while the path forward becomes harder to see.
-            </p>
-        </section>
-
-        <div class="signal-list" aria-label="Story signals">
-            <div class="signal-row">
-                <span class="signal-number">01</span>
-                <span class="signal-text">Studied here</span>
-                <svg viewBox="0 0 32 32" aria-hidden="true">
-                    <path d="M4 11.5 16 6l12 5.5L16 17 4 11.5Z"/>
-                    <path d="M9 14v7c2 2.5 12 2.5 14 0v-7"/>
-                    <path d="M28 12v9"/>
-                </svg>
+            <p class="hero-eyebrow">A personal story &middot; Joe Hu</p>
+            <p class="hero-lead">I came to Canada to study and build &mdash; and the path forward is getting harder to see.</p>
+            <div class="hero-actions">
+                <a class="hero-button hero-button-primary" href="#video">
+                    <span>Watch the 2-minute story</span>
+                    <svg class="btn-arrow" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M4 12h14M12 6l6 6-6 6" />
+                    </svg>
+                </a>
+                <a class="hero-button hero-button-secondary" href="#support">
+                    <svg class="btn-heart" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 20.4S3.6 15 3.6 8.9C3.6 6 5.9 4 8.4 4c1.7 0 3 .9 3.6 2.2C12.6 4.9 13.9 4 15.6 4c2.5 0 4.8 2 4.8 4.9 0 6.1-8.4 11.5-8.4 11.5Z" />
+                    </svg>
+                    <span>Support this message</span>
+                </a>
             </div>
-            <div class="signal-row">
-                <span class="signal-number">02</span>
-                <span class="signal-text">Built from here</span>
-                <svg viewBox="0 0 32 32" aria-hidden="true">
-                    <path d="M6 27V8h10v19"/>
-                    <path d="M16 14h10v13"/>
-                    <path d="M10 12h2M10 17h2M10 22h2M20 18h2M20 23h2"/>
-                </svg>
-            </div>
-            <div class="signal-row">
-                <span class="signal-number">03</span>
-                <span class="signal-text">Hoping to keep contributing</span>
-                <svg viewBox="0 0 32 32" aria-hidden="true">
-                    <path d="M11 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/>
-                    <path d="M21 15a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z"/>
-                    <path d="M3 27c1.5-5 6-8 13-8s11.5 3 13 8"/>
-                </svg>
-            </div>
-        </div>
-
-        <div class="action-dock" aria-label="Hero actions">
-            <span class="dock-number">01</span>
-            <span class="dock-label">Actions</span>
-            <a class="hero-button hero-button-primary" href="#video">
-                <span aria-hidden="true">-></span>
-                <span>Watch the 2-minute story</span>
-            </a>
-            <span class="dock-number dock-number-second">02</span>
-            <a class="hero-button hero-button-secondary" href="#support">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 20s-7-4.5-9.5-8.5C.8 8.6 2.4 5 5.8 5c2 0 3.4 1.1 4.2 2.4C10.8 6.1 12.2 5 14.2 5c3.4 0 5 3.6 3.3 6.5C15 15.5 12 20 12 20Z"/>
-                </svg>
-                <span>Support this message</span>
-            </a>
-            <span class="dock-audience-label">For whom</span>
-            <p class="audience-copy">For people in Canada's tech, startup, university, and policy communities.</p>
         </div>
 
         <p class="hero-accessibility-note sr-only">
-            The hero contains an autoplaying muted video hook. It introduces Joe's story with the line Canada helped me become a builder.
+            The hero shows an autoplaying, muted background video. It introduces Joe&rsquo;s story with the line: Canada helped me become a builder.
         </p>
     </header>
 
