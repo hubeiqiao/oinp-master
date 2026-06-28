@@ -2,11 +2,58 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Replace `oinp.hubeiqiao.com` with a story-led public support page for Joe's Canada/Ontario builder pathway message, while preserving the current policy-comment website as an archive.
+**Goal:** Replace `oinp.hubeiqiao.com` with a story-led public awareness page for Joe's Canada/Ontario builder pathway message, while preserving the current policy-comment website as an archive.
 
-**Architecture:** Keep the site as a small Cloudflare Workers Assets deployment backed by static HTML/CSS/JS. Move the existing long policy-comment page into an archive route, then make the root homepage a focused five-section experience with the cinematic autoplay hook video in the hero, full video section, support form, share actions, and a small hiring link. If support submissions need to persist, add a minimal Worker API backed by Cloudflare D1; do not rely on social login.
+**Architecture:** Keep the site as a small Cloudflare Workers Assets deployment backed by static HTML/CSS/JS. Move the existing long policy-comment page into an archive route, then make the root homepage a focused five-section experience with the cinematic autoplay hook video in the hero, full video section, one-click support UI, share actions, and a quiet contact/build-with-Joe link. If support submissions need to persist, add a minimal Worker API backed by Cloudflare D1; do not rely on social login.
 
 **Tech Stack:** Static `index.html`, `styles.css`, `script.js`, `worker.js`, Cloudflare Workers Assets via `wrangler.toml`, optional Cloudflare D1 for support records, MP4/WebM video assets generated from the Remotion output, CSS/WAAPI motion with IntersectionObserver. Use Three.js only if a specific lightweight hero depth effect is approved after static/video-first prototyping.
+
+## Implementation Status (updated 2026-06-28)
+
+**Status: homepage + archive shipped as a static front-end served from `public/` (security restructure done & verified via `wrangler dev`). The only remaining deferral is support persistence (Task 8), pending Joe's go-ahead on data collection.**
+
+The five-section homepage, the cinematic full-story video section, the one-click support UI, share actions, social/OG assets, and the policy archive are all built and verified in Chrome (Playwright) at 390 / 768 / 1440 widths. The hero was already in place; this pass updated its copy + page metadata and built everything below it.
+
+### What was implemented
+
+- **Hero (copy + metadata only):** eyebrow `Joe Hu's story · Built in Canada`, updated lead, screen-reader `h1` with the full hook line, and `title`/description/OG/Twitter set to the Option A direction. Hero video, scrim, and fallback logic left intact.
+- **Nav:** minimal floating nav (`Joe Hu · Ottawa`, links `Video / Message / Support`, quiet `Support` pill) with a condensed backdrop after scroll. Links hidden on mobile.
+- **Section 2 — Video:** chromeless poster + custom play affordance over a native-controls `<video>`; below it an editorial rail with the highlighted essay ("Two Years After Quitting My Job…") plus quiet `Build with Joe` and `Talk to Joe` sidecars (contact bridge).
+- **Section 3 — Message:** three numbered asks (01–03) + archive link.
+- **Section 4 — Support:** one-click `I support this message` → thank-you/share state (LinkedIn / X / copy / native) → optional comment-or-story form with `private`-default permission, consent note, and a honeypot.
+- **Section 5 — Final + footer:** "not only about me" close with support/share/contact actions and the quiet `Build with Joe` + archive links.
+- **Assets:** `media/oinp-feedback-story.mp4` (720p, two-pass x264, **22 MB**, faststart — under the 25 MiB Workers limit) + `media/oinp-feedback-story-poster.jpg`; `share/og-oinp-builder-story.jpg` (1200×630) + `…-square.jpg` (1200×1200), composited from a real Ottawa-River still + headline.
+- **Archive:** `archive/proposal-25-mlitsd019/` restored from git `0c4e18c` with an "Archived" banner + back-link; fixed a pre-existing `countdownInterval` TDZ crash in the archived script.
+
+### Deviations from the plan (intentional)
+
+- **Reveal motion:** uses a self-removing, rAF-throttled **scroll-driven** reveal instead of IntersectionObserver. The IO version left sections invisible (only 2/10 fired) on fast flicks / anchor jumps; the scroll version reveals 10/10 and disconnects when done. This overrides the "IntersectionObserver, not scroll listeners" guidance for correctness.
+- **Typography:** dropped Inter (per "no default Inter/Arial" rule) and use a three-role system — **Oswald** (statements) · **Hanken Grotesk** (UI/body) · **Source Serif 4** (first-person voice) — rather than a strict two-family set. The serif carries the personal-essay tone established in the hero.
+- **Video asset:** named `oinp-feedback-story.mp4`, encoded at **720p** (not 1080p) to fit the 25 MiB per-file limit from the 147 MB source. Higher-quality hosting (R2/Stream) remains the long-term option.
+- **Served directory:** ✅ resolved 2026-06-28 — servable files moved into `public/` and `wrangler.toml` now serves `directory = "public"`. `wrangler dev` confirms private/source files return 404 (see Task 1).
+- **Support persistence:** front-end only. The UI posts optimistically to `/api/support` (+ `/details`) and degrades gracefully when absent, recording the signal in `localStorage`. No D1/Worker API, no fabricated counts (Task 8 deferred).
+
+### Task status
+
+| Task | Status |
+| --- | --- |
+| 1 · Restructure served assets into `public/` | ✅ Done & verified (`wrangler dev`: private files 404) |
+| 2 · Archive current site | ✅ Done (`public/archive/proposal-25-mlitsd019/`) |
+| 3 · Prepare video/poster/hero assets | ✅ Done (720p 22 MB + poster) |
+| 4 · Create social/OG assets | ✅ Done (1200×630 + square) |
+| 5 · Replace root homepage markup | ✅ Done |
+| 6 · Rebuild styles + design system | ✅ Done |
+| 7 · Support UI behavior | ✅ Done (front-end, mocked-success preview) |
+| 8 · Add Support API (Worker + D1) | ⏳ Deferred (needs Joe's go-ahead) |
+| 9 · Verification | ✅ Done (Chrome/Playwright @ 390/768/1440 + archive; no overflow; reveals 10/10; support flow + share work) |
+
+### Next Steps
+
+> ✅ Completed 2026-06-28: the `public/` restructure (private files now return 404 via `wrangler dev`) and the Notion essay link check (renders publicly — "Two Years After Quitting My Job…").
+
+1. **Support persistence (Task 8) — the main remaining item:** only after Joe confirms data collection — add the Worker `/api/support` + `/api/support/details` routes, D1 table + migration, origin/size/honeypot/`startedAt` validation, route-level rate limiting, and publish the privacy + manual-deletion notice. The front-end is already wired for it.
+2. **Optional before launch:** higher-quality full video via R2/Cloudflare Stream if 720p/22 MB feels too compressed; add a `.gitignore` (`node_modules`, `.wrangler/`, `.DS_Store`); final favicon/`theme-color` check.
+3. **Deploy** once Task 8 is decided — or ship now without persistence if the support signal can stay client-side for v1.
 
 ## Current Context
 
@@ -39,8 +86,9 @@ Current site content:
 
 New source video:
 
-- Source path: `/Users/joehu/Joe/compaign/canada-journey/oinp-feedback-video/hook-remotion/out/oinp-feedback-rebuild-1080p.mp4`
-- Format verified with `ffprobe`: 1920x1080, 60 fps, H.264/AAC, about 2:00, about 128 MB.
+- Final source path: `/Users/joehu/Joe/compaign/canada-journey/oinp-feedback-video/hook-remotion/out/oinp-feedback-final-1080p.mp4`
+- Format verified with `ffprobe`: 1920x1080, H.264/AAC, about 2:03, about 147 MB.
+- Use this final video as the source for the full video section. Do not use the older `oinp-feedback-rebuild-1080p.mp4` unless the final export is unavailable.
 - Hero hook source path: `/Users/joehu/Joe/compaign/canada-journey/oinp-feedback-video/hook-1080p.mp4`
 - Hero hook format verified with `ffprobe`: 1920x1080, 60 fps, H.264/AAC, 5.6 seconds, about 5.2 MB.
 - Related transcript: `/Users/joehu/Joe/compaign/canada-journey/oinp-feedback-video/transcript/verified-transcript.md`
@@ -74,10 +122,538 @@ A cinematic founder-documentary page: the first viewport feels like the opening 
 Content thesis:
 
 - Hero earns attention by showing the actual video hook as a natural autoplaying cinematic surface, not by rebuilding the hook as duplicate page text.
-- The hero must still explain what the page is: a personal public message about whether Canada and Ontario can keep early-stage builders who are already contributing here.
+- The hero must still explain what the page is: one builder's story about how Canada helped him build, what recent pathway changes made harder, and what public awareness/request he is sharing now.
 - The full video becomes the next step for visitors who are interested.
-- The support section converts sympathy into one low-friction public signal.
+- The support section converts sympathy into one low-friction public signal and makes sharing easy.
+- The team/contact path must be visible for forward-thinking companies without turning the page into a resume.
 - The archive preserves policy detail for people who want the longer background.
+
+## Content Revision To Confirm
+
+Status: **copy planning only**. Do not implement these content changes until Joe confirms the copy direction.
+
+This section supersedes the earlier hero/page-copy draft in the plan. The current hero visual direction is the best baseline for now; the next content pass should update copy and metadata first, without redesigning the hero layout.
+
+### Page Purpose
+
+The website should do three jobs, in this order:
+
+```text
+1. Share Joe's perspective on how current immigration changes affect early-stage founders and international builders.
+2. Raise public awareness in Canada's tech, startup, university, and policy-adjacent communities.
+3. Keep a secondary path for people who want to contact Joe directly or explore building with him.
+```
+
+This is not a policy memo and not only a petition. It is one builder's story, used to make a broader issue visible: international builders can be studying, building products, registering companies, serving users, joining communities, and still face a path that is hard to see.
+
+The public request should be clear and practical: help more people understand what international builders are facing, support fair recognition of builders already contributing here, and share the story with people in Canada's tech, startup, university, and policy communities.
+
+The contact/team message should exist, but it is not the center of the page. Joe is in Ottawa and open to conversations, interviews, and serious building opportunities in Canada.
+
+Voice anchor:
+
+```text
+This is personal, but it is not only about me.
+
+I am sharing this because I believe Canada can be one of the best places in the world for builders. But to do that, the system needs to recognize people who are already here, already building, and already trying to contribute.
+```
+
+Primary action:
+
+```text
+I support this message
+```
+
+Secondary action:
+
+```text
+Watch the full story
+```
+
+### Hero Copy Options
+
+The hero should not say only "a personal story about building in Canada." That is too generic. The hero also should not lead with `OINP`; that acronym belongs later in the page, metadata, and archived policy context. The first viewport should make the human and startup-talent argument clear: this is one builder's story, but it points to a broader reality for international builders in Canada.
+
+Option A, recommended:
+
+```text
+Eyebrow:
+Joe Hu's story · Built in Canada
+
+Headline:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+Lead:
+Canada did something important for me: it helped me become a builder. I built my first product here, registered my first company here, and found confidence through Canadian communities. I am sharing this because I believe Canada can be one of the best places in the world for builders, but the system needs to recognize people already here, already building, and already trying to contribute.
+```
+
+Why: focuses on Joe's story first, repeats the full title, and directly reflects the two primary goals: share perspective and raise awareness. The team/contact path stays secondary.
+
+Option B:
+
+```text
+Eyebrow:
+Joe Hu's story · International builder in Canada
+
+Headline:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+Lead:
+Traditional employment is one signal. French is one signal. But product, users, company-building, and community contribution should also matter when someone is already creating from inside Canada.
+```
+
+Why: more policy-direct; strong if the hero visual already carries the personal story.
+
+Option C:
+
+```text
+Eyebrow:
+Joe Hu's story · Already building here
+
+Headline:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+Lead:
+I built my first product here and found the community that made me believe I could keep building. The question is whether Canada can see that contribution before it fits a traditional employment category.
+```
+
+Why: most compact startup-policy thesis.
+
+Option D:
+
+```text
+Eyebrow:
+Joe Hu's story · Two years after quitting my job
+
+Headline:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+Lead:
+Two years after quitting my job, I found myself building in Canada. That is the kind of outcome a country should want from graduate talent. This page is about whether the system can recognize this kind of early contribution while it is still taking shape.
+```
+
+Why: ties directly to the important article and gives the hero a more literary, personal opening.
+
+Option E:
+
+```text
+Eyebrow:
+Joe Hu's story · Building what comes next
+
+Headline:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+Lead:
+Canada helped me become a builder. Now I am sharing that story because I believe Canada can be one of the best places in the world for builders, if it recognizes people already here, already building, and already trying to contribute.
+```
+
+Why: useful as a final-section variant if the page needs a more reflective close, but still keeps the public-awareness goal ahead of the team/contact path.
+
+### Recommended Full Page Copy
+
+Use this as the default full-copy draft if Joe chooses Option A.
+
+#### Metadata
+
+```text
+Page title:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+Meta description:
+Joe Hu shares one builder's story about Canada, Ontario, early-stage founders, fair pathways, and recognizing people already building here.
+
+OG title:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+OG description:
+Joe Hu built his first product, registered his first company, and found confidence through Canadian communities. Now he is sharing what international builders are facing.
+
+Twitter title:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+Twitter description:
+One builder's story about products, company-building, community, fair pathways, and people already trying to contribute in Canada.
+```
+
+Favicon:
+
+```text
+Reuse the previous OINP favicon from the archived site:
+https://pbs.twimg.com/profile_images/1926465242164289538/XdrQhdiw_400x400.jpg
+```
+
+#### Navigation
+
+```text
+Joe Hu
+Video
+Message
+Support
+```
+
+#### Section 1: Hero
+
+```text
+Eyebrow:
+Joe Hu's story · Built in Canada
+
+Headline:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+Lead:
+Canada did something important for me: it helped me become a builder. I built my first product here, registered my first company here, and found confidence through Canadian communities. I am sharing this because I believe Canada can be one of the best places in the world for builders, but the system needs to recognize people already here, already building, and already trying to contribute.
+
+Primary CTA:
+Watch the full story
+
+Secondary CTA:
+I support this message
+
+Tertiary text link:
+Talk to Joe in Ottawa
+```
+
+Hero copy rules:
+
+- The headline can appear as accessible HTML if the hero design needs it, but do not duplicate the giant in-video hook visually in a way that fights the video.
+- If the hook video already displays the same headline in the current frame, place the lead and CTAs in annotation/field-note areas instead of stacking the same title below it.
+- Do not put `OINP` in the hero eyebrow. Keep the first viewport human-first and builder-first.
+- Use an eyebrow like `Joe Hu's story · Built in Canada`, `Joe Hu's story · International builder in Canada`, or `Joe Hu's story · Ottawa, Ontario`. The eyebrow should have context, but it should still focus on Joe's story, not Canada as an abstract subject.
+- If OINP needs to appear above the fold for clarity, use a small secondary note such as `Context: Ontario graduate pathways`, not the acronym as the main label.
+
+#### Section 2: Video
+
+```text
+Kicker:
+The full story
+
+Title:
+Why I am sharing this
+
+Body:
+This video explains how Canada helped me become a builder, what changed after Ontario's graduate pathway updates, and why I believe Canada needs a clearer way to recognize early-stage founders who are already building here.
+
+Small note:
+Video source: final 1080p export from the OINP feedback film.
+```
+
+Feature this related article in the video/story section, directly below the video or beside the video on desktop:
+
+```text
+Kicker:
+Longer backstory
+
+Title:
+Two Years After Quitting My Job I Found Myself Building in Canada
+
+Body:
+This essay is the longer personal context behind the video: how leaving my previous path eventually led me to Canada, product-building, and the kind of founder journey I hope Canada can keep.
+
+CTA:
+Read the essay
+
+URL:
+https://www.notion.so/hubeiqiao/Two-Years-After-Quitting-My-Job-I-Found-Myself-Building-in-Canada-38b0df12ec7780dd8670fecc77f7b51b?source=copy_link
+```
+
+Article implementation note:
+
+- This article is important enough to be visually highlighted, not buried in the footer.
+- Keep it inside Section 2 so the first flow is: hero hook -> full video -> longer written story.
+- Before launch, verify the Notion page is publicly accessible. If the Notion link is private or visually inconsistent, create a public article page/archive copy and link to that instead.
+
+Add a small team-facing bridge near the article, using the visual tone of the `/co` page rather than a generic hiring banner:
+
+```text
+Kicker:
+Building what comes next?
+
+Title:
+I am looking for people serious about building for a better Canada.
+
+Body:
+If you are building a small, high-agency product team in Canada, I am open to the right team. Product sense, shipped execution, and proof from real work.
+
+CTA:
+Build with Joe
+
+URL:
+https://hubeiqiao.com/co
+```
+
+Team-link placement rule:
+
+- Put this as a compact sidecar after the video/article, or repeat it quietly in the final section.
+- Do not make it the primary action above support.
+- The tone should match the screenshot direction from `/co`: serious, high-agency, Canada-specific, and proof-led.
+
+Add a direct contact bridge for people who want to speak with Joe: tech/startup community members, media, hiring teams, university/community leaders, and policy-adjacent people.
+
+```text
+Kicker:
+Talk to Joe
+
+Title:
+I am in Ottawa and open to conversations.
+
+Body:
+If you are part of Canada's tech, startup, university, hiring, media, or policy community and want to understand this story directly, I am open to talking, interviews, events, and serious conversations about keeping builders in Canada.
+
+CTA:
+Contact Joe directly
+
+Secondary link:
+For teams: Build with Joe
+```
+
+Contact placement rule:
+
+- Add a visible contact entry point in the hero as a quiet text link or tertiary CTA.
+- Add a dedicated contact block after the video/article area, because people who finish the video may want to reach out immediately.
+- Add a final-section contact link for people who scroll to the end.
+- Do not make contact compete with the main public-support CTA.
+
+Contact page plan:
+
+```text
+Route:
+/contact/
+
+Page title:
+Talk to Joe in Ottawa
+
+Intro:
+I am currently in Ottawa and open to direct conversations about this story, the builder pathway question, and serious opportunities to build what comes next.
+
+Contact reasons:
+- Policy or community conversation
+- Media / interview
+- Startup or employer conversation
+- University / community event
+- Builder or founder conversation
+- Other
+
+Suggested fields:
+- Name
+- Email
+- Organization, optional
+- Affiliation, optional
+- Reason for reaching out
+- Message
+
+Primary CTA:
+Send message
+
+Secondary CTA:
+Build with Joe
+
+Secondary CTA URL:
+https://hubeiqiao.com/co
+```
+
+Implementation note:
+
+- Before implementation, choose the direct contact mechanism: a Worker form endpoint, a mailto link, or a simple external form.
+- If using a form endpoint, add spam protection and a short privacy note before launch.
+
+Video asset:
+
+```text
+Source file:
+/Users/joehu/Joe/compaign/canada-journey/oinp-feedback-video/hook-remotion/out/oinp-feedback-final-1080p.mp4
+```
+
+Implementation note:
+
+- The source file is about 147 MB, so implementation must either optimize it below the deployment limit or host it through an approved video host such as Cloudflare Stream/R2.
+- The full video section may use native controls. The hero must not.
+
+#### Section 3: Message
+
+```text
+Kicker:
+The ask
+
+Title:
+What I hope Canada and Ontario will consider
+
+Intro:
+Traditional employment is one signal. French is one signal. But product, users, company-building, and community contribution should also count when someone is already building from inside Canada.
+```
+
+Item 1:
+
+```text
+Title:
+Protect students who planned under the old system
+
+Body:
+Current students and recent graduates should not be left in uncertainty after making major life, tuition, and career decisions based on previous pathways.
+```
+
+Item 2:
+
+```text
+Title:
+Keep an independent path for graduate talent
+
+Body:
+Masters and PhD graduates should have a way to stay based on their education, contribution, and potential, not only through a single employer relationship.
+```
+
+Item 3:
+
+```text
+Title:
+Recognize early-stage builders
+
+Body:
+Founders often create value before they fit traditional employment categories. Products, users, pilots, community work, company registration, and startup-building should count as evidence of contribution.
+```
+
+Archive link inside or after this section:
+
+```text
+For detailed policy context, read my archived December 2025 OINP feedback on Proposal 25-MLITSD019.
+
+Link label:
+Read the December 2025 OINP feedback
+
+Target:
+/archive/proposal-25-mlitsd019/
+```
+
+#### Section 4: Support
+
+```text
+Kicker:
+Public support
+
+Title:
+Support this message
+
+Body:
+If this story resonates with you, one click is enough. This is not a formal petition. It is a public signal that people care about fair pathways for students, graduates, and early-stage builders in Canada.
+
+Button:
+I support this message
+
+Microcopy:
+No account. No social login. You can add a comment or story after supporting, but you do not have to.
+```
+
+Support interaction:
+
+```text
+Step 1:
+Visitor clicks `I support this message`.
+
+Immediate result:
+Count the support signal right away and show the thank-you state.
+
+Step 2, optional:
+Invite the visitor to add more context if they want.
+
+Optional prompt:
+Want to add context?
+You can share a short comment, your own story, or why this message matters to you.
+```
+
+Optional comment/story form:
+
+```text
+Name
+Optional
+
+Email
+Optional, only if you are open to follow-up
+
+Comment or story
+Optional
+
+Public permission
+You may show my name/comment publicly
+Keep my support private
+
+Consent note:
+Your email will not be shown publicly. If you choose public permission, your name/comment may be reviewed before any public display.
+```
+
+Thank-you copy:
+
+```text
+Thank you. Your support has been counted.
+The most helpful next step is to share the video with someone in Canada's tech, startup, university, or policy community.
+
+Share on LinkedIn
+Share on X
+Copy link
+
+Optional secondary action:
+Add a comment or story
+```
+
+#### Section 5: Final
+
+```text
+Title:
+This is personal, but it is not only about me.
+
+Body:
+I am sharing this because I believe Canada can be one of the best places in the world for builders. But to do that, the system needs to recognize people who are already here, already building, and already trying to contribute.
+
+Primary CTA:
+Support this message
+
+Secondary CTA:
+Share the video
+
+Tertiary CTA:
+Contact Joe directly
+
+Small link:
+Building a high-agency product team in Canada? Build with Joe
+
+Small link URL:
+https://hubeiqiao.com/co
+```
+
+#### Footer
+
+```text
+Earlier policy detail:
+Read the December 2025 OINP feedback
+
+Small context:
+Archived OINP Proposal 25-MLITSD019 feedback and policy-comment page.
+```
+
+### Share Copy
+
+LinkedIn/X default:
+
+```text
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+This is one builder's story, but it points to something broader: product, users, company-building, and community contribution can exist before they become traditional employment signals.
+
+I support fair pathways for students, graduates, and early-stage builders already contributing in Canada.
+
+https://oinp.hubeiqiao.com/
+```
+
+Native share payload:
+
+```text
+Title:
+Canada helped me become a builder. Does Canada know how to keep builders?
+
+Text:
+Joe Hu built his first product, registered his first company, and found confidence through Canadian communities. Now he is sharing what international builders are facing.
+
+URL:
+https://oinp.hubeiqiao.com/
+```
 
 Interaction thesis:
 
@@ -219,6 +795,7 @@ Primary share promise:
 
 ```text
 Canada helped me become a builder. Does Canada know how to keep builders?
+One builder's story about what international builders are facing in Canada.
 ```
 
 Recommended OG/Twitter assets:
@@ -234,7 +811,7 @@ OG image direction:
   - `Canada helped me become a builder.`
   - `Does Canada know how to keep builders?`
 - Add a small context line if it remains readable:
-  - `A 2-minute story about fair pathways for builders already here.`
+  - `Joe Hu's story · Built in Canada`
 - Keep Joe visible. Do not crop him into a dark, anonymous silhouette.
 - Include a small `oinp.hubeiqiao.com` or `Joe Hu` mark only if it does not compete with the headline.
 
@@ -242,7 +819,7 @@ Metadata requirements:
 
 - `og:type`: `website`
 - `og:title`: `Canada helped me become a builder. Does Canada know how to keep builders?`
-- `og:description`: `Joe Hu's 2-minute story about Canada, Ontario, graduate pathways, and fair recognition for early-stage builders already contributing here.`
+- `og:description`: `Joe Hu built his first product, registered his first company, and found confidence through Canadian communities. Now he is sharing what international builders are facing.`
 - `og:image`: `https://oinp.hubeiqiao.com/share/og-oinp-builder-story.jpg`
 - `twitter:card`: `summary_large_image`
 - `twitter:title`, `twitter:description`, `twitter:image` matching OG.
@@ -254,6 +831,8 @@ Share text:
 
   ```text
   Canada helped me become a builder. Does Canada know how to keep builders?
+
+  This is one builder's story, but it points to something broader: product, users, company-building, and community contribution can exist before they become traditional employment signals.
 
   I support fair pathways for students, graduates, and early-stage builders already contributing in Canada.
   ```
@@ -269,7 +848,7 @@ Why:
 
 - It matches the new purpose: "This is my story, but it is not only about me."
 - It keeps the page emotionally accessible for tech, startup, university, and policy audiences.
-- It gives one clear action: "I support fair pathways for builders already here."
+- It gives one clear action: "I support this message."
 - It avoids turning the page into a petition, a government brief, or a hiring page.
 - It preserves the current long policy page without letting it dominate the new message.
 
@@ -289,9 +868,9 @@ In scope:
 - Direct full video embed below the hero for interested visitors.
 - Archived copy of the current site.
 - Small archive link from the new homepage.
-- Support form with optional name/email/comment and required role/visibility choice.
+- One-click support action with optional name/email/comment-or-story afterward.
 - Thank-you state and share links after support.
-- Small bottom link: "Building a high-agency AI/product team? Build with Joe"
+- Small bottom link: "Building a high-agency product team in Canada? Build with Joe" pointing to `https://hubeiqiao.com/co`
 - Updated metadata, social preview image, and share text.
 - Responsive/mobile validation.
 
@@ -346,7 +925,7 @@ Navigation should be minimal:
 Footer should be quiet:
 
 - Archive link: `Earlier OINP policy-comment page`
-- Hiring link: `Building a high-agency AI/product team? Build with Joe`
+- Hiring link: `Building a high-agency product team in Canada? Build with Joe`
 - Personal links can stay small if needed, but should not compete with support/share actions.
 
 ## Content Plan
@@ -358,9 +937,14 @@ Purpose: create a stunning first impression and establish the emotional question
 Use this copy as the base:
 
 ```text
+Eyebrow:
+Joe Hu's story · Built in Canada
+
+Headline:
 Canada helped me become a builder. Does Canada know how to keep builders?
 
-I came to Canada to study, build, and contribute. I built products, joined the startup community, registered my company, and started creating value here. But recent immigration changes made the path for early-stage builders much harder to see.
+Lead:
+Canada did something important for me: it helped me become a builder. I built my first product here, registered my first company here, and found confidence through Canadian communities. I am sharing this because I believe Canada can be one of the best places in the world for builders, but the system needs to recognize people already here, already building, and already trying to contribute.
 ```
 
 Primary actions:
@@ -444,44 +1028,43 @@ Copy:
 ```text
 Support this message
 
-If this story resonates with you, you can add your support. This is not a formal petition. It is a public signal that people care about fair pathways for students, graduates, and early-stage builders in Canada.
+If this story resonates with you, one click is enough. This is not a formal petition. It is a public signal that people care about fair pathways for students, graduates, and early-stage builders in Canada.
 ```
 
 Button:
 
 ```text
-I support fair pathways for builders
+I support this message
 ```
 
-After click, reveal a form.
+After click, count the support immediately and reveal the thank-you/share state.
 
-Fields:
+Then show an optional prompt:
+
+```text
+Want to add context?
+You can share a short comment, your own story, or why this message matters to you.
+```
+
+Optional fields:
 
 - Name, optional
-- Email, optional but recommended
-- Role, required:
-  - Student
-  - Graduate
-  - Founder
-  - Builder
-  - Employer
-  - Investor
-  - Professor / educator
-  - Community member
-  - Other
-- Comment, optional
-- Visibility, required:
+- Email, optional, only for follow-up
+- Comment or story, optional
+- Public permission, default private:
   - You may show my name/comment publicly
-  - Count me privately only
+  - Keep my support private
 
 Implementation detail:
 
-- Although the idea says "checkbox", treat the two visibility choices as mutually exclusive choices. Implement as a fieldset with radio behavior or checkbox-style buttons that enforce one selected value. This avoids ambiguous consent.
+- The support click should be the conversion event. Optional details must not block or delay the support count.
+- Do not require an identity category. If audience context is useful later, ask for it in an optional follow-up survey, not in the main support flow.
+- Treat public permission as mutually exclusive consent. Implement as a fieldset with radio behavior or checkbox-style buttons that enforce one selected value.
 
 After submit:
 
 ```text
-Thank you for supporting this message.
+Thank you. Your support has been counted.
 The most helpful next step is to share the video with someone in Canada's tech, startup, university, or policy community.
 ```
 
@@ -496,13 +1079,13 @@ Privacy:
 
 - Email is optional and should not be displayed publicly.
 - Do not show name/comment publicly in v1 unless there is moderation or manual review.
-- Store the user's visibility preference for future public display.
+- Store the user's public-permission preference for future public display.
 - Do not collect raw IP unless there is a clear anti-spam reason and a retention policy.
 
 Privacy/consent line near the form:
 
 ```text
-By submitting, you agree that Joe may store this response to count support for this message. Your email will not be shown publicly. If you choose public visibility, your name/comment may be reviewed before any public display. To remove or update your support, contact Joe through hubeiqiao.com.
+By submitting, you agree that Joe may store this response to count support for this message. Your email will not be shown publicly. If you give public permission, your name/comment may be reviewed before any public display. To remove or update your support, contact Joe through hubeiqiao.com.
 ```
 
 Retention/deletion:
@@ -531,7 +1114,8 @@ Buttons:
 Small bottom link:
 
 ```text
-Building a high-agency AI/product team? Build with Joe
+Building a high-agency product team in Canada? Build with Joe
+https://hubeiqiao.com/co
 ```
 
 Design:
@@ -601,19 +1185,24 @@ Proposed D1 table:
 CREATE TABLE IF NOT EXISTS supporters (
   id TEXT PRIMARY KEY,
   created_at TEXT NOT NULL,
+  updated_at TEXT,
+  update_token_hash TEXT,
   name TEXT,
   email TEXT,
-  role TEXT NOT NULL,
   comment TEXT,
-  visibility TEXT NOT NULL CHECK (visibility IN ('public', 'private')),
+  public_permission TEXT NOT NULL DEFAULT 'private' CHECK (public_permission IN ('public', 'private')),
+  detail_status TEXT NOT NULL DEFAULT 'support_only' CHECK (detail_status IN ('support_only', 'with_comment')),
   source TEXT NOT NULL DEFAULT 'oinp-homepage'
 );
 
 CREATE INDEX IF NOT EXISTS idx_supporters_created_at
 ON supporters(created_at);
 
-CREATE INDEX IF NOT EXISTS idx_supporters_visibility
-ON supporters(visibility);
+CREATE INDEX IF NOT EXISTS idx_supporters_public_permission
+ON supporters(public_permission);
+
+CREATE INDEX IF NOT EXISTS idx_supporters_detail_status
+ON supporters(detail_status);
 ```
 
 Manual setup required before deployment:
@@ -638,11 +1227,18 @@ API routes:
   - Reject non-JSON content types with `415 Unsupported Media Type`.
   - Reject request bodies over a small fixed limit before parsing.
   - Restrict accepted origins to `https://oinp.hubeiqiao.com` and local dev origins if CORS is needed.
-  - Validate role and visibility against allowlists.
+  - Create a support record immediately, even when no name, email, or comment is provided.
   - Trim strings.
   - Reject overlong fields.
   - Validate `startedAt` server-side so immediate automated submissions are rejected.
-  - Insert one row.
+  - Insert one row with `detail_status = 'support_only'` and `public_permission = 'private'`.
+  - Return `{ "ok": true, "supportId": "...", "updateToken": "..." }`.
+- `POST /api/support/details`
+  - Accept optional `supportId`, `updateToken`, `name`, `email`, `comment`, and `publicPermission`.
+  - Verify the update token before changing the existing record.
+  - If the token is missing or invalid, reject the update instead of creating a duplicate support count.
+  - Validate `publicPermission` against `public` and `private`.
+  - Store optional details and set `detail_status = 'with_comment'` when a comment/story exists.
   - Return `{ "ok": true }`.
 - `GET /api/support/summary`
   - Optional.
@@ -668,9 +1264,9 @@ Validation limits:
 - Body: 16 KB maximum.
 - Name: 120 chars.
 - Email: 254 chars; optional; basic format validation only.
-- Role: allowlist only.
-- Comment: 1000 chars.
-- Visibility: `public` or `private`.
+- Comment/story: 1500 chars.
+- Public permission: `public` or `private`; default to `private`.
+- Support-only submissions must be accepted without name, email, comment, or audience category.
 
 Spam control:
 
@@ -681,12 +1277,16 @@ Spam control:
 
 Fallback if backend is postponed:
 
-- Keep the support form UI hidden behind a `data-mode="prototype"` guard or replace the submit action with a mailto/link collection strategy.
+- Keep the support UI hidden behind a `data-mode="prototype"` guard or replace the submit action with a mailto/link collection strategy.
 - Do not ship a fake success state that implies support was recorded when it was not.
 
 ## File-Level Implementation Tasks
 
+> **Implementation note (updated 2026-06-28):** Tasks 1–7 and 9 are built and verified (see the status table above). Only Task 8 (Worker/D1 support API) remains and is flagged inline below. Servable files now live under `public/`.
+
 ### Task 1: Restructure Served Assets
+
+> ✅ **Done (2026-06-28).** Servable files moved into `public/` (`index.html`, `styles.css`, `script.js`, `media/`, `share/`, `archive/`, `preview-og.jpg`, `preview.png`) and `wrangler.toml` now serves `directory = "public"`. `wrangler dev` confirms `/wrangler.toml`, `/worker.js`, `/docs/…`, `/README.md`, `/.DS_Store`, `/assets/…`, and the policy `.md` return 404, while the homepage, media, share assets, and archive serve 200. `assets/`, `docs/`, `worker.js`, `wrangler.toml`, and the source `.md` remain outside `public/`.
 
 **Files:**
 
@@ -835,11 +1435,11 @@ During implementation, preview the hook in the hero before further compression. 
 2. Add a minimal nav with anchors for video/message/support.
 3. Add the full-bleed/no-player hero hook video, mobile-safe source/fallback, poster fallback, compact context layer, and CTAs.
 4. Ensure the hero video element has no `controls` attribute and no custom player UI.
-5. Do not duplicate the hook headline as a giant HTML hero title; the video carries the hook line.
+5. Use the live page headline `Canada helped me become a builder. Does Canada know how to keep builders?`, but do not recreate the video's animated hook as static transcript text.
 6. Add accessible hidden text or an `aria-label` that describes the hook video for screen readers without adding visible duplicate typography.
 7. Add the full video section with native video controls.
 8. Add the three "I hope" panels.
-9. Add support form markup with accessible labels and fieldsets.
+9. Add one-click support UI markup and optional comment/story markup with accessible labels and fieldsets.
 10. Add thank-you/share state markup.
 11. Add final section and quiet footer links.
 12. Update title/meta/OG/Twitter copy for the new story page.
@@ -848,7 +1448,7 @@ Recommended metadata direction:
 
 ```text
 Title: Canada helped me become a builder. Does Canada know how to keep builders?
-Description: Joe Hu's 2-minute story about Canada, Ontario, graduate pathways, and fair recognition for early-stage builders already contributing here.
+Description: Joe Hu shares one builder's story about Canada, Ontario, early-stage founders, fair pathways, and recognizing people already building here.
 ```
 
 ### Task 6: Rebuild Styles Around The Video Design System
@@ -922,18 +1522,24 @@ Motion requirements:
    - if autoplay fails, keep the poster visible and do not show an error.
    - if reduced motion is active, do not start the hero hook video.
    - do not reveal player controls in the hero when autoplay fails; the fallback remains a poster plus CTAs.
-4. Add support form reveal behavior.
-5. Add client validation.
-6. POST to `/api/support` if backend is enabled.
-7. Show loading, success, and error states.
-8. Add share-link generation:
+4. Add one-click support behavior:
+   - pressing `I support this message` immediately posts a support-only signal;
+   - success shows the thank-you/share state;
+   - optional comment/story fields appear only after support is counted.
+5. Add client validation for optional detail fields.
+6. POST to `/api/support` for the one-click support signal if backend is enabled.
+7. POST to `/api/support/details` only when the visitor adds optional details.
+8. Show loading, success, and error states.
+9. Add share-link generation:
    - LinkedIn share URL.
    - X intent URL.
    - Native Web Share API where supported.
    - Clipboard copy with fallback.
-9. Keep all JS progressive: the page should still show the video and content if JS fails.
+10. Keep all JS progressive: the page should still show the video and content if JS fails.
 
 ### Task 8: Add Support API
+
+> ⏳ **Not done — deferred until Joe confirms data collection.** The front-end already posts optimistically to `/api/support` and `/api/support/details` and degrades gracefully when absent. Before enabling: add the D1 table + migration, validation (origin / size / honeypot / `startedAt`), route-level rate limiting, and a published privacy + manual-deletion notice.
 
 **Files:**
 
@@ -949,12 +1555,13 @@ Motion requirements:
 4. Reject request bodies over 16 KB before parsing.
 5. Parse JSON safely.
 6. Validate allowed origin if CORS is used.
-7. Validate allowed role and visibility.
+7. Accept support-only submissions without identity category, name, email, or comment.
 8. Validate `startedAt` minimum age and honeypot.
 9. Insert into D1.
 10. Return a compact JSON response.
-11. Keep all other paths delegated to assets.
-12. Configure Cloudflare route-level rate limiting for `POST /api/support` before accepting real submissions.
+11. Add `/api/support/details` for optional comment/story updates with token validation.
+12. Keep all other paths delegated to assets.
+13. Configure Cloudflare route-level rate limiting for `POST /api/support` before accepting real submissions.
 
 Pseudo-structure:
 
@@ -965,6 +1572,10 @@ export default {
 
     if (url.pathname === "/api/support") {
       return handleSupport(request, env);
+    }
+
+    if (url.pathname === "/api/support/details") {
+      return handleSupportDetails(request, env);
     }
 
     if (url.pathname === "/api/support/summary") {
@@ -1008,10 +1619,11 @@ export default {
    - Mobile CTAs remain visible and tappable in the first viewport.
    - Video loads and poster displays.
    - `Watch the video` scrolls to the full video section.
-   - Support button reveals form.
-   - Required role/visibility validation works.
+   - Support button counts support immediately without requiring identity category, name, email, or comment.
+   - Thank-you/share actions appear after support is counted.
+   - Optional comment/story form appears after support is counted.
    - Optional name/email/comment behave correctly.
-   - Submit success shows thank-you/share actions.
+   - Public permission defaults to private and only changes with explicit consent.
    - Copy link works.
    - Native share path works on supported mobile browsers or gracefully falls back.
    - Archive link works.
@@ -1044,28 +1656,37 @@ export default {
 9. Validate API security if D1 is included:
    - non-JSON POST returns 415.
    - oversized body returns 413.
-   - missing/invalid role returns 400.
-   - invalid visibility returns 400.
+   - support-only submission without name/email/comment returns `{ "ok": true }`.
+   - invalid public permission returns 400.
+   - invalid optional-details update token returns 403 or 400.
    - too-fast `startedAt` returns 400 or 429.
    - valid support submission returns `{ "ok": true }`.
    - rate limiting is configured in Cloudflare before production.
 
 ## Open Decisions For Joe
 
-1. Should support submissions be stored immediately with D1, or should the first pass be a static prototype until the copy/design is approved? Resolve before Task 8.
-2. Should the full video be committed as an optimized MP4 only if it is under 25 MiB, or hosted externally through R2/Cloudflare Stream/another approved host? Resolve before Task 3.
-3. Should the new page show a public support count in v1, or only collect support privately until there is enough volume and moderation?
-4. What should the "Build with Joe" link target be: `https://hubeiqiao.com`, a hiring-specific page, LinkedIn, or a future page? Resolve before Task 5.
-5. Should the hero remain video-only in v1, or should a lightweight Three.js atmospheric layer be explored after the video-first prototype is approved?
+> Status as of 2026-06-28 implementation. See **Implementation Status** near the top for full detail.
+
+1. **Support storage (D1 vs static prototype).** ⏳ *Open — built as front-end prototype for now.* The support UI ships with optimistic posting + `localStorage`; no D1 yet. Decide whether to wire real persistence (Task 8) with a privacy notice, deletion path, and rate limiting before deploy.
+2. **Full video hosting (committed MP4 vs external).** ✅ *Resolved — committed.* Encoded to a 720p, 22 MB MP4 (under the 25 MiB limit) and committed at `media/oinp-feedback-story.mp4`. Revisit R2/Cloudflare Stream only if higher quality is wanted.
+3. **Public support count in v1.** ✅ *Resolved — no public count.* The thank-you state shows no total (no real data, no fabricated number); the conversion is the share action. Add a count later only with real D1 data + moderation.
+4. **`Build with Joe` link target.** ✅ *Resolved — `https://hubeiqiao.com/co`.* Used in the video sidecar and final section; the direct-contact link points to `https://hubeiqiao.com`.
+5. **Three.js atmospheric layer.** ✅ *Resolved — not used.* The video-led hero plus per-section film grain reads as intended; no canvas layer added.
+
+New decision surfaced during implementation:
+
+6. **`public/` restructure.** ✅ *Resolved — done & verified 2026-06-28.* Servable files moved to `public/`; `wrangler dev` confirms `/wrangler.toml`, `/worker.js`, `/docs/…`, `/README.md`, `/.DS_Store`, `/assets/…`, and the policy `.md` all return 404, while the homepage, media, share assets, and archive serve 200.
 
 ## Recommended Implementation Order
 
-1. Restructure served assets into `public/` and update `wrangler.toml`.
-2. Archive current site under `public/archive/proposal-25-mlitsd019/`.
-3. Prepare video/poster/hero-hook assets with the 25 MiB Workers Assets gate.
-4. Prepare OG/social sharing assets.
-5. Replace homepage static markup and styling.
-6. Implement support UI as frontend only against a mocked success state locally.
-7. Add real Worker/D1 persistence only after Joe confirms data collection, privacy notice, deletion path, and rate limiting.
-8. Run visual validation, form/API verification, public-file exposure checks, and social metadata checks.
-9. Deploy only after archive, hero hook, full video, support form, share actions, and mobile layout are verified.
+> Progress as of 2026-06-28 marked inline.
+
+1. Restructure served assets into `public/` and update `wrangler.toml`. — ✅ **Done & verified** (`wrangler dev`: private files 404).
+2. Archive current site under `public/archive/proposal-25-mlitsd019/`. — ✅ **Done**.
+3. Prepare video/poster/hero-hook assets with the 25 MiB Workers Assets gate. — ✅ **Done** (720p 22 MB + poster; hero hook already in place).
+4. Prepare OG/social sharing assets. — ✅ **Done** (1200×630 + square).
+5. Replace homepage static markup and styling. — ✅ **Done**.
+6. Implement support UI as frontend only against a mocked success state locally. — ✅ **Done**.
+7. Add real Worker/D1 persistence only after Joe confirms data collection, privacy notice, deletion path, and rate limiting. — ⏳ **Deferred** (Next Step 2; front-end already wired).
+8. Run visual validation, form/API verification, public-file exposure checks, and social metadata checks. — ✅ **Done**: visual + form + social verified in Chrome at 390/768/1440; public-file exposure check passed via `wrangler dev` (private files 404).
+9. Deploy only after archive, hero hook, full video, one-click support UI, share actions, and mobile layout are verified. — ⏳ **Pending** (do steps 1 + 3 from Next Steps first).

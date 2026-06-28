@@ -2,5 +2,8 @@ name = "oinp"
 main = "worker.js"
 compatibility_date = "2025-12-05"
 
-# Serve static files from the repo root
-assets = { directory = ".", binding = "ASSETS" }
+# Serve static files from the dedicated public/ directory.
+# Private/source files (worker.js, wrangler.toml, docs/, assets/, README.md,
+# the policy-comment .md, .claude/, .wrangler/, .DS_Store) stay OUTSIDE public/
+# so Workers Assets never exposes them.
+assets = { directory = "public", binding = "ASSETS" }
