@@ -1,0 +1,23 @@
+{
+  "oinp": {
+    "status": "approved-current",
+    "heading_line_1": "This is <span class=\"footer-highlight\">personal</span>,",
+    "heading_line_2": "but it is <span class=\"footer-mobile-highlight\">not only</span><br class=\"footer-mobile-break\"> about me.",
+    "description_line_1": "I am one case of a larger question:",
+    "description_line_2": "who gets to keep building here?"
+  },
+  "co": {
+    "status": "placeholder-needs-joe-approval",
+    "heading_line_1": "Build with Joe.",
+    "heading_line_2": "For teams that care about the work.",
+    "description_line_1": "Product sense, AI-native execution,",
+    "description_line_2": "and proof from real building."
+  },
+  "personal": {
+    "status": "placeholder-needs-joe-approval",
+    "heading_line_1": "Still walking the Pathless Path.",
+    "heading_line_2": "One build at a time.",
+    "description_line_1": "Ideas, products, writing, and proof",
+    "description_line_2": "from a life I am still figuring out."
+  }
+}
