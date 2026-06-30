@@ -1502,6 +1502,10 @@ html.video-fallback .hero-video { display: none !important; }
     .hero-lead { max-width: 420px; }
     .story-rail { grid-template-columns: 1fr; }
     .sidecar-stack { grid-template-columns: 1fr 1fr; }
+    .footer-map { width: min(48vw, 520px); grid-template-columns: repeat(2, minmax(120px, 1fr)); gap: 30px 46px; }
+    .footer-statement { margin-top: clamp(120px, 19vh, 210px); }
+    .footer-bottom { align-items: flex-start; flex-direction: column; }
+    .footer-actions { justify-content: flex-start; gap: 34px; }
 }
 
 @media (max-width: 760px) {
