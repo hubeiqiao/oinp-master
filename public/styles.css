@@ -1379,6 +1379,96 @@ html.video-fallback .hero-video { display: none !important; }
     }
 }
 
+.story-footer.footer-motion-ready .footer-brand-panel,
+.story-footer.footer-motion-ready .footer-map .footer-col,
+.story-footer.footer-motion-ready .footer-statement,
+.story-footer.footer-motion-ready .footer-bottom {
+    opacity: 0.72;
+    filter: blur(1.4px);
+    transform: translate3d(0, 6px, 0);
+    transition:
+        opacity var(--footer-enter-duration) var(--ease-smooth) var(--footer-motion-delay, 0ms),
+        filter var(--footer-enter-duration) var(--ease-smooth) var(--footer-motion-delay, 0ms),
+        transform var(--footer-enter-duration) var(--ease-smooth) var(--footer-motion-delay, 0ms);
+    will-change: opacity, filter, transform;
+}
+.story-footer.footer-motion-ready .footer-brand-panel { --footer-motion-delay: 0ms; }
+.story-footer.footer-motion-ready .footer-map .footer-col:nth-child(1) { --footer-motion-delay: 40ms; }
+.story-footer.footer-motion-ready .footer-map .footer-col:nth-child(2) { --footer-motion-delay: 70ms; }
+.story-footer.footer-motion-ready .footer-map .footer-col:nth-child(3) { --footer-motion-delay: 100ms; }
+.story-footer.footer-motion-ready .footer-map .footer-col:nth-child(4) { --footer-motion-delay: 130ms; }
+.story-footer.footer-motion-ready .footer-statement { --footer-motion-delay: 170ms; }
+.story-footer.footer-motion-ready .footer-bottom { --footer-motion-delay: 210ms; }
+.story-footer.footer-motion-in .footer-brand-panel,
+.story-footer.footer-motion-in .footer-map .footer-col,
+.story-footer.footer-motion-in .footer-statement,
+.story-footer.footer-motion-in .footer-bottom {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0);
+}
+
+.footer-action-build {
+    --magnet-x: 0px;
+    --magnet-y: 0px;
+    --press-scale: 1;
+    position: relative;
+    overflow: hidden;
+    transform: translate3d(var(--magnet-x), var(--magnet-y), 0) scale(var(--press-scale));
+    transition:
+        background var(--dur) var(--ease-smooth),
+        border-color var(--dur) var(--ease-smooth),
+        box-shadow var(--dur) var(--ease-smooth),
+        color var(--dur) var(--ease-smooth),
+        transform var(--dur-slow) var(--ease-smooth);
+    will-change: transform;
+}
+.footer-action-build::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: inherit;
+    background: linear-gradient(110deg, rgba(255,255,255,0) 0%, rgba(255,250,226,0.44) 44%, rgba(255,255,255,0) 62%);
+    opacity: 0;
+    transform: translateX(-115%) skewX(-18deg);
+    transition: opacity var(--dur) var(--ease-smooth), transform 680ms var(--ease-smooth);
+    pointer-events: none;
+}
+.footer-action-build > * {
+    position: relative;
+    z-index: 1;
+}
+.footer-action-build .footer-action-icon {
+    transition: transform var(--dur) var(--ease-spring);
+}
+.footer-action-build:hover,
+.footer-action-build:focus-visible {
+    transform: translate3d(var(--magnet-x), calc(var(--magnet-y) - 2px), 0) scale(var(--press-scale));
+}
+.footer-action-build:hover::before,
+.footer-action-build:focus-visible::before,
+.footer-action-build.is-magnetic::before {
+    opacity: 0.56;
+    transform: translateX(115%) skewX(-18deg);
+}
+.footer-action-build:hover .footer-action-icon,
+.footer-action-build:focus-visible .footer-action-icon,
+.footer-action-build.is-magnetic .footer-action-icon {
+    transform: rotate(-7deg) translateY(-1px);
+}
+.footer-action-build:hover .footer-action-arrow,
+.footer-action-build:focus-visible .footer-action-arrow,
+.footer-action-build.is-magnetic .footer-action-arrow {
+    transform: rotate(-45deg) translate(2px, -2px);
+}
+.footer-action-build.is-magnetic {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.36), 0 24px 58px -30px rgba(232, 183, 95, 0.92), 0 0 0 0.5px rgba(255, 244, 210, 0.32);
+}
+.footer-action-build:active {
+    --press-scale: 0.985;
+    transform: translate3d(var(--magnet-x), calc(var(--magnet-y) - 1px), 0) scale(var(--press-scale));
+}
+
 /* =========================================================================
    REVEAL MOTION  (IntersectionObserver-driven)
    ========================================================================= */
@@ -1766,6 +1856,21 @@ html.video-fallback .hero-video { display: none !important; }
     html { scroll-behavior: auto; }
     .hero-video { display: none !important; }
     .reveal { opacity: 1 !important; transform: none !important; filter: none !important; transition: none !important; }
+    .story-footer.footer-motion-ready .footer-brand-panel,
+    .story-footer.footer-motion-ready .footer-map .footer-col,
+    .story-footer.footer-motion-ready .footer-statement,
+    .story-footer.footer-motion-ready .footer-bottom {
+        opacity: 1 !important;
+        filter: none !important;
+        transform: none !important;
+        transition: none !important;
+    }
+    .footer-action-build {
+        --magnet-x: 0px !important;
+        --magnet-y: 0px !important;
+        transform: none !important;
+    }
+    .footer-action-build::before { display: none; }
     .hero-scroll svg { animation: none; }
     .support-thanks, .support-check { animation: none; }
     .btn-support.is-loading .btn-support-label { animation: none; color: #160d02; background: none; -webkit-text-fill-color: currentColor; }
