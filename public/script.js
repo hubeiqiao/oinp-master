@@ -227,17 +227,194 @@
         document.querySelectorAll("[data-share]").forEach(function (btn) {
             btn.addEventListener("click", function () { shareTo(btn.getAttribute("data-share"), btn); });
         });
-        // reveal native share button where supported
-        if (navigator.share) {
-            document.querySelectorAll(".share-btn-native").forEach(function (b) { b.hidden = false; });
+        if (navigator.share) document.querySelectorAll(".share-btn-native").forEach(function (b) { b.hidden = false; });
+    }
+
+    function initCalActions() {
+        document.querySelectorAll("[data-cal-link]").forEach(function (btn) {
+            btn.addEventListener("click", function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                var link = btn.getAttribute("data-cal-link");
+                if (!link) return;
+                var cfg = { layout: "month_view", useSlotsViewOnSmallScreen: "true" };
+                if (window.Cal && window.Cal.ns && window.Cal.ns.talk) {
+                    try { window.Cal.ns.talk("modal", { calLink: link, config: cfg }); return; } catch (e) {}
+                }
+                window.open("https://cal.com/" + link, "_blank", "noopener,noreferrer");
+            });
+        });
+    }
+
+    /* ---------- footer avatar: 3D tilt + style popover ---------- */
+    function initFooterAvatarPop() {
+        var button = document.querySelector("[data-footer-avatar]");
+        var pop = document.querySelector("[data-footer-avatar-pop]");
+        if (!button || !pop) return;
+        var shell = button.querySelector(".footer-avatar-shell");
+        var close = pop.querySelector("[data-footer-avatar-close]");
+        var closeTimer = null;
+
+        function setOpen(open) {
+            clearTimeout(closeTimer);
+            button.setAttribute("aria-expanded", open ? "true" : "false");
+            button.classList.toggle("is-pop-open", open);
+            if (open) {
+                pop.hidden = false;
+                requestAnimationFrame(function () { pop.classList.add("is-open"); });
+            } else {
+                pop.classList.remove("is-open");
+                closeTimer = setTimeout(function () {
+                    if (!pop.classList.contains("is-open")) pop.hidden = true;
+                }, 220);
+            }
+        }
+
+        function resetTilt() {
+            if (!shell) return;
+            shell.style.removeProperty("--avatar-rx");
+            shell.style.removeProperty("--avatar-ry");
+        }
+
+        button.addEventListener("click", function (e) {
+            e.preventDefault();
+            setOpen(button.getAttribute("aria-expanded") !== "true");
+        });
+        if (close) close.addEventListener("click", function () { setOpen(false); button.focus(); });
+
+        button.addEventListener("mousemove", function (e) {
+            if (!shell || reducedMotion.matches) return;
+            var rect = button.getBoundingClientRect();
+            var cx = rect.left + rect.width / 2;
+            var cy = rect.top + rect.height / 2;
+            var ry = Math.max(-8, Math.min(8, (e.clientX - cx) / 4.8));
+            var rx = Math.max(-8, Math.min(8, (cy - e.clientY) / 4.8));
+            shell.style.setProperty("--avatar-rx", rx.toFixed(2) + "deg");
+            shell.style.setProperty("--avatar-ry", ry.toFixed(2) + "deg");
+        });
+        button.addEventListener("mouseleave", resetTilt);
+        button.addEventListener("blur", resetTilt);
+
+        document.addEventListener("click", function (e) {
+            if (button.contains(e.target) || pop.contains(e.target)) return;
+            setOpen(false);
+        });
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape") setOpen(false);
+        });
+    }
+
+    /* ---------- premium footer motion: entrance + magnetic Build CTA ---------- */
+    function initFooterPremiumMotion() {
+        var footer = document.querySelector(".story-footer");
+        if (!footer) return;
+        if (reducedMotion.matches) {
+            footer.classList.add("footer-motion-in");
+            return;
+        }
+        footer.classList.add("footer-motion-ready");
+
+        function revealFooter() {
+            footer.classList.add("footer-motion-in");
+        }
+
+        function syncInitialFooterState() {
+            var rect = footer.getBoundingClientRect();
+            var vh = window.innerHeight || document.documentElement.clientHeight;
+            if (rect.top < vh * 1.18) revealFooter();
+        }
+
+        if ("IntersectionObserver" in window) {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    if (!entry.isIntersecting) return;
+                    revealFooter();
+                    io.disconnect();
+                });
+            }, { rootMargin: "0px 0px 18% 0px", threshold: 0.01 });
+            io.observe(footer);
+            requestAnimationFrame(syncInitialFooterState);
+        } else {
+            revealFooter();
         }
     }
 
-    /* ====================================================================
-       Support flow — one-click signal + optional details
-       ==================================================================== */
-    var STORE_KEY = "oinp_support_v1";
+    function initFooterMagneticBuild() {
+        var button = document.querySelector(".footer-action-build");
+        if (!button || reducedMotion.matches) return;
+        var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+        if (!finePointer.matches) return;
 
+        var footer = document.querySelector(".story-footer");
+        var visible = !("IntersectionObserver" in window) || !footer;
+        var active = false;
+        var frame = null;
+        var pending = null;
+
+        function setMagnet(x, y) {
+            button.style.setProperty("--magnet-x", x.toFixed(2) + "px");
+            button.style.setProperty("--magnet-y", y.toFixed(2) + "px");
+            button.classList.add("is-magnetic");
+            active = true;
+        }
+
+        function resetMagnet() {
+            if (frame) {
+                cancelAnimationFrame(frame);
+                frame = null;
+            }
+            pending = null;
+            button.style.setProperty("--magnet-x", "0px");
+            button.style.setProperty("--magnet-y", "0px");
+            button.classList.remove("is-magnetic");
+            active = false;
+        }
+
+        function onPointerMove(event) {
+            if (!visible) return;
+            var rect = button.getBoundingClientRect();
+            var cx = rect.left + rect.width / 2;
+            var cy = rect.top + rect.height / 2;
+            var dx = event.clientX - cx;
+            var dy = event.clientY - cy;
+            var distance = Math.sqrt(dx * dx + dy * dy);
+            var radius = Math.max(128, Math.min(170, rect.width * 0.78));
+
+            if (distance > radius) {
+                if (active) resetMagnet();
+                return;
+            }
+
+            var strength = 1 - distance / radius;
+            pending = {
+                x: Math.max(-10, Math.min(10, dx * (0.045 + strength * 0.055))),
+                y: Math.max(-6, Math.min(6, dy * (0.04 + strength * 0.045)))
+            };
+            if (frame) return;
+            frame = requestAnimationFrame(function () {
+                frame = null;
+                if (pending) setMagnet(pending.x, pending.y);
+            });
+        }
+
+        if ("IntersectionObserver" in window && footer) {
+            var io = new IntersectionObserver(function (entries) {
+                entries.forEach(function (entry) {
+                    visible = entry.isIntersecting;
+                    if (!visible) resetMagnet();
+                });
+            }, { threshold: 0.08 });
+            io.observe(footer);
+        }
+
+        document.addEventListener("pointermove", onPointerMove, { passive: true });
+        window.addEventListener("blur", resetMagnet);
+        button.addEventListener("pointerleave", resetMagnet);
+        button.addEventListener("blur", resetMagnet);
+    }
+
+    /* ---------- support + story portal ---------- */
+    var STORE_KEY = "oinp_support_v1";
     function postJSON(path, payload) {
         // Progressive enhancement: works once the Worker/D1 API exists.
         // Never blocks or fakes the UI if the endpoint is absent.
@@ -361,6 +538,10 @@
         initReveals();
         initStoryVideo();
         initShare();
+        initCalActions();
+        initFooterAvatarPop();
+        initFooterPremiumMotion();
+        initFooterMagneticBuild();
         initSupport();
     });
 })();
