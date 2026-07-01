@@ -1,0 +1,102 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OINP Builder Story Public API",
+    "version": "2026-07-01",
+    "description": "Read-only public endpoints for the OINP builder-story support signal and transparency ledger."
+  },
+  "servers": [
+    {
+      "url": "https://oinp.hubeiqiao.com"
+    }
+  ],
+  "paths": {
+    "/api/support/count": {
+      "get": {
+        "summary": "Get the public supporter count state",
+        "description": "Returns the total support count only after the public threshold is reached.",
+        "responses": {
+          "200": {
+            "description": "Support count state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total": { "type": "integer" },
+                    "threshold": { "type": "integer" },
+                    "show": { "type": "boolean" }
+                  },
+                  "required": ["total", "threshold", "show"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/transparency": {
+      "get": {
+        "summary": "Get public transparency information",
+        "description": "Returns public count and ledger metadata when the support threshold is reached.",
+        "responses": {
+          "200": {
+            "description": "Transparency state",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "threshold": { "type": "integer" },
+                    "show": { "type": "boolean" },
+                    "total": { "type": "integer" },
+                    "ledger_seq": { "type": "integer" },
+                    "removed": { "type": "integer" }
+                  },
+                  "required": ["threshold", "show"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/verify": {
+      "get": {
+        "summary": "Verify a support receipt",
+        "parameters": [
+          {
+            "name": "receipt",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 32
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Receipt verification result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "exists": { "type": "boolean" },
+                    "status": { "type": "string" },
+                    "counted_on": { "type": "string" }
+                  },
+                  "required": ["exists"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or invalid receipt query"
+          }
+        }
+      }
+    }
+  }
+}

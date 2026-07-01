@@ -10,10 +10,67 @@
 const GENESIS_PREV = "0".repeat(64);
 const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"; // Crockford-ish (no I,L,O,U)
 const enc = new TextEncoder();
+const SITE_ORIGIN = "https://oinp.hubeiqiao.com";
+const CONTENT_SIGNAL = "ai-train=no, search=yes, ai-input=yes";
+const AGENT_LINK_HEADER = [
+  '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"; title="OINP public API catalog"',
+  '</openapi.json>; rel="service-desc"; type="application/openapi+json"; title="OINP public API description"',
+  '</llms.txt>; rel="alternate"; type="text/markdown"; title="LLM-readable site summary"',
+].join(", ");
+const HOME_MARKDOWN = `# Canada helped Joe become a builder. Does Canada know how to keep builders?
+
+Joe Hu is a builder in Ottawa, Canada. Canada helped him study, build, register a company, and find community. After the immigration pathway changed, this page asks whether Canada can recognize builders before their work becomes conventional employment.
+
+## What this page is about
+
+This is a public-awareness story, not immigration advice. It connects Joe's personal case to a broader question for Canada and Ontario: how should policy recognize students, graduates, founders, and early-stage builders who are already contributing here?
+
+## Quick answers
+
+What this page is about:
+Joe Hu's story is one example of a broader question: can Canada recognize people already studying, building, and contributing here before their work becomes conventional employment?
+
+What changed:
+Ontario redesigned OINP. The old pathways are gone, new entries are paused, and people already studying and building here need a fair way to be recognized.
+
+What Joe is asking for:
+Count builder evidence alongside job offers and language ability: shipped products, users, pilots, companies, research, teaching, and community contribution.
+
+How people can help:
+Support the message, share the video with Canada's tech, startup, university, media, or policy communities, or add a story if they are seeing the same pattern.
+
+## Story summary
+
+Canada helped Joe become a builder. Here, he studied, built his first product, registered a company, and found community.
+
+After the immigration pathway changed, the question became larger than one application: can Canada recognize builders while they are already contributing, before their work looks like conventional employment?
+
+## The ask
+
+Recognize contribution before it becomes conventional employment. A full-time job offer is one kind of evidence. French ability is one kind of evidence. But shipped products, users, pilots, research, teaching, company-building, and community work should also count when someone is already building from inside Canada.
+
+## Evidence and resources
+
+- Joe Speaking: an AI speaking coach built in Canada, with 1,200+ organic users across 30+ countries.
+- YC AI Startup School: an external signal that Joe is building in the AI/startup community.
+- Ontario OINP redesign: official program updates behind the immigration-pathway context.
+- Start-Up Visa pause: federal founder-route context.
+- Joe's Canada journey: the longer essay behind the story.
+
+## Support
+
+The easiest action is to support the message and share the story with people in Canada's tech, startup, university, media, and policy communities.
+
+Canonical URL: ${SITE_ORIGIN}/
+Video: ${SITE_ORIGIN}/media/oinp-feedback-story.mp4
+`;
 
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+    if (url.pathname === "/.well-known/api-catalog") return handleApiCatalog(request, url);
+    if (wantsMarkdown(request, url)) return handleMarkdownHome(request);
+
     if (url.pathname.startsWith("/api/")) {
       try {
         return await handleApi(request, env, url, ctx);
@@ -21,12 +78,59 @@ export default {
         return json({ ok: false, error: "server_error" }, 500);
       }
     }
-    return env.ASSETS.fetch(request);
+    return withAeoHeaders(request, url, await env.ASSETS.fetch(request));
   },
   async scheduled(event, env, ctx) {
     ctx.waitUntil((async () => { await purgeEphemeral(env); await anchorLedger(env); })());
   },
 };
+
+function handleMarkdownHome(request) {
+  const body = request.method === "HEAD" ? null : HOME_MARKDOWN;
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "Content-Type": "text/markdown; charset=utf-8",
+      "Content-Signal": CONTENT_SIGNAL,
+      "Link": AGENT_LINK_HEADER,
+      "Vary": "Accept",
+      "X-Markdown-Tokens": String(Math.ceil(HOME_MARKDOWN.split(/\s+/).length * 1.35)),
+    },
+  });
+}
+
+function handleApiCatalog(request, url) {
+  const origin = url.origin || SITE_ORIGIN;
+  const body = {
+    linkset: [
+      {
+        anchor: origin + "/",
+        "service-desc": [
+          { href: origin + "/openapi.json", type: "application/openapi+json", title: "OINP public API description" },
+        ],
+        "service-doc": [
+          { href: origin + "/#support", type: "text/html", title: "Support and story-sharing action" },
+          { href: origin + "/transparency/", type: "text/html", title: "Support count and privacy transparency" },
+        ],
+      },
+      {
+        anchor: origin + "/api/support/count",
+        status: [
+          { href: origin + "/api/transparency", type: "application/json", title: "Public support ledger summary" },
+        ],
+        "service-desc": [
+          { href: origin + "/openapi.json", type: "application/openapi+json", title: "Endpoint schema" },
+        ],
+      },
+    ],
+  };
+  return json(body, 200, {
+    "Content-Type": "application/linkset+json; charset=utf-8",
+    "Cache-Control": "public, max-age=3600",
+    "Link": AGENT_LINK_HEADER,
+    "Content-Signal": CONTENT_SIGNAL,
+  });
+}
 
 async function handleApi(request, env, url, ctx) {
   const p = url.pathname;
@@ -403,6 +507,45 @@ async function verifyNonce(env, nonce) {
 }
 
 /* ------------------------------ helpers ------------------------------ */
+
+function wantsMarkdown(request, url) {
+  if (!isHomePath(url.pathname)) return false;
+  if (request.method !== "GET" && request.method !== "HEAD") return false;
+  return (request.headers.get("Accept") || "").toLowerCase().includes("text/markdown");
+}
+
+function isHomePath(pathname) {
+  return pathname === "/" || pathname === "/index.html";
+}
+
+function withAeoHeaders(request, url, response) {
+  const headers = new Headers(response.headers);
+  const type = headers.get("Content-Type") || "";
+  if (isHomePath(url.pathname) && type.includes("text/html")) {
+    appendHeader(headers, "Link", AGENT_LINK_HEADER);
+    appendVary(headers, "Accept");
+    headers.set("Content-Signal", CONTENT_SIGNAL);
+  } else if (type.includes("text/html") || url.pathname === "/llms.txt" || url.pathname === "/robots.txt") {
+    headers.set("Content-Signal", CONTENT_SIGNAL);
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
+function appendHeader(headers, name, value) {
+  const current = headers.get(name);
+  headers.set(name, current ? current + ", " + value : value);
+}
+
+function appendVary(headers, value) {
+  const current = headers.get("Vary");
+  if (!current) { headers.set("Vary", value); return; }
+  const existing = current.split(",").map((v) => v.trim().toLowerCase());
+  if (!existing.includes(value.toLowerCase())) headers.set("Vary", current + ", " + value);
+}
 
 function json(obj, status = 200, headers = {}) {
   return new Response(JSON.stringify(obj), { status, headers: { "Content-Type": "application/json", ...headers } });

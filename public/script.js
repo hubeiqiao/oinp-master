@@ -2,18 +2,18 @@
     "use strict";
 
     var SHARE_URL = "https://oinp.hubeiqiao.com/";
-    var SHARE_TITLE = "Canada helped Joe become a builder. Can Canada keep builders here?";
+    var SHARE_TITLE = "Canada helped Joe become a builder. Does Canada know how to keep builders?";
     var SHARE_TEXT =
         "Canada helped Joe become a builder.\n\n" +
-        "He studied, built, registered a company, and found his community here.\n\n" +
-        "Then the pathway changed. Can Canada recognize builders before it loses them?";
+        "He studied, built, registered a company, and found community here.\n\n" +
+        "Then the pathway changed. Does Canada know how to keep builders?";
     var NATIVE_TEXT =
-        "Canada helped Joe become a builder. He studied, built, registered a company, and found his community here. Then the pathway changed. Can Canada recognize builders before it loses them?";
-    var EMAIL_SUBJECT = "Canada helped Joe become a builder. Can Canada keep builders here?";
+        "Canada helped Joe become a builder. He studied, built, registered a company, and found community here. Then the pathway changed. Does Canada know how to keep builders?";
+    var EMAIL_SUBJECT = "Canada helped Joe become a builder. Does Canada know how to keep builders?";
     var EMAIL_BODY =
         "Hi,\n\n" +
-        "Sharing Joe Hu\u2019s story from Ottawa. Canada helped him become a builder: he studied here, built products here, registered a company here, and found his community here. Then the pathway changed.\n\n" +
-        "He is asking a broader question: can Canada recognize early-stage builders by what they are already building, not only by one permanent employer relationship?\n\n" +
+        "Sharing Joe Hu\u2019s story from Ottawa. Canada helped him become a builder: he studied here, built products here, registered a company here, and found community here. Then the pathway changed.\n\n" +
+        "He is asking a broader question: does Canada know how to keep builders, and can it recognize builder contribution before it becomes conventional employment?\n\n" +
         "This is not a petition. It is a public-awareness page for people in Canada\u2019s tech, startup, university, media, and policy communities who care about fair pathways for builders already contributing here.\n\n" +
         "Take a look:";
 
