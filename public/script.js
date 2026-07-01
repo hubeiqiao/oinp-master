@@ -144,7 +144,7 @@
         if (!stage) return;
         var video = stage.querySelector("video");
         var playBtn = stage.querySelector("[data-film-play]");
-        var fullscreenBtn = stage.querySelector("[data-film-fullscreen]");
+        var fullscreenBtn = document.querySelector("[data-film-fullscreen]");
         if (!video) return;
         var engaged = false;
         video.muted = true; video.playsInline = true; video.setAttribute("playsinline", "");

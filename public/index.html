@@ -41,7 +41,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap">
-    <link rel="stylesheet" href="styles.css?v=87">
+    <link rel="stylesheet" href="styles.css?v=88">
 </head>
 <body>
     <a class="skip-link" href="#video">Skip to the story</a>
@@ -124,15 +124,15 @@
                         <span class="film-play-sub">2-minute story &middot; with sound</span>
                     </span>
                 </button>
-                <button type="button" class="film-fullscreen" data-film-fullscreen aria-label="Watch the video in full screen">
-                    <svg viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M8 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z"/>
-                        <path d="M18.5 7.5a4.5 4.5 0 0 1 0 9"/>
-                        <path d="M20.5 5.5a7.5 7.5 0 0 1 0 13"/>
-                    </svg>
-                    <span>Full screen</span>
-                </button>
             </figure>
+            <button type="button" class="film-fullscreen" data-film-fullscreen aria-label="Watch the video in full screen">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M8 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z"/>
+                    <path d="M18.5 7.5a4.5 4.5 0 0 1 0 9"/>
+                    <path d="M20.5 5.5a7.5 7.5 0 0 1 0 13"/>
+                </svg>
+                <span>Full screen</span>
+            </button>
         </section>
 
         <!-- ============ IMMIGRATION PATHWAY - plain-language policy bridge ============ -->
@@ -181,7 +181,7 @@
                         <span class="res-body">
                             <span class="res-label">Founder route</span>
                             <span class="res-title">Start-Up Visa pause</span>
-                            <span class="res-desc">The federal Start-Up Visa route is paused for most new applicants without a valid 2025 commitment certificate.</span>
+                            <span class="res-desc">The Start-Up Visa route is paused for most new applicants without a valid 2025 commitment certificate.</span>
                             <span class="res-link">canada.ca<svg class="res-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
                         </span>
                     </a>
@@ -475,7 +475,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=37"></script>
+    <script src="script.js?v=38"></script>
     <script type="text/javascript">
         (function (C, A, L) { var p = function (a, ar) { a.q.push(ar); }; var d = C.document; C.Cal = C.Cal || function () { var cal = C.Cal; var ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { var api = function () { p(api, arguments); }; var namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
         Cal("init", "talk", { origin: "https://app.cal.com" });
