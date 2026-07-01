@@ -1,0 +1,12 @@
+# Secrets — never commit
+.dev.vars
+.dev.vars.*
+
+# Local Wrangler / Miniflare state (local D1, KV, caches)
+.wrangler/
+
+# Dependencies
+node_modules/
+
+# OS
+.DS_Store
