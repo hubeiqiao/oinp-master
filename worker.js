@@ -19,21 +19,21 @@ const AGENT_LINK_HEADER = [
 ].join(", ");
 const HOME_MARKDOWN = `# Canada helped Joe become a builder. Does Canada know how to keep builders?
 
-Joe Hu is a builder in Ottawa, Canada. Canada helped him study, build, register a company, and find community. After the immigration pathway changed, this page asks whether Canada can recognize builders before their work becomes conventional employment.
+[Joe Hu](https://hubeiqiao.com/) is a builder in Ottawa, Canada. Canada helped him study, build, register a company, and find community. After the immigration pathway changed, this page asks whether Canada can recognize builders before their work becomes conventional employment.
 
 ## What this page is about
 
-This is a public-awareness story, not immigration advice. It connects Joe's personal case to a broader question for Canada and Ontario: how should policy recognize students, graduates, founders, and early-stage builders who are already contributing here?
+This is a public-awareness story, not immigration advice. It connects [Joe](https://hubeiqiao.com/)'s personal case to a broader question for Canada and Ontario: how should policy recognize students, graduates, founders, and early-stage builders who are already contributing here?
 
 ## Quick answers
 
 What this page is about:
-Joe Hu's story is one example of a broader question: can Canada recognize people already studying, building, and contributing here before their work becomes conventional employment?
+[Joe Hu](https://hubeiqiao.com/)'s story is one example of a broader question: can Canada recognize people already studying, building, and contributing here before their work becomes conventional employment?
 
 What changed:
-Ontario redesigned OINP. The old pathways are gone, new entries are paused, and people already studying and building here need a fair way to be recognized.
+Ontario redesigned the Ontario Immigrant Nominee Program (OINP). The old pathways are gone, new entries are paused, and people already studying and building here need a fair way to be recognized.
 
-What Joe is asking for:
+What the ask is:
 Count builder evidence alongside job offers and language ability: shipped products, users, pilots, companies, research, teaching, and community contribution.
 
 How people can help:
@@ -41,7 +41,7 @@ Support the message, share the video with Canada's tech, startup, university, me
 
 ## Story summary
 
-Canada helped Joe become a builder. Here, he studied, built his first product, registered a company, and found community.
+Canada helped [Joe](https://hubeiqiao.com/) become a builder. Here, he studied, built his first product, registered a company, and found community.
 
 After the immigration pathway changed, the question became larger than one application: can Canada recognize builders while they are already contributing, before their work looks like conventional employment?
 
@@ -52,10 +52,10 @@ Recognize contribution before it becomes conventional employment. A full-time jo
 ## Evidence and resources
 
 - Joe Speaking: an AI speaking coach built in Canada, with 1,200+ organic users across 30+ countries.
-- YC AI Startup School: an external signal that Joe is building in the AI/startup community.
+- YC AI Startup School: an external signal that [Joe](https://hubeiqiao.com/) is building in the AI/startup community.
 - Ontario OINP redesign: official program updates behind the immigration-pathway context.
 - Start-Up Visa pause: federal founder-route context.
-- Joe's Canada journey: the longer essay behind the story.
+- [Joe](https://hubeiqiao.com/)'s Canada journey: the longer essay behind the story.
 
 ## Support
 

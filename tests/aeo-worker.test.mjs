@@ -66,7 +66,7 @@ test("homepage returns markdown when an agent requests text/markdown", async () 
 
   assert.match(response.headers.get("Content-Type") || "", /text\/markdown/);
   assert.equal(response.headers.get("Vary"), "Accept");
-  assert.match(await response.text(), /Canada helped Joe become a builder/);
+  assert.match(await response.text(), /Canada helped \[Joe\]\(https:\/\/hubeiqiao\.com\/\) become a builder/);
 });
 
 test("api catalog is discoverable as a linkset", async () => {
@@ -115,7 +115,7 @@ test("homepage metadata is aligned for search and answer engines", async () => {
 
   assert.ok(faq, "FAQPage JSON-LD node should exist");
   assert.ok(faq.mainEntity.some((entry) => entry.name === "What is this page about?"));
-  assert.match(JSON.stringify(faq), /What is Joe asking for\?/);
+  assert.match(JSON.stringify(faq), /What is the ask\?/);
 });
 
 test("visitor share copy uses third-person aligned messaging", async () => {
@@ -133,12 +133,41 @@ test("homepage exposes visible answer sections for search and answer engines", a
   assert.match(html, /id="answer-brief"/);
   assert.match(html, /What this page is about/);
   assert.match(html, /What changed/);
-  assert.match(html, /What Joe is asking for/);
+  assert.match(html, /What the ask is/);
   assert.match(html, /id="story-summary"/);
   assert.match(html, /Read the story summary/);
   assert.match(html, /Evidence and resources/);
-  assert.match(html, /These proof points connect Joe's personal story to the policy question/);
+  assert.match(html, /These proof points connect <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a>&rsquo;s personal story to the policy question/);
   assert.match(html, /id="faq"/);
   assert.match(html, /What is this page about\?/);
   assert.match(html, /How can people help\?/);
+});
+
+test("answer copy uses highlights, full program name, and Joe profile links", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+
+  assert.match(html, /<span class="answer-highlight">studied, built his first product, registered a company, and found community<\/span>/);
+  assert.match(html, /<span class="answer-highlight">recognize builders while they are already contributing<\/span>/);
+  assert.match(html, /Ontario redesigned the Ontario Immigrant Nominee Program \(OINP\)/);
+  assert.doesNotMatch(html, /Ontario redesigned OINP/);
+  assert.match(html, /<a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a>/);
+  assert.match(html, /<a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe Hu<\/a>/);
+});
+
+test("resources header is a single title row and Canada journey is third", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const resources = html.match(/<section class="resources"[\s\S]*?<\/section>/)?.[0] || "";
+
+  assert.match(resources, /<div class="resources-title-line">/);
+  assert.match(resources, /<h2>Proof behind the story<\/h2>/);
+  assert.match(resources, /These proof points connect <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a>&rsquo;s personal story to the policy question/);
+
+  const titles = [...resources.matchAll(/<span class="res-title">([^<]+)<\/span>/g)].map((match) => match[1]);
+  assert.deepEqual(titles.slice(0, 5), [
+    "Joe Speaking",
+    "YC AI Startup School",
+    "My Canada journey",
+    "OINP redesign",
+    "Start-Up Visa pause",
+  ]);
 });

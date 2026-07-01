@@ -2,19 +2,19 @@
 
 Canonical URL: https://oinp.hubeiqiao.com/
 
-Joe Hu is a builder in Ottawa, Canada. Canada helped him study, build, register a company, and find community. After the immigration pathway changed, this page asks whether Canada can recognize builders before their work becomes conventional employment.
+[Joe Hu](https://hubeiqiao.com/) is a builder in Ottawa, Canada. Canada helped him study, build, register a company, and find community. After the immigration pathway changed, this page asks whether Canada can recognize builders before their work becomes conventional employment.
 
-This page is public awareness, not immigration advice. It uses Joe's personal story as one example of a broader question for Canada and Ontario: how should policy recognize students, graduates, founders, and early-stage builders who are already contributing here?
+This page is public awareness, not immigration advice. It uses [Joe](https://hubeiqiao.com/)'s personal story as one example of a broader question for Canada and Ontario: how should policy recognize students, graduates, founders, and early-stage builders who are already contributing here?
 
 ## Quick answers
 
 What this page is about:
-Joe Hu's story is one example of a broader question: can Canada recognize people already studying, building, and contributing here before their work becomes conventional employment?
+[Joe Hu](https://hubeiqiao.com/)'s story is one example of a broader question: can Canada recognize people already studying, building, and contributing here before their work becomes conventional employment?
 
 What changed:
-Ontario redesigned OINP. The old pathways are gone, new entries are paused, and people already studying and building here need a fair way to be recognized.
+Ontario redesigned the Ontario Immigrant Nominee Program (OINP). The old pathways are gone, new entries are paused, and people already studying and building here need a fair way to be recognized.
 
-What Joe is asking for:
+What the ask is:
 Count builder evidence alongside job offers and language ability: shipped products, users, pilots, companies, research, teaching, and community contribution.
 
 How people can help:
@@ -22,7 +22,7 @@ Support the message, share the video with Canada's tech, startup, university, me
 
 ## Story summary
 
-Canada helped Joe become a builder. Here, he studied, built his first product, registered a company, and found community.
+Canada helped [Joe](https://hubeiqiao.com/) become a builder. Here, he studied, built his first product, registered a company, and found community.
 
 After the immigration pathway changed, the question became larger than one application: can Canada recognize builders while they are already contributing, before their work looks like conventional employment?
 
@@ -32,7 +32,7 @@ Recognize contribution before it becomes conventional employment.
 
 A full-time job offer is one kind of evidence. French ability is one kind of evidence. But shipped products, users, pilots, research, teaching, company-building, and community work should also count when someone is already building from inside Canada.
 
-## What Joe is asking Canada and Ontario to consider
+## What Canada and Ontario should consider
 
 1. Protect those who planned ahead.
    Current students and recent graduates made tuition, career, and life decisions around published pathways.
@@ -49,7 +49,7 @@ A full-time job offer is one kind of evidence. French ability is one kind of evi
   An AI speaking coach built in Canada, with 1,200+ organic users across 30+ countries.
 
 - YC AI Startup School: https://events.ycombinator.com/startup-school-2026
-  External signal that Joe is building in the AI/startup community.
+  External signal that [Joe](https://hubeiqiao.com/) is building in the AI/startup community.
 
 - Ontario OINP updates: https://www.ontario.ca/page/2026-ontario-immigrant-nominee-program-updates
   Official program updates behind the Ontario pathway context.
@@ -57,7 +57,7 @@ A full-time job offer is one kind of evidence. French ability is one kind of evi
 - Federal Start-Up Visa route: https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa.html
   Founder-route context.
 
-- Joe's Canada journey: https://www.notion.so/hubeiqiao/Two-Years-After-Quitting-My-Job-I-Found-Myself-Building-in-Canada-38b0df12ec7780dd8670fecc77f7b51b
+- [Joe](https://hubeiqiao.com/)'s Canada journey: https://www.notion.so/hubeiqiao/Two-Years-After-Quitting-My-Job-I-Found-Myself-Building-in-Canada-38b0df12ec7780dd8670fecc77f7b51b
   Longer personal context behind the story.
 
 - Archived December 2025 OINP feedback: https://oinp.hubeiqiao.com/archive/proposal-25-mlitsd019/

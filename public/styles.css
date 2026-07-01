@@ -410,6 +410,26 @@ html.video-fallback .hero-video { display: none !important; }
     font-size: clamp(16px, 1.45vw, 20px);
     line-height: 1.48;
 }
+.answer-highlight {
+    color: rgba(251, 247, 238, 0.9);
+    font-weight: 600;
+    background:
+        linear-gradient(rgba(240, 168, 56, 0.18), rgba(240, 168, 56, 0.18)) no-repeat 0 82% / 100% 0.34em;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+}
+.person-link {
+    color: inherit;
+    text-decoration: none;
+    background:
+        linear-gradient(rgba(240, 168, 56, 0.2), rgba(240, 168, 56, 0.2)) no-repeat 0 84% / 100% 0.32em,
+        linear-gradient(var(--amber-bright), var(--amber-bright)) no-repeat 0 100% / 100% 1px;
+    transition: color var(--dur) var(--ease-smooth), background-size var(--dur) var(--ease-smooth);
+}
+.person-link:hover {
+    color: var(--amber-bright);
+    background-size: 100% 0.46em, 100% 1px;
+}
 
 /* =========================================================================
    WHAT CHANGED — plain-language bridge
@@ -515,10 +535,16 @@ html.video-fallback .hero-video { display: none !important; }
    RESOURCES — links from the video
    ========================================================================= */
 .resources-head {
-    max-width: 840px;
+    max-width: none;
     margin-bottom: clamp(24px, 4vh, 42px);
 }
+.resources-title-line {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(18px, 2.6vw, 36px);
+}
 .resources-head h2 {
+    flex: none;
     margin: 0;
     color: var(--ink);
     font-family: var(--display);
@@ -527,13 +553,14 @@ html.video-fallback .hero-video { display: none !important; }
     line-height: 0.98;
     letter-spacing: -0.015em;
 }
-.resources-head p:last-child {
-    margin: 13px 0 0;
-    max-width: 740px;
+.resources-title-line p {
+    margin: 0;
+    max-width: none;
     color: var(--muted);
     font-family: var(--serif);
-    font-size: clamp(16px, 1.35vw, 20px);
-    line-height: 1.48;
+    font-size: clamp(13.5px, 1vw, 15.5px);
+    line-height: 1.35;
+    white-space: nowrap;
 }
 .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2.2vw, 28px); }
 .res-grid .res-card:nth-child(3n+2) { --reveal-delay: 90ms; }
@@ -1793,12 +1820,17 @@ html.video-fallback .hero-video { display: none !important; }
     .resources-head {
         margin-bottom: 18px;
     }
+    .resources-title-line {
+        display: block;
+    }
     .resources-head h2 {
         font-size: clamp(30px, 8.8vw, 42px);
     }
-    .resources-head p:last-child {
+    .resources-title-line p {
+        margin-top: 10px;
         font-size: 15.5px;
         line-height: 1.44;
+        white-space: normal;
     }
     .res-grid {
         grid-auto-flow: column; grid-template-columns: none; grid-auto-columns: 80%;
