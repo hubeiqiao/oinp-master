@@ -10,7 +10,10 @@ account_id = "715eeba5ac9c4d46450860c95870f56a"
 # Private/source files (worker.js, wrangler.toml, docs/, assets/, README.md,
 # the policy-comment .md, .claude/, .wrangler/, .DS_Store) stay OUTSIDE public/
 # so Workers Assets never exposes them.
-assets = { directory = "public", binding = "ASSETS" }
+# run_worker_first: route requests through worker.js so the AEO layer
+# (markdown negotiation, Content-Signal, Link headers) actually executes.
+# Without it, Workers Assets serves "/" directly and that code never runs.
+assets = { directory = "public", binding = "ASSETS", run_worker_first = true }
 
 # Backend lives in the SAME Worker: worker.js routes /api/* (D1-backed),
 # everything else falls through to the ASSETS (static frontend) binding above.

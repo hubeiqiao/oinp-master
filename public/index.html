@@ -53,17 +53,17 @@
       "dateModified": "2026-07-02",
       "author": {
         "@type": "Person",
+        "@id": "https://hubeiqiao.com/#joe",
         "name": "Joe Hu",
         "url": "https://hubeiqiao.com/",
         "sameAs": [
+          "https://hubeiqiao.com/",
           "https://x.com/hubeiqiao",
           "https://linkedin.com/in/hubeiqiao"
         ]
       },
       "publisher": {
-        "@type": "Person",
-        "name": "Joe Hu",
-        "url": "https://hubeiqiao.com/"
+        "@id": "https://hubeiqiao.com/#joe"
       },
       "primaryImageOfPage": {
         "@type": "ImageObject",
@@ -79,6 +79,7 @@
           "https://oinp.hubeiqiao.com/media/oinp-feedback-story-poster.jpg"
         ],
         "contentUrl": "https://oinp.hubeiqiao.com/media/oinp-feedback-story.mp4",
+        "uploadDate": "2026-06-28",
         "duration": "PT1M57S"
       },
       "about": [
@@ -102,7 +103,7 @@
           "name": "What is this page about?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Joe Hu's story is one example of a broader question: can Canada retain early-stage contributors it helped train while their value is still emerging and hard to classify?"
+            "text": "Joe Hu's story is one example of a broader question: can Canada retain early-stage contributors it helped train while their value is still early — before the system has a way to measure it?"
           }
         },
         {
@@ -137,8 +138,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap">
-    <link rel="stylesheet" href="styles.css?v=93">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600;700&family=Oswald:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap">
+    <link rel="stylesheet" href="styles.css?v=94">
 </head>
 <body>
     <a class="skip-link" href="#video">Skip to the story</a>
@@ -168,7 +169,7 @@
             <h1 class="sr-only" id="hero-title">Canada helped Joe become a builder. Does Canada know how to keep builders?</h1>
             <div class="hero-copy">
                 <p class="hero-eyebrow">A builder&rsquo;s story &middot; Ottawa, Canada</p>
-                <p class="hero-lead">Canada helped Joe become a builder. Here, he studied, built, registered a company, and <br class="hero-lead-br">found community. Then the pathway changed. Can Canada recognize builders in time?</p>
+                <p class="hero-lead"><span class="hero-lead-full">Canada helped Joe become a builder. Here, he studied, built, registered a company, and found community. Then the immigration pathway changed. Does Canada know how to keep builders?</span><span class="hero-lead-min"><span class="hero-lead-min-line">Canada helped Joe become a builder.</span><span class="hero-lead-min-line">Does Canada know how to keep builders?</span></span></p>
             </div>
             <div class="hero-actions">
                 <a class="btn btn-primary btn-watch" href="#video">
@@ -195,7 +196,7 @@
                     <span class="film-slate-rule" aria-hidden="true"></span>
                 </div>
                 <h2 id="film-title" class="film-title"><span class="ft-l">One story, <span class="ft-accent">a bigger question</span></span></h2>
-                <p class="film-lede">This is a 2-minute story about how Canada helped Joe <span class="amber">become a builder</span>, what shifted when the pathway changed, and why people already building here need fair ways to be <span class="amber">recognized</span>.</p>
+                <p class="film-lede">This is a 2-minute story about how Canada helped Joe become a builder, what shifted when the pathway changed, and why people already building here need fair ways to be recognized.</p>
             </div>
 
             <figure class="film-stage reveal" data-film>
@@ -221,15 +222,15 @@
                         <span class="film-play-sub">2-minute story &middot; with sound</span>
                     </span>
                 </button>
+                <button type="button" class="film-fullscreen" data-film-fullscreen aria-label="Watch the video in full screen">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M8 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z"/>
+                        <path d="M18.5 7.5a4.5 4.5 0 0 1 0 9"/>
+                        <path d="M20.5 5.5a7.5 7.5 0 0 1 0 13"/>
+                    </svg>
+                    <span>Full screen</span>
+                </button>
             </figure>
-            <button type="button" class="film-fullscreen" data-film-fullscreen aria-label="Watch the video in full screen">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M8 3h5a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3Z"/>
-                    <path d="M18.5 7.5a4.5 4.5 0 0 1 0 9"/>
-                    <path d="M20.5 5.5a7.5 7.5 0 0 1 0 13"/>
-                </svg>
-                <span>Full screen</span>
-            </button>
 
             <details class="story-summary wrap reveal" id="story-summary">
                 <summary>
@@ -248,24 +249,15 @@
             <div class="wrap change-bridge-inner reveal">
                 <div class="answer-brief-head">
                     <p class="kicker kicker-center"><span class="kicker-tick" aria-hidden="true"></span>At a glance</p>
-                    <h2 id="answer-brief-title">This page is personal, but the argument is not sentimental.</h2>
-                    <p>This page asks whether Canada can retain people already studying, building, founding, researching, and contributing here while their value is still early and hard to classify.</p>
+                    <h2 id="answer-brief-title"><span class="head-line">Personal story.</span><span class="head-line">Structural question.</span></h2>
                 </div>
 
-                <div class="answer-grid" role="list">
-                    <article class="answer-card" role="listitem">
-                        <span class="answer-card-label">What this page is about</span>
-                        <p><a class="person-link" href="https://hubeiqiao.com/" target="_blank" rel="noopener">Joe Hu</a>&rsquo;s story asks a broader startup and talent-retention question: what happens when Canada-trained people start building here?</p>
-                    </article>
-                    <article class="answer-card" role="listitem">
-                        <span class="answer-card-label">What changed</span>
-                        <p><a href="https://www.ontario.ca/page/2026-ontario-immigrant-nominee-program-updates" target="_blank" rel="noopener">Ontario redesigned the Ontario Immigrant Nominee Program (OINP)</a>. Former graduate streams will issue no more invitations.</p>
-                    </article>
-                    <article class="answer-card" role="listitem">
-                        <span class="answer-card-label">What the ask is</span>
-                        <p>Fair transitions. Independent graduate pathways. Bridges into Canada&rsquo;s economy, research, and communities.</p>
-                    </article>
-                </div>
+                <ol class="arc">
+                    <li class="arc-beat reveal">Canada helped <a class="person-link" href="https://hubeiqiao.com/" target="_blank" rel="noopener">Joe Hu</a> become a builder.</li>
+                    <li class="arc-beat reveal">The work is visible &mdash; a product, a company, a community.</li>
+                    <li class="arc-beat arc-beat-turn reveal">Then Ontario redesigned the Ontario Immigrant Nominee Program (OINP). The former graduate streams will issue no more invitations. <span class="arc-source">&mdash;&nbsp;<a href="https://www.ontario.ca/page/2026-ontario-immigrant-nominee-program-updates" target="_blank" rel="noopener">ontario.ca</a></span></li>
+                    <li class="arc-beat reveal"><a class="person-link" href="https://hubeiqiao.com/" target="_blank" rel="noopener">Joe</a> is one example. The question is bigger: <em>does Canada know how to keep builders?</em></li>
+                </ol>
             </div>
         </section>
 
@@ -276,61 +268,64 @@
                     <p class="kicker"><span class="kicker-tick" aria-hidden="true"></span>Evidence and resources</p>
                     <div class="resources-title-line">
                         <h2>Proof behind the story</h2>
-                        <p>These links show what <a class="person-link" href="https://hubeiqiao.com/" target="_blank" rel="noopener">Joe</a> built, the external founder signal, official program context, and the broader pathway question.</p>
+                        <p>What <a class="person-link" href="https://hubeiqiao.com/" target="_blank" rel="noopener">Joe</a> built, who&rsquo;s vouched for it, and the official record of what changed.</p>
                     </div>
                 </div>
 
-                <div class="res-grid">
-                    <a class="res-card reveal" href="https://joespeaking.com" target="_blank" rel="noopener">
+                <div class="exhibit-grid">
+                    <a class="res-card exhibit reveal" href="https://joespeaking.com" target="_blank" rel="noopener">
                         <span class="res-thumb"><img src="media/resources/joe-speaking.jpg" alt="Joe Speaking — practice speaking with an AI examiner" loading="lazy"></span>
                         <span class="res-body">
-                            <span class="res-label">Product evidence</span>
+                            <span class="res-label">What he built</span>
                             <span class="res-title">Joe Speaking</span>
-                            <span class="res-desc">AI speaking coach built from Joe&rsquo;s English-speaking struggle, now used by 1,200+ learners across 30+ countries.</span>
+                            <span class="res-desc">An AI speaking coach built from Joe&rsquo;s own English-speaking struggle &mdash; now used by 1,200+ learners across 30+ countries.</span>
                             <span class="res-link">joespeaking.com<svg class="res-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
                         </span>
                     </a>
 
-                    <a class="res-card reveal" href="https://events.ycombinator.com/startup-school-2026" target="_blank" rel="noopener">
+                    <a class="res-card exhibit reveal" href="https://events.ycombinator.com/startup-school-2026" target="_blank" rel="noopener">
                         <span class="res-thumb"><img src="media/resources/yc.jpg" alt="Y Combinator Startup School 2026 admission ticket for Beiqiao Hu" loading="lazy"></span>
                         <span class="res-body">
-                            <span class="res-label">External signal</span>
+                            <span class="res-label">Who noticed</span>
                             <span class="res-title">YC Startup School 2026</span>
-                            <span class="res-desc">Accepted into YC Startup School 2026, an outside founder-community signal around Joe&rsquo;s AI product work.</span>
+                            <span class="res-desc">Accepted into Y Combinator&rsquo;s Startup School 2026 &mdash; outside recognition of Joe&rsquo;s product work.</span>
                             <span class="res-link">events.ycombinator.com<svg class="res-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
                         </span>
                     </a>
 
-                    <a class="res-card reveal" href="https://www.notion.so/hubeiqiao/Two-Years-After-Quitting-My-Job-I-Found-Myself-Building-in-Canada-38b0df12ec7780dd8670fecc77f7b51b?source=copy_link" target="_blank" rel="noopener">
-                        <span class="res-thumb"><img src="media/resources/article.jpg" alt="Article: Two years after quitting my job, I built products in Canada and rebuilt myself" loading="lazy"></span>
+                    <a class="res-card exhibit exhibit-essay reveal" href="https://hubeiqiao.com/blog/38b0df12-ec77-80dd-8670-fecc77f7b51b" target="_blank" rel="noopener">
+                        <span class="res-thumb"><img src="media/resources/article.jpg" alt="Essay: Two Years After Quitting My Job, I Found Myself Building in Canada" loading="lazy"></span>
                         <span class="res-body">
-                            <span class="res-label">Personal context</span>
-                            <span class="res-title">My Canada journey</span>
-                            <span class="res-desc">The longer essay on leaving an old rhythm, finding confidence in Canada, and building his way back through products.</span>
-                            <span class="res-link">Read the essay<svg class="res-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-                        </span>
-                    </a>
-
-                    <a class="res-card reveal" href="https://www.ontario.ca/page/2026-ontario-immigrant-nominee-program-updates" target="_blank" rel="noopener">
-                        <span class="res-thumb"><img src="media/resources/oinp-draw.jpg" alt="OINP 2026 program updates page" loading="lazy"></span>
-                        <span class="res-body">
-                            <span class="res-label">Ontario change</span>
-                            <span class="res-title">OINP redesign</span>
-                            <span class="res-desc">Official Ontario updates saying no further invitations will be issued under the former graduate streams.</span>
-                            <span class="res-link">ontario.ca<svg class="res-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-                        </span>
-                    </a>
-
-                    <a class="res-card reveal" href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa.html" target="_blank" rel="noopener">
-                        <span class="res-thumb"><img src="media/resources/startup-visa.jpg" alt="Canada Start-Up Visa status: closed to most new applications" loading="lazy"></span>
-                        <span class="res-body">
-                            <span class="res-label">Founder route</span>
-                            <span class="res-title">Start-Up Visa status</span>
-                            <span class="res-desc">Federal founder-route context: the Start-Up Visa is closed to most new applications for now.</span>
-                            <span class="res-link">canada.ca<svg class="res-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+                            <span class="res-label">Where it started</span>
+                            <span class="res-title">Joe&rsquo;s Canada journey</span>
+                            <span class="res-desc">The longer essay: leaving an old rhythm, finding confidence in Canada, and building his way back.</span>
+                            <span class="res-link">hubeiqiao.com<svg class="res-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
                         </span>
                     </a>
                 </div>
+
+                <ol class="record-list reveal">
+                    <li>
+                        <a class="record record-turn" href="https://www.ontario.ca/page/2026-ontario-immigrant-nominee-program-updates" target="_blank" rel="noopener">
+                            <span class="record-label">What changed</span>
+                            <span class="record-main">
+                                <span class="record-title">OINP redesign</span>
+                                <span class="record-desc">Official Ontario updates saying no further invitations will be issued under the former graduate streams.</span>
+                            </span>
+                            <span class="record-link">ontario.ca<svg class="res-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="record" href="https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/start-visa.html" target="_blank" rel="noopener">
+                            <span class="record-label">What else closed</span>
+                            <span class="record-main">
+                                <span class="record-title">Start-Up Visa status</span>
+                                <span class="record-desc">The federal founder route is closed to most new applications for now.</span>
+                            </span>
+                            <span class="record-link">canada.ca<svg class="res-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+                        </a>
+                    </li>
+                </ol>
             </div>
         </section>
 
@@ -339,10 +334,10 @@
             <div class="wrap">
                 <div class="section-head reveal">
                     <p class="kicker"><span class="kicker-tick" aria-hidden="true"></span>The ask</p>
-                    <h2 id="message-title" class="display">Build fair pathways for <span class="amber">people already contributing</span></h2>
+                    <h2 id="message-title" class="display">Build fair pathways for people already contributing</h2>
                     <p class="lede ask-signal">
-                        <span class="signal-context">Job offers and language ability matter. So do study, research, products, companies, teaching, and community.</span>
-                        <span class="signal-main">Some contribution appears before a standard immigration category can name it. <strong>Fair policy should protect people caught mid-change and help early-stage talent keep building here.</strong></span>
+                        <span class="signal-context">Job offers and language scores matter. So do the products, companies, and research people build first.</span>
+                        <span class="signal-main">Some contribution shows up before the immigration system has a category for it &mdash; <strong>fair policy should protect the people caught in that gap.</strong></span>
                     </p>
                 </div>
 
@@ -351,12 +346,8 @@
                         <div class="ask-figure"><span class="ask-num" aria-hidden="true">01</span></div>
                         <div class="ask-body">
                             <span class="ask-kicker"><span class="ask-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 2.6v5.2c0 4.3-2.9 7.3-7 8.9-4.1-1.6-7-4.6-7-8.9V5.6L12 3z"/><path d="M8.8 11.7l2.1 2.1 4.3-4.4"/></svg></span><span class="ask-tag">Mid-change transition</span></span>
-                            <span class="ask-proof">People made tuition, career, and life decisions around published graduate streams, and some had already entered the process.</span>
-                            <h3 class="ask-title">Protect people <span class="amber">caught mid-change</span></h3>
-                            <details class="ask-detail" open>
-                                <summary><span>Read full ask</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
-                                <p class="ask-desc">People made <span class="amber">tuition, career, and life decisions</span> around published graduate streams. When rules change mid-process, there should be a clear transition instead of sudden uncertainty.</p>
-                            </details>
+                            <h3 class="ask-title">Protect people caught mid-change</h3>
+                            <p class="ask-desc">People made tuition, career, and life decisions around published graduate streams &mdash; some were already in the process. When rules change mid-stream, there should be a clear transition, not sudden uncertainty.</p>
                         </div>
                         <span class="ask-type" aria-hidden="true">Time-sensitive</span>
                     </li>
@@ -364,25 +355,17 @@
                         <div class="ask-figure"><span class="ask-num" aria-hidden="true">02</span></div>
                         <div class="ask-body">
                             <span class="ask-kicker"><span class="ask-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></svg></span><span class="ask-tag">Independent graduate pathways</span></span>
-                            <span class="ask-proof">Graduate talent needs room to explore research, startups, public-interest work, teaching, and community contribution.</span>
-                            <h3 class="ask-title">Keep independent <span class="amber">graduate pathways</span></h3>
-                            <details class="ask-detail" open>
-                                <summary><span>Read full ask</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
-                                <p class="ask-desc">Masters and PhD talent should have stable routes to explore <span class="amber">startup-building, deeper research, public-interest work, teaching, and community contribution</span> without collapsing everything into one employer-defined track.</p>
-                            </details>
+                            <h3 class="ask-title">Keep independent graduate pathways</h3>
+                            <p class="ask-desc">Masters and PhD talent should have stable routes into research, startups, teaching, and community work &mdash; without collapsing everything into one employer-defined track.</p>
                         </div>
                         <span class="ask-type" aria-hidden="true">Structural</span>
                     </li>
                     <li class="ask reveal">
                         <div class="ask-figure"><span class="ask-num" aria-hidden="true">03</span></div>
                         <div class="ask-body">
-                            <span class="ask-kicker"><span class="ask-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span><span class="ask-tag">Builder ecosystem bridge</span></span>
-                            <span class="ask-proof">Products, users, research, teaching, company formation, and community work are early signals of potential.</span>
-                            <h3 class="ask-title">Bridge graduate talent to <span class="amber">impact</span></h3>
-                            <details class="ask-detail" open>
-                                <summary><span>Read full ask</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
-                                <p class="ask-desc">Canada should give graduates more ways to show what they can do through <span class="amber">startups, research, products, companies, public-interest work, and community contribution</span>, helping early talent grow into Canada&rsquo;s builder ecosystem.</p>
-                            </details>
+                            <span class="ask-kicker"><span class="ask-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></span><span class="ask-tag">Ecosystem bridge</span></span>
+                            <h3 class="ask-title">Reward what graduates actually build</h3>
+                            <p class="ask-desc">Canada should give graduates more ways to show what they can do &mdash; through startups, research, products, and community work &mdash; and help early talent grow into Canada&rsquo;s builder ecosystem.</p>
                         </div>
                         <span class="ask-type" aria-hidden="true">Opportunity</span>
                     </li>
@@ -408,7 +391,7 @@
                             <span>What is this page about?</span>
                             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                         </summary>
-                        <p><a class="person-link" href="https://hubeiqiao.com/" target="_blank" rel="noopener">Joe Hu</a>&rsquo;s story is one example of a broader question: can Canada retain <span class="answer-highlight">early-stage contributors it helped train</span> while their value is still emerging and hard to classify?</p>
+                        <p><a class="person-link" href="https://hubeiqiao.com/" target="_blank" rel="noopener">Joe Hu</a>&rsquo;s story is one example of a broader question: can Canada retain <span class="answer-highlight">early-stage contributors it helped train</span> while their value is still early &mdash; before the system has a way to measure it?</p>
                     </details>
                     <details class="faq-item reveal">
                         <summary>
@@ -444,8 +427,8 @@
                 <div class="support-lead reveal" data-support>
                     <div class="support-ask" data-support-ask>
                         <p class="kicker kicker-center"><span class="kicker-tick" aria-hidden="true"></span>Public signal</p>
-                        <h2 id="support-title" class="display">Help this reach people who should see the <span class="amber">pattern</span></h2>
-                        <p class="lede lede-center">If this story resonates, one click is enough. This is not a petition. It is a public signal that Canada&rsquo;s tech, startup, university, and policy communities should pay attention to fair pathways for students, graduates, and early-stage builders already contributing here.</p>
+                        <h2 id="support-title" class="display">Help this reach people who should see the pattern</h2>
+                        <p class="lede lede-center">If this resonates, one click is enough. It&rsquo;s not a petition &mdash; it&rsquo;s a public signal that Canada&rsquo;s tech, startup, university, and policy communities should pay attention to the builders already here.</p>
                         <button type="button" class="btn btn-primary btn-xl btn-support" data-support-btn>
                             <svg class="ico-heart" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.4S3.6 15 3.6 8.9C3.6 6 5.9 4 8.4 4c1.7 0 3 .9 3.6 2.2C12.6 4.9 13.9 4 15.6 4c2.5 0 4.8 2 4.8 4.9 0 6.1-8.4 11.5-8.4 11.5Z"/></svg>
                             <span class="btn-support-label">I support fair pathways</span>
@@ -455,9 +438,14 @@
                     </div>
 
                     <div class="support-thanks" data-support-thanks hidden>
+                        <div class="signature-card">
                         <span class="support-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-                        <h2 class="display">Thank you &mdash; your support is <span class="amber">counted</span>.</h2>
-                        <p class="lede lede-center">Now share it with someone in Canada&rsquo;s tech, startup, university, media, or policy community.</p>
+                        <h2 class="display signature-title">Thank you &mdash; your support is counted.</h2>
+                        <p class="signature-num" data-signature-num hidden>
+                            <span class="signature-hash" aria-hidden="true">#</span><span data-signature-count>&nbsp;</span>
+                            <span class="signature-num-label">supporter of fair pathways for people already building here</span>
+                        </p>
+                        <p class="lede lede-center signature-lede">Now share it with someone in Canada&rsquo;s tech, startup, university, media, or policy community.</p>
                         <p class="support-count" data-support-count hidden></p>
                         <p class="support-receipt" data-support-receipt hidden></p>
                         <div class="share-row" role="group" aria-label="Share this story">
@@ -465,6 +453,8 @@
                             <button type="button" class="share-btn" data-share="x" aria-label="Share on X"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg><span>X</span></button>
                             <button type="button" class="share-btn" data-share="email" aria-label="Share by email"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16v11H4z"/><path d="m5 7 7 6 7-6"/></svg><span>Email</span></button> <button type="button" class="share-btn" data-share="copy" aria-label="Copy link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.5 19.5"/></svg><span data-copy-label>Copy link</span></button>
                             <button type="button" class="share-btn share-btn-native" data-share="native" aria-label="Share" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14"/></svg><span>Share</span></button>
+                        </div>
+                        <p class="signature-attrib">Canada helped Joe become a builder &middot; oinp.hubeiqiao.com</p>
                         </div>
                     </div>
                 </div>
@@ -510,7 +500,7 @@
 
                         <div class="portal-thanks" data-portal-thanks hidden>
                             <span class="support-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-                            <h3 class="portal-title">Thank you &mdash; your story is <span class="amber">in</span>.</h3>
+                            <h3 class="portal-title">Thank you &mdash; your story is in.</h3>
                             <p class="portal-intro portal-intro-center">It&rsquo;ll be reviewed before any public display &mdash; and your support is counted either way.</p>
                             <p class="support-receipt" data-portal-receipt hidden></p>
                             <div class="share-row" role="group" aria-label="Share this message">
@@ -598,7 +588,7 @@
                     <div class="footer-col">
                         <h3>ARTICLES</h3>
                         <a href="https://hubeiqiao.com/blog/7b6c4254-0c05-47d2-adfe-d7e100cfd03e" target="_blank" rel="noopener" title="My preparation for Canada - Preparation for Re:Zero, Starting Life in North America" aria-label="My preparation for Canada - Preparation for Re:Zero, Starting Life in North America">Prep for Canada</a>
-                        <a href="https://www.notion.so/hubeiqiao/Two-Years-After-Quitting-My-Job-I-Found-Myself-Building-in-Canada-38b0df12ec7780dd8670fecc77f7b51b" target="_blank" rel="noopener" title="Two Years After Quitting My Job, I Found Myself Building in Canada" aria-label="Two Years After Quitting My Job, I Found Myself Building in Canada">2y Canada Journey</a>
+                        <a href="https://hubeiqiao.com/blog/38b0df12-ec77-80dd-8670-fecc77f7b51b" target="_blank" rel="noopener" title="Two Years After Quitting My Job, I Found Myself Building in Canada - Joe Hu" aria-label="Two Years After Quitting My Job, I Found Myself Building in Canada - Joe Hu">2y Canada Journey</a>
                         <a href="https://oinp.hubeiqiao.com/" target="_blank" rel="noopener" title="Canada helped Joe become a builder. Can it keep builders here?" aria-label="Current OINP awareness message: keep builders in Canada">Keep Builders in 🍁</a>
                     </div>
                     <div class="footer-col">
@@ -628,7 +618,7 @@
                     <span class="footer-title-line">but it is <span class="footer-mobile-highlight">not only</span><br class="footer-mobile-break"> about me.</span>
                 </h2>
                 <span class="footer-statement-rule" aria-hidden="true"></span>
-                <p>I am one case of a larger question:<br class="footer-copy-mobile-break"> who gets to keep building here?</p>
+                <p>I am one case of a bigger question:<br class="footer-copy-mobile-break"> who gets to keep building here?</p>
             </div>
 
             <div class="footer-bottom">
@@ -650,7 +640,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=38"></script>
+    <script src="script.js?v=39"></script>
     <script type="text/javascript">
         (function (C, A, L) { var p = function (a, ar) { a.q.push(ar); }; var d = C.document; C.Cal = C.Cal || function () { var cal = C.Cal; var ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { var api = function () { p(api, arguments); }; var namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
         Cal("init", "talk", { origin: "https://app.cal.com" });

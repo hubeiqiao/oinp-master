@@ -134,13 +134,16 @@ test("homepage exposes visible answer sections for search and answer engines", a
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
 
   assert.match(html, /id="answer-brief"/);
-  assert.match(html, /What this page is about/);
-  assert.match(html, /What changed/);
-  assert.match(html, /What the ask is/);
+  assert.match(html, /Personal story\./);
+  assert.match(html, /Structural question\./);
+  assert.match(html, /The work is visible/);
+  assert.doesNotMatch(html, /The proof is real/);
+  assert.match(html, /The former graduate streams will issue no more invitations\./);
+  assert.match(html, /The question is bigger: <em>does Canada know how to keep builders\?<\/em>/);
   assert.match(html, /id="story-summary"/);
   assert.match(html, /The short version/);
   assert.match(html, /Evidence and resources/);
-  assert.match(html, /These links show what <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> built/);
+  assert.match(html, /What <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> built, who&rsquo;s vouched for it/);
   assert.match(html, /id="faq"/);
   assert.match(html, /What is this page about\?/);
   assert.match(html, /How can people help\?/);
@@ -157,7 +160,7 @@ test("homepage exposes visible answer sections for search and answer engines", a
 test("film copy uses Joe in third person", async () => {
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
 
-  assert.match(html, /This is a 2-minute story about how Canada helped Joe <span class="amber">become a builder<\/span>/);
+  assert.match(html, /This is a 2-minute story about how Canada helped Joe become a builder/);
   assert.doesNotMatch(html, /Canada helped me/);
   assert.doesNotMatch(html, /how Canada helped me/);
 });
@@ -174,22 +177,24 @@ test("answer copy uses highlights, full program name, and Joe profile links", as
   assert.match(html, /<a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe Hu<\/a>/);
 });
 
-test("resources header is a single title row and Canada journey is third", async () => {
+test("resources are two exhibits plus three official record rows", async () => {
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
   const resources = html.match(/<section class="resources"[\s\S]*?<\/section>/)?.[0] || "";
 
   assert.match(resources, /<div class="resources-title-line">/);
   assert.match(resources, /<h2>Proof behind the story<\/h2>/);
-  assert.match(resources, /These links show what <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> built/);
+  assert.match(resources, /What <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> built, who&rsquo;s vouched for it/);
 
-  const titles = [...resources.matchAll(/<span class="res-title">([^<]+)<\/span>/g)].map((match) => match[1]);
-  assert.deepEqual(titles.slice(0, 5), [
-    "Joe Speaking",
-    "YC Startup School 2026",
-    "My Canada journey",
-    "OINP redesign",
-    "Start-Up Visa status",
-  ]);
+  const exhibits = [...resources.matchAll(/<span class="res-title">([^<]+)<\/span>/g)].map((match) => match[1]);
+  assert.deepEqual(exhibits, ["Joe Speaking", "YC Startup School 2026", "Joe&rsquo;s Canada journey"]);
+
+  const records = [...resources.matchAll(/<span class="record-title">([^<]+)<\/span>/g)].map((match) => match[1]);
+  assert.deepEqual(records, ["OINP redesign", "Start-Up Visa status"]);
+
+  assert.match(resources, /1,200\+/);
+  assert.match(resources, /30\+/);
+  assert.match(resources, /hubeiqiao\.com\/blog\/38b0df12-ec77-80dd-8670-fecc77f7b51b/);
+  assert.doesNotMatch(html, /notion\.so/);
 });
 
 test("faq details use single-open accordion behavior", async () => {
@@ -199,4 +204,26 @@ test("faq details use single-open accordion behavior", async () => {
   assert.match(script, /document\.querySelectorAll\("\.faq-item"\)/);
   assert.match(script, /other\.open = false/);
   assert.match(script, /initFaqDetails\(\);/);
+});
+
+test("AEO guards: video uploadDate, FAQ count, and markdown twins stay aligned", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const llms = await fs.readFile(path.join(root, "public", "llms.txt"), "utf8");
+  const workerSrc = await fs.readFile(path.join(root, "worker.js"), "utf8");
+
+  const block = html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/);
+  const graph = JSON.parse(block[1])["@graph"];
+  const page = graph.find((node) => node["@type"] === "WebPage");
+  const faq = graph.find((node) => node["@type"] === "FAQPage");
+
+  assert.match(page.video.uploadDate || "", /^\d{4}-\d{2}-\d{2}$/, "VideoObject needs uploadDate for video rich results");
+  assert.strictEqual(faq.mainEntity.length, 4, "visible FAQ stays at 4 questions — no job-search FAQ");
+  assert.doesNotMatch(html, /Is Joe asking for a job\?/);
+
+  // the "what this is not" clarification lives ONLY on non-visible surfaces, and both twins carry it
+  for (const surface of [llms, workerSrc]) {
+    assert.match(surface, /This is not a petition, not a fundraiser, and not immigration advice\./);
+    assert.match(surface, /will issue no more invitations/);
+    assert.match(surface, /the people caught in that gap/);
+  }
 });

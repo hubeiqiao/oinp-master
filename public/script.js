@@ -108,36 +108,6 @@
         check();
     }
 
-    function initAskDetails() {
-        var items = Array.prototype.slice.call(document.querySelectorAll(".ask-detail"));
-        if (!items.length) return;
-        var mobile = window.matchMedia("(max-width: 760px)");
-        var syncing = false;
-
-        function sync() {
-            syncing = true;
-            items.forEach(function (detail) {
-                if (mobile.matches) {
-                    if (!detail.dataset.userToggled) detail.open = false;
-                } else {
-                    detail.open = true;
-                    delete detail.dataset.userToggled;
-                }
-            });
-            syncing = false;
-        }
-
-        items.forEach(function (detail) {
-            detail.addEventListener("toggle", function () {
-                if (!syncing && mobile.matches) detail.dataset.userToggled = "true";
-            });
-        });
-
-        sync();
-        if (typeof mobile.addEventListener === "function") mobile.addEventListener("change", sync);
-        else if (typeof mobile.addListener === "function") mobile.addListener(sync);
-    }
-
     function initFaqDetails() {
         var items = Array.prototype.slice.call(document.querySelectorAll(".faq-item"));
         if (!items.length) return;
@@ -241,38 +211,39 @@
 
     /* ---------- sharing ---------- */
     function openShare(u) { window.open(u, "_blank", "noopener,noreferrer,width=640,height=600"); }
+    function shareUrlFor(kind) { return SHARE_URL + "?utm_source=" + kind; }
     function shareTo(kind, btn) {
-        var u = encodeURIComponent(SHARE_URL);
-        if (kind === "linkedin") openShare("https://www.linkedin.com/sharing/share-offsite/?url=" + u);
-        else if (kind === "x") openShare("https://twitter.com/intent/tweet?text=" + encodeURIComponent(SHARE_TEXT) + "&url=" + u);
+        if (kind === "linkedin") openShare("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(shareUrlFor("linkedin")));
+        else if (kind === "x") openShare("https://x.com/intent/post?text=" + encodeURIComponent(SHARE_TEXT) + "&url=" + encodeURIComponent(shareUrlFor("x")));
         else if (kind === "email") emailShare();
         else if (kind === "copy") copyLink(btn);
         else if (kind === "native") nativeShare();
         else if (kind === "native-or-copy") { if (navigator.share) nativeShare(); else copyLink(btn); }
     }
+    function copyPayload() { return NATIVE_TEXT + "\n\n" + shareUrlFor("copy"); }
     function copyLink(btn) {
         var done = function () {
             if (!btn) return;
             btn.classList.add("copied");
             var label = btn.querySelector("[data-copy-label]") || btn.querySelector("span");
             var orig = label ? label.textContent : null;
-            if (label) label.textContent = "Link copied";
+            if (label) label.textContent = "Copied";
             setTimeout(function () { btn.classList.remove("copied"); if (label && orig) label.textContent = orig; }, 2200);
         };
-        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(SHARE_URL).then(done).catch(function () { legacyCopy(); done(); });
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(copyPayload()).then(done).catch(function () { legacyCopy(); done(); });
         else { legacyCopy(); done(); }
     }
     function legacyCopy() {
         try {
             var t = document.createElement("textarea");
-            t.value = SHARE_URL; t.setAttribute("readonly", "");
+            t.value = copyPayload(); t.setAttribute("readonly", "");
             t.style.position = "absolute"; t.style.left = "-9999px";
             document.body.appendChild(t); t.select(); document.execCommand("copy"); document.body.removeChild(t);
         } catch (e) {}
     }
-    function nativeShare() { if (navigator.share) navigator.share({ title: SHARE_TITLE, text: NATIVE_TEXT, url: SHARE_URL }).catch(function () {}); }
+    function nativeShare() { if (navigator.share) navigator.share({ title: SHARE_TITLE, text: NATIVE_TEXT, url: shareUrlFor("native") }).catch(function () {}); }
     function emailShare() {
-        var body = EMAIL_BODY + "\n\n" + SHARE_URL;
+        var body = EMAIL_BODY + "\n\n" + shareUrlFor("email");
         window.location.href = "mailto:?subject=" + encodeURIComponent(EMAIL_SUBJECT) + "&body=" + encodeURIComponent(body);
     }
     function initShare() {
@@ -549,12 +520,19 @@
         ensureToken(state);
         fetchNonce(); // prime early so server-side dwell accrues before the click
 
+        var sigNumEl = root.querySelector("[data-signature-num]");
+        var sigCountEl = root.querySelector("[data-signature-count]");
         function refreshCount() {
             if (!countEl) return;
             fetch("/api/support/count").then(function (r) { return r.json(); }).then(function (d) {
                 if (d && d.show && typeof d.total === "number") {
                     countEl.innerHTML = d.total.toLocaleString() + " people support this \u00b7 <a href=\"/transparency/\">how we count</a>";
                     countEl.hidden = false;
+                    // signature numeral: only once the room is no longer empty
+                    if (sigNumEl && sigCountEl && d.total >= 25) {
+                        sigCountEl.textContent = d.total.toLocaleString();
+                        sigNumEl.hidden = false;
+                    }
                 } else { countEl.hidden = true; }
             }).catch(function () {});
         }
@@ -861,7 +839,6 @@
         initHeroScroll();
         initMagneticSnap();
         initReveals();
-        initAskDetails();
         initFaqDetails();
         initFilm();
         initShare();

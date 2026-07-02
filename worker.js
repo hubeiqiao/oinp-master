@@ -28,7 +28,7 @@ This is a public-awareness story, not immigration advice. It connects [Joe](http
 ## Quick answers
 
 What this page is about:
-[Joe Hu](https://hubeiqiao.com/)'s story is one example of a broader question: can Canada retain early-stage contributors it helped train while their value is still emerging and hard to classify?
+[Joe Hu](https://hubeiqiao.com/)'s story is one example of a broader question: can Canada retain early-stage contributors it helped train while their value is still early — before the system has a way to measure it?
 
 What changed:
 Ontario redesigned the Ontario Immigrant Nominee Program (OINP). Former graduate streams will issue no more invitations, leaving some people who planned around that path in uncertainty.
@@ -39,6 +39,10 @@ Fair transitions, independent graduate pathways, and bridges into Canada's econo
 How people can help:
 Support the message, share the video with Canada's tech, startup, university, media, or policy communities, or add a story if they are seeing the same pattern.
 
+## What this is not
+
+This is not a petition, not a fundraiser, and not immigration advice. Joe is not asking for a job or for personal relief — he can find work. The ask is systemic: fair transitions and independent graduate pathways for people already contributing in Canada.
+
 ## The short version
 
 Canada helped [Joe](https://hubeiqiao.com/) become a builder. Here, he studied, built his first product, registered a company, and found community.
@@ -47,7 +51,7 @@ Then the immigration pathway changed. Joe became one story in a broader question
 
 ## The ask
 
-Build fair pathways for people already contributing. Job offers and language ability matter. So do study, research, products, companies, teaching, and community. Some contribution appears before a standard immigration category can name it. Fair policy should protect people caught mid-change and help early-stage talent keep building here.
+Build fair pathways for people already contributing. Job offers and language scores matter. So do the products, companies, and research people build first. Some contribution shows up before the immigration system has a category for it — fair policy should protect the people caught in that gap.
 
 ## Evidence and resources
 
