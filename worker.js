@@ -19,43 +19,45 @@ const AGENT_LINK_HEADER = [
 ].join(", ");
 const HOME_MARKDOWN = `# Canada helped Joe become a builder. Does Canada know how to keep builders?
 
-[Joe Hu](https://hubeiqiao.com/) is a builder in Ottawa, Canada. Canada helped him study, build, register a company, and find community. After the immigration pathway changed, this page asks whether Canada can recognize builders before their work becomes conventional employment.
+[Joe Hu](https://hubeiqiao.com/) is a builder in Ottawa, Canada. Canada helped him study, build an AI product, register a company, and find community. His story asks whether Canada can keep early-stage builders it helped create.
 
 ## What this page is about
 
-This is a public-awareness story, not immigration advice. It connects [Joe](https://hubeiqiao.com/)'s personal case to a broader question for Canada and Ontario: how should policy recognize students, graduates, founders, and early-stage builders who are already contributing here?
+This is a public-awareness story, not immigration advice. It connects [Joe](https://hubeiqiao.com/)'s personal case to a broader question for Canada and Ontario: can Canada retain early-stage contributors before their value is easy to classify?
 
 ## Quick answers
 
 What this page is about:
-[Joe Hu](https://hubeiqiao.com/)'s story is one example of a broader question: can Canada recognize people already studying, building, and contributing here before their work becomes conventional employment?
+[Joe Hu](https://hubeiqiao.com/)'s story is one example of a broader question: can Canada retain early-stage contributors it helped train while their value is still emerging and hard to classify?
 
 What changed:
-Ontario redesigned the Ontario Immigrant Nominee Program (OINP). The old pathways are gone, new entries are paused, and people already studying and building here need a fair way to be recognized.
+Ontario redesigned the Ontario Immigrant Nominee Program (OINP). Former graduate streams will issue no more invitations, leaving some people who planned around that path in uncertainty.
 
 What the ask is:
-Count builder evidence alongside job offers and language ability: shipped products, users, pilots, companies, research, teaching, and community contribution.
+Fair transitions, independent graduate pathways, and bridges into Canada's economy, research, and communities.
 
 How people can help:
 Support the message, share the video with Canada's tech, startup, university, media, or policy communities, or add a story if they are seeing the same pattern.
 
-## Story summary
+## The short version
 
 Canada helped [Joe](https://hubeiqiao.com/) become a builder. Here, he studied, built his first product, registered a company, and found community.
 
-After the immigration pathway changed, the question became larger than one application: can Canada recognize builders while they are already contributing, before their work looks like conventional employment?
+Then the immigration pathway changed. Joe became one story in a broader question: can Canada keep early-stage contributors it helped create?
 
 ## The ask
 
-Recognize contribution before it becomes conventional employment. A full-time job offer is one kind of evidence. French ability is one kind of evidence. But shipped products, users, pilots, research, teaching, company-building, and community work should also count when someone is already building from inside Canada.
+Build fair pathways for people already contributing. Job offers and language ability matter. So do study, research, products, companies, teaching, and community. Some contribution appears before a standard immigration category can name it. Fair policy should protect people caught mid-change and help early-stage talent keep building here.
 
 ## Evidence and resources
 
-- Joe Speaking: an AI speaking coach built in Canada, with 1,200+ organic users across 30+ countries.
-- YC AI Startup School: an external signal that [Joe](https://hubeiqiao.com/) is building in the AI/startup community.
-- Ontario OINP redesign: official program updates behind the immigration-pathway context.
-- Start-Up Visa pause: federal founder-route context.
-- [Joe](https://hubeiqiao.com/)'s Canada journey: the longer essay behind the story.
+- Joe Speaking: AI speaking coach built from Joe's English-speaking struggle, now used by 1,200+ learners across 30+ countries.
+- YC Startup School 2026: accepted into YC Startup School 2026, an outside founder-community signal around Joe's AI product work.
+- Ontario OINP redesign: official Ontario updates saying no further invitations will be issued under the former graduate streams.
+- Former graduate pathway context: official context showing the former structure separated graduate streams from employer-dependent routes.
+- Graduate talent context: official context recognizing master's and doctoral students for contributions to Canada's economic growth and innovation.
+- Start-Up Visa status: federal founder-route context; the Start-Up Visa is closed to most new applications for now.
+- [Joe](https://hubeiqiao.com/)'s Canada journey: the longer essay on leaving an old rhythm, finding confidence in Canada, and building his way back through products.
 
 ## Support
 

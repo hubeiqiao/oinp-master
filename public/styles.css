@@ -448,7 +448,7 @@ html.video-fallback .hero-video { display: none !important; }
 }
 .change-bridge-inner {
     display: block;
-    max-width: 1120px;
+    max-width: 1460px;
 }
 .answer-brief-head {
     max-width: 1040px;
@@ -477,13 +477,13 @@ html.video-fallback .hero-video { display: none !important; }
 .answer-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(14px, 1.6vw, 22px);
+    gap: clamp(16px, 1.8vw, 28px);
     margin-top: clamp(24px, 4vh, 44px);
 }
 .answer-card {
     position: relative;
-    min-height: 190px;
-    padding: clamp(18px, 2vw, 24px);
+    min-height: 158px;
+    padding: clamp(18px, 1.75vw, 24px);
     border: 1px solid rgba(251, 247, 238, 0.1);
     border-radius: 18px;
     background:
@@ -512,11 +512,12 @@ html.video-fallback .hero-video { display: none !important; }
     text-transform: uppercase;
 }
 .answer-card p {
-    margin: 18px 0 0;
+    margin: 16px 0 0;
     color: rgba(251, 247, 238, 0.68);
     font-family: var(--serif);
-    font-size: clamp(16px, 1.25vw, 18.5px);
-    line-height: 1.48;
+    font-size: clamp(16px, 1.12vw, 18px);
+    line-height: 1.46;
+    text-wrap: balance;
 }
 .change-bridge a {
     color: var(--ink);
@@ -539,28 +540,34 @@ html.video-fallback .hero-video { display: none !important; }
     margin-bottom: clamp(24px, 4vh, 42px);
 }
 .resources-title-line {
-    display: flex;
-    align-items: baseline;
-    gap: clamp(18px, 2.6vw, 36px);
+    display: grid;
+    grid-template-columns: max-content minmax(420px, 1fr);
+    align-items: end;
+    gap: clamp(28px, 4vw, 72px);
+    padding-bottom: clamp(6px, 1vh, 12px);
 }
 .resources-head h2 {
-    flex: none;
     margin: 0;
     color: var(--ink);
     font-family: var(--display);
-    font-size: clamp(32px, 4.2vw, 58px);
+    font-size: clamp(40px, 5.6vw, 82px);
     font-weight: 600;
-    line-height: 0.98;
-    letter-spacing: -0.015em;
+    line-height: 0.9;
+    letter-spacing: 0;
+    text-wrap: balance;
+    white-space: nowrap;
 }
 .resources-title-line p {
-    margin: 0;
-    max-width: none;
+    margin: 0 0 clamp(2px, 0.6vh, 8px);
+    max-width: 840px;
+    padding-left: clamp(18px, 2vw, 28px);
+    border-left: 2px solid rgba(240, 168, 56, 0.58);
     color: var(--muted);
     font-family: var(--serif);
-    font-size: clamp(13.5px, 1vw, 15.5px);
-    line-height: 1.35;
-    white-space: nowrap;
+    font-size: clamp(15px, 1.15vw, 18px);
+    line-height: 1.42;
+    white-space: normal;
+    text-wrap: balance;
 }
 .res-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(18px, 2.2vw, 28px); }
 .res-grid .res-card:nth-child(3n+2) { --reveal-delay: 90ms; }
@@ -628,12 +635,33 @@ html.video-fallback .hero-video { display: none !important; }
     .res-body { padding: 17px 16px; gap: 7px; }
     .res-label { font-size: 10px; letter-spacing: 0.16em; }
     .res-title { font-size: clamp(16px, 1.25vw, 19px); line-height: 1.08; }
-    .res-desc { font-size: 12.8px; line-height: 1.46; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+    .res-desc {
+        min-height: calc(1.48em * 3);
+        font-size: 13.2px;
+        line-height: 1.48;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
     .res-link { margin-top: 11px; padding-top: 11px; font-size: 12px; }
     .res-card::after { width: 26px; height: 26px; top: 10px; right: 10px; font-size: 13px; }
 }
 .res-links a > span:first-child { font-weight: 600; font-size: 14.5px; color: var(--ink); }
 .res-links-url { font-size: 12px; color: var(--quiet); }
+
+@media (max-width: 1199px) {
+    .resources-title-line {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
+    .resources-head h2 {
+        white-space: normal;
+    }
+    .resources-title-line p {
+        max-width: 760px;
+    }
+}
 
 /* =========================================================================
    ASKS — numbered manifesto columns (editorial / cinematic)
@@ -643,8 +671,8 @@ html.video-fallback .hero-video { display: none !important; }
    ========================================================================= */
 .asks { padding-block: clamp(50px, 7vh, 90px); }
 .asks .wrap { max-width: 1340px; }
-.asks .section-head { max-width: 1080px; margin: 0 auto clamp(24px, 3.5vh, 42px); }
-.asks .section-head .display { font-family: var(--footer-serif); font-weight: 600; font-size: clamp(34px, 4.7vw, 58px); line-height: 1.08; letter-spacing: 0; }
+.asks .section-head { max-width: 1320px; margin: 0 auto clamp(24px, 3.5vh, 42px); }
+.asks .section-head .display { font-family: var(--footer-serif); font-weight: 600; font-size: clamp(34px, 4.45vw, 58px); line-height: 1.08; letter-spacing: 0; white-space: nowrap; }
 .ask-signal {
     max-width: 780px;
 }
@@ -868,7 +896,7 @@ html.video-fallback .hero-video { display: none !important; }
 .support-lead .display { font-size: clamp(30px, 4.4vw, 50px); }
 .support-lead .lede { font-size: clamp(16.5px, 1.5vw, 18.5px); max-width: 940px; margin-inline: auto; }
 .btn-support { margin: 30px auto 0; }
-.support-micro { margin: 16px auto 0; max-width: 50ch; font-size: 13px; color: var(--quiet); line-height: 1.5; }
+.support-micro { margin: 16px auto 0; max-width: min(100%, 92ch); font-size: 13px; color: var(--quiet); line-height: 1.5; white-space: nowrap; }
 .support-micro a, .support-count a { color: var(--ink); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: color var(--dur) var(--ease-smooth); }
 .support-micro a:hover, .support-count a:hover { color: var(--amber-bright); }
 
@@ -1718,6 +1746,11 @@ html.video-fallback .hero-video { display: none !important; }
 @media (max-width: 760px) {
     body { font-size: 16px; }
 
+    .support-micro {
+        max-width: 50ch;
+        white-space: normal;
+    }
+
     /* hero: full 16:9 hook at top, copy below */
     .hero-pin { height: auto; }
     .hero { position: static; height: auto; min-height: auto; overflow: visible; padding: 0 0 14px; }
@@ -1828,6 +1861,8 @@ html.video-fallback .hero-video { display: none !important; }
     }
     .resources-title-line p {
         margin-top: 10px;
+        padding-left: 0;
+        border-left: 0;
         font-size: 15.5px;
         line-height: 1.44;
         white-space: normal;
@@ -1856,6 +1891,7 @@ html.video-fallback .hero-video { display: none !important; }
         font-size: clamp(31px, 8.8vw, 46px);
         line-height: 1.02;
         text-align: left;
+        white-space: normal;
     }
     .asks .section-head .display .amber {
         display: inline-block;

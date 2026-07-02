@@ -96,7 +96,7 @@ test("public discovery files exist", async () => {
 test("homepage metadata is aligned for search and answer engines", async () => {
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
 
-  assert.match(html, /<title>Canada helped me become a builder\. Does Canada know how to keep builders\?<\/title>/);
+  assert.match(html, /<title>Canada helped Joe become a builder\. Does Canada know how to keep builders\?<\/title>/);
   assert.match(html, /property="og:title" content="Canada helped Joe become a builder\. Does Canada know how to keep builders\?"/);
   assert.match(html, /name="twitter:title" content="Canada helped Joe become a builder\. Does Canada know how to keep builders\?"/);
 
@@ -123,8 +123,11 @@ test("visitor share copy uses third-person aligned messaging", async () => {
 
   assert.match(script, /Canada helped Joe become a builder\. Does Canada know how to keep builders\?/);
   assert.match(script, /He studied, built, registered a company, and found community here\./);
+  assert.match(script, /can Canada retain early-stage contributors it helped train while their value is still emerging and hard to classify\?/);
   assert.doesNotMatch(script, /Can Canada keep builders here\?/);
   assert.doesNotMatch(script, /before it loses them/);
+  assert.doesNotMatch(script, /one job offer/);
+  assert.doesNotMatch(script, /startup ecosystem/);
 });
 
 test("homepage exposes visible answer sections for search and answer engines", async () => {
@@ -135,19 +138,28 @@ test("homepage exposes visible answer sections for search and answer engines", a
   assert.match(html, /What changed/);
   assert.match(html, /What the ask is/);
   assert.match(html, /id="story-summary"/);
-  assert.match(html, /Read the story summary/);
+  assert.match(html, /The short version/);
   assert.match(html, /Evidence and resources/);
-  assert.match(html, /These proof points connect <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a>&rsquo;s personal story to the policy question/);
+  assert.match(html, /These links show what <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> built/);
   assert.match(html, /id="faq"/);
   assert.match(html, /What is this page about\?/);
   assert.match(html, /How can people help\?/);
+  assert.doesNotMatch(html, /The old pathways are gone/);
+  assert.doesNotMatch(html, /Count builder evidence/);
+  assert.doesNotMatch(html, /French ability is one kind of evidence/);
+  assert.doesNotMatch(html, /one permanent job/);
+  assert.doesNotMatch(html, /one permanent job offer/);
+  assert.doesNotMatch(html, /builder activity as evidence/);
+  assert.doesNotMatch(html, /startup-era talent/);
+  assert.doesNotMatch(html, /startup ecosystem/);
 });
 
 test("answer copy uses highlights, full program name, and Joe profile links", async () => {
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
 
   assert.match(html, /<span class="answer-highlight">studied, built his first product, registered a company, and found community<\/span>/);
-  assert.match(html, /<span class="answer-highlight">recognize builders while they are already contributing<\/span>/);
+  assert.match(html, /<span class="answer-highlight">Joe became one story in a broader question<\/span>/);
+  assert.match(html, /early-stage contributors it helped train/);
   assert.match(html, /Ontario redesigned the Ontario Immigrant Nominee Program \(OINP\)/);
   assert.doesNotMatch(html, /Ontario redesigned OINP/);
   assert.match(html, /<a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a>/);
@@ -160,14 +172,23 @@ test("resources header is a single title row and Canada journey is third", async
 
   assert.match(resources, /<div class="resources-title-line">/);
   assert.match(resources, /<h2>Proof behind the story<\/h2>/);
-  assert.match(resources, /These proof points connect <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a>&rsquo;s personal story to the policy question/);
+  assert.match(resources, /These links show what <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> built/);
 
   const titles = [...resources.matchAll(/<span class="res-title">([^<]+)<\/span>/g)].map((match) => match[1]);
   assert.deepEqual(titles.slice(0, 5), [
     "Joe Speaking",
-    "YC AI Startup School",
+    "YC Startup School 2026",
     "My Canada journey",
     "OINP redesign",
-    "Start-Up Visa pause",
+    "Start-Up Visa status",
   ]);
+});
+
+test("faq details use single-open accordion behavior", async () => {
+  const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
+
+  assert.match(script, /function initFaqDetails\(\)/);
+  assert.match(script, /document\.querySelectorAll\("\.faq-item"\)/);
+  assert.match(script, /other\.open = false/);
+  assert.match(script, /initFaqDetails\(\);/);
 });

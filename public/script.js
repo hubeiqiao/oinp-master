@@ -13,8 +13,8 @@
     var EMAIL_BODY =
         "Hi,\n\n" +
         "Sharing Joe Hu\u2019s story from Ottawa. Canada helped him become a builder: he studied here, built products here, registered a company here, and found community here. Then the pathway changed.\n\n" +
-        "He is asking a broader question: does Canada know how to keep builders, and can it recognize builder contribution before it becomes conventional employment?\n\n" +
-        "This is not a petition. It is a public-awareness page for people in Canada\u2019s tech, startup, university, media, and policy communities who care about fair pathways for builders already contributing here.\n\n" +
+        "He is asking a broader question: can Canada retain early-stage contributors it helped train while their value is still emerging and hard to classify?\n\n" +
+        "This is not a petition. It is a public-awareness page for people in Canada\u2019s tech, startup, university, media, and policy communities who care about fair transitions, independent graduate pathways, and bridges into Canada\u2019s economy, research, and communities.\n\n" +
         "Take a look:";
 
     var reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -136,6 +136,23 @@
         sync();
         if (typeof mobile.addEventListener === "function") mobile.addEventListener("change", sync);
         else if (typeof mobile.addListener === "function") mobile.addListener(sync);
+    }
+
+    function initFaqDetails() {
+        var items = Array.prototype.slice.call(document.querySelectorAll(".faq-item"));
+        if (!items.length) return;
+        var syncing = false;
+
+        items.forEach(function (detail) {
+            detail.addEventListener("toggle", function () {
+                if (syncing || !detail.open) return;
+                syncing = true;
+                items.forEach(function (other) {
+                    if (other !== detail) other.open = false;
+                });
+                syncing = false;
+            });
+        });
     }
 
     /* ---------- FILM: muted preview from Joe's intro -> click plays with sound ---------- */
@@ -845,6 +862,7 @@
         initMagneticSnap();
         initReveals();
         initAskDetails();
+        initFaqDetails();
         initFilm();
         initShare();
         initCalActions();
