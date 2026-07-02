@@ -154,6 +154,14 @@ test("homepage exposes visible answer sections for search and answer engines", a
   assert.doesNotMatch(html, /startup ecosystem/);
 });
 
+test("film copy uses Joe in third person", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+
+  assert.match(html, /This is a 2-minute story about how Canada helped Joe <span class="amber">become a builder<\/span>/);
+  assert.doesNotMatch(html, /Canada helped me/);
+  assert.doesNotMatch(html, /how Canada helped me/);
+});
+
 test("answer copy uses highlights, full program name, and Joe profile links", async () => {
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
 
