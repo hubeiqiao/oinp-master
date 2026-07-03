@@ -132,6 +132,7 @@
         var video = stage.querySelector("video");
         var playBtn = stage.querySelector("[data-film-play]");
         var fullscreenBtn = document.querySelector("[data-film-fullscreen]");
+        var exitBtn = stage.querySelector("[data-film-exit]");
         if (!video) return;
         var engaged = false;
         video.muted = true; video.playsInline = true; video.setAttribute("playsinline", "");
@@ -143,6 +144,21 @@
             video.muted = true; video.loop = true;
             var p = video.play(); if (p && p.catch) p.catch(function () {});
         }
+        function setLockScreenArtwork() {
+            // Without this, iOS guesses an image for the lock-screen/Control-Center
+            // "Now Playing" widget from whatever it finds on the page — it was picking
+            // the footer avatar, which has visible white padding baked into the file,
+            // instead of the full-bleed app icon. Pin it explicitly so that never happens.
+            if (!("mediaSession" in navigator) || window.__lockScreenArtworkSet) return;
+            window.__lockScreenArtworkSet = true;
+            try {
+                navigator.mediaSession.metadata = new MediaMetadata({
+                    title: "Canada helped Joe become a builder.",
+                    artist: "Joe Hu",
+                    artwork: [{ src: "assets/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
+                });
+            } catch (e) {}
+        }
         function engage(options) {
             var reset = !options || options.reset !== false;
             engaged = true;
@@ -151,43 +167,73 @@
             video.loop = false;
             video.muted = false;
             video.controls = true;
+            setLockScreenArtwork();
             if (reset) {
                 try { video.currentTime = 0; } catch (e) {}
             }
             var p = video.play(); if (p && p.catch) p.catch(function () {});
         }
-        function lockLandscape() {
-            if (!screen.orientation || !screen.orientation.lock) return;
-            var p = screen.orientation.lock("landscape");
-            if (p && p.catch) p.catch(function () {});
+        // Two different "landscape" stories, handled on purpose:
+        // - Android can genuinely rotate the OS via Fullscreen + Orientation-Lock, so try that first.
+        // - iOS Safari has no orientation-lock API at all (and fullscreen support on <video>/arbitrary
+        //   elements is inconsistent), so real rotation there isn't reliable — fall back to a CSS-only
+        //   "pretend landscape" that rotates the player in place instead of fighting the platform.
+        function enterPseudoLandscape() {
+            document.body.classList.add("film-landscape-lock");
+            stage.classList.add("pseudo-landscape");
+        }
+        function exitPseudoLandscape() {
+            document.body.classList.remove("film-landscape-lock");
+            stage.classList.remove("pseudo-landscape");
+        }
+        // Set right before we exit fullscreen ourselves as part of the native-landscape cleanup,
+        // so the fullscreenchange listener below can tell "we're cleaning up a failed attempt"
+        // apart from "the user backed out of real fullscreen" — the promise/event firing order
+        // for exitFullscreen() isn't reliably sequenced, so a timing-based fix would still race.
+        var ignoreNextFullscreenExit = false;
+        function tryNativeLandscape() {
+            var request = stage.requestFullscreen || stage.webkitRequestFullscreen;
+            if (!request || !screen.orientation || !screen.orientation.lock) return Promise.resolve(false);
+            try {
+                return Promise.resolve(request.call(stage))
+                    .then(function () { return screen.orientation.lock("landscape"); })
+                    .then(function () { return true; })
+                    .catch(function () {
+                        if (document.fullscreenElement) {
+                            ignoreNextFullscreenExit = true;
+                            try { document.exitFullscreen(); } catch (e) {}
+                        }
+                        return false;
+                    });
+            } catch (e) {
+                return Promise.resolve(false);
+            }
         }
         function openFullscreen(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
             if (!engaged) engage();
             else engage({ reset: false });
 
-            function tryWebkitFullscreen() {
-                if (typeof video.webkitEnterFullscreen !== "function") return false;
-                try { video.webkitEnterFullscreen(); } catch (err) { return false; }
-                return true;
-            }
-
-            if (tryWebkitFullscreen()) {
-                // iOS: if the video wasn't buffered enough yet, the first call can silently
-                // no-op — retry once it has actually entered its native fullscreen player.
-                setTimeout(function () {
-                    if (!video.webkitDisplayingFullscreen) tryWebkitFullscreen();
-                }, 250);
-                return;
-            }
-
-            var target = video;
-            var request = target.requestFullscreen || target.webkitRequestFullscreen || stage.requestFullscreen || stage.webkitRequestFullscreen;
-            if (!request) return;
-            var p = request.call(target.requestFullscreen || target.webkitRequestFullscreen ? target : stage);
-            if (p && p.then) p.then(lockLandscape).catch(function () {});
-            else lockLandscape();
+            tryNativeLandscape().then(function (worked) {
+                if (!worked) enterPseudoLandscape();
+            }, function () {
+                enterPseudoLandscape();
+            });
         }
+        function exitFullscreen() {
+            exitPseudoLandscape();
+            if (screen.orientation && screen.orientation.unlock) { try { screen.orientation.unlock(); } catch (e) {} }
+            if (document.fullscreenElement) { try { document.exitFullscreen(); } catch (e) {} }
+        }
+        if (exitBtn) exitBtn.addEventListener("click", exitFullscreen);
+        document.addEventListener("fullscreenchange", function () {
+            if (document.fullscreenElement) return;
+            if (ignoreNextFullscreenExit) { ignoreNextFullscreenExit = false; return; }
+            exitPseudoLandscape();
+        });
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && stage.classList.contains("pseudo-landscape")) exitFullscreen();
+        });
         // "special move": glide to the video, play on arrival, then nudge it flush to the top
         // (a few passes catch any late layout settle so there's no gap/black edge)
         function alignVideoTop() {

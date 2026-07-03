@@ -92,6 +92,7 @@ body {
     background: var(--bg);
     color: var(--ink);
     overflow-x: hidden;
+    overscroll-behavior-y: none;
 }
 a { color: inherit; text-decoration: none; }
 button { color: inherit; font: inherit; border: none; background: none; cursor: pointer; }
@@ -373,6 +374,56 @@ html.video-fallback .hero-video { display: none !important; }
     background: rgba(251, 247, 238, 0.085);
     border-color: rgba(240, 168, 56, 0.36);
 }
+
+/* pseudo-landscape: CSS-only rotate-in-place fallback for platforms (iOS Safari,
+   or any Android that refuses the native fullscreen+orientation-lock combo) where
+   we can't actually spin the OS. Rotates the player, not the device. */
+body.film-landscape-lock { overflow: hidden; }
+.film-stage.pseudo-landscape {
+    position: fixed;
+    inset: 0;
+    left: 50%;
+    top: 50%;
+    z-index: 9999;
+    width: 100dvh;
+    height: 100dvw;
+    max-width: none;
+    aspect-ratio: auto;
+    margin: 0;
+    background: #000;
+    /* .reveal.in sets transform:none at equal specificity and wins on source order —
+       !important is the deliberate escape hatch for this one-off full-viewport mode. */
+    transform: translate(-50%, -50%) rotate(90deg) !important;
+    transform-origin: center center;
+}
+.film-stage.pseudo-landscape .film-video { object-fit: contain; }
+.film-exit {
+    display: none;
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 6;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid rgba(251, 247, 238, 0.2);
+    background: rgba(8, 7, 5, 0.62);
+    color: rgba(251, 247, 238, 0.86);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.film-exit svg {
+    width: 17px;
+    height: 17px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+.film-stage.pseudo-landscape .film-exit { display: flex; }
+
 .story-summary {
     max-width: 920px;
     margin-top: clamp(18px, 3vh, 30px);
@@ -1099,7 +1150,7 @@ html.video-fallback .hero-video { display: none !important; }
 .portal-avatar { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; border: 1px solid var(--ring); flex: none; }
 .portal-head .kicker { margin: 0 0 4px; }
 .portal-title { font-family: var(--footer-serif); font-weight: 600; font-size: clamp(24px, 2.7vw, 31px); line-height: 1.08; }
-.portal-intro { color: var(--muted); font-size: 15.5px; line-height: 1.55; margin-bottom: 22px; max-width: none; }
+.portal-intro { color: var(--muted); font-size: 15.5px; line-height: 1.55; margin-bottom: 22px; max-width: none; text-wrap: balance; text-wrap: pretty; }
 .portal-form { display: flex; flex-direction: column; }
 .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .field { margin-bottom: 14px; }
