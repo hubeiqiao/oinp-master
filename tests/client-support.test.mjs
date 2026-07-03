@@ -118,3 +118,15 @@ test("support click gives immediate in-flight feedback while saving", async () =
   assert.equal(button.attrs["aria-busy"], "true");
   assert.equal(label.textContent, "Counting your support");
 });
+
+test("mobile X and LinkedIn actions prefer app-scheme links with web fallback", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
+
+  assert.match(html, /class="footer-social-x" href="https:\/\/x\.com\/hubeiqiao" data-app-href="twitter:\/\/user\?screen_name=hubeiqiao" data-web-href="https:\/\/x\.com\/hubeiqiao"/);
+  assert.match(html, /class="footer-social-linkedin" href="https:\/\/linkedin\.com\/in\/hubeiqiao" data-app-href="linkedin:\/\/in\/hubeiqiao" data-web-href="https:\/\/linkedin\.com\/in\/hubeiqiao"/);
+
+  assert.match(script, /function initAppSchemeLinks\(\)/);
+  assert.match(script, /twitter:\/\/post\?message=/);
+  assert.match(script, /linkedin:\/\/shareArticle\?mini=true/);
+});

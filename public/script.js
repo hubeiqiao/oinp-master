@@ -348,15 +348,65 @@
     }
 
     /* ---------- sharing ---------- */
+    function isMobileLike() {
+        var ua = navigator.userAgent || "";
+        return /Android|iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+    }
     function openShare(u) { window.open(u, "_blank", "noopener,noreferrer,width=640,height=600"); }
+    function openAppOrFallback(appHref, webHref) {
+        if (!appHref || !isMobileLike()) return false;
+        var fallbackHref = webHref || appHref;
+        var settled = false;
+        var timer = null;
+        function settle() {
+            settled = true;
+            if (timer) clearTimeout(timer);
+            document.removeEventListener("visibilitychange", onVisibility);
+            window.removeEventListener("pagehide", settle);
+        }
+        function onVisibility() {
+            if (document.hidden) settle();
+        }
+        document.addEventListener("visibilitychange", onVisibility);
+        window.addEventListener("pagehide", settle, { once: true });
+        timer = setTimeout(function () {
+            if (settled || document.hidden) return;
+            settle();
+            window.location.href = fallbackHref;
+        }, 900);
+        window.location.href = appHref;
+        return true;
+    }
+    function appShareUrl(kind, url) {
+        if (kind === "x") return "twitter://post?message=" + encodeURIComponent(SHARE_TEXT + "\n\n" + url);
+        if (kind === "linkedin") return "linkedin://shareArticle?mini=true&url=" + encodeURIComponent(url) + "&title=" + encodeURIComponent(SHARE_TITLE);
+        return "";
+    }
     function shareUrlFor(kind) { return SHARE_URL + "?utm_source=" + kind; }
     function shareTo(kind, btn) {
-        if (kind === "linkedin") openShare("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(shareUrlFor("linkedin")));
-        else if (kind === "x") openShare("https://x.com/intent/post?text=" + encodeURIComponent(SHARE_TEXT) + "&url=" + encodeURIComponent(shareUrlFor("x")));
+        if (kind === "linkedin") {
+            var linkedInUrl = shareUrlFor("linkedin");
+            var linkedInWeb = "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(linkedInUrl);
+            if (!openAppOrFallback(appShareUrl("linkedin", linkedInUrl), linkedInWeb)) openShare(linkedInWeb);
+        }
+        else if (kind === "x") {
+            var xUrl = shareUrlFor("x");
+            var xWeb = "https://x.com/intent/post?text=" + encodeURIComponent(SHARE_TEXT) + "&url=" + encodeURIComponent(xUrl);
+            if (!openAppOrFallback(appShareUrl("x", xUrl), xWeb)) openShare(xWeb);
+        }
         else if (kind === "email") emailShare();
         else if (kind === "copy") copyLink(btn);
         else if (kind === "native") nativeShare();
         else if (kind === "native-or-copy") { if (navigator.share) nativeShare(); else copyLink(btn); }
+    }
+    function initAppSchemeLinks() {
+        document.querySelectorAll("[data-app-href]").forEach(function (link) {
+            link.addEventListener("click", function (e) {
+                if (!isMobileLike()) return;
+                e.preventDefault();
+                openAppOrFallback(link.getAttribute("data-app-href"), link.getAttribute("data-web-href") || link.href);
+            });
+        });
     }
     function copyPayload() { return NATIVE_TEXT + "\n\n" + shareUrlFor("copy"); }
     function copyLink(btn) {
@@ -999,6 +1049,7 @@
         initReveals();
         initFaqDetails();
         initFilm();
+        initAppSchemeLinks();
         initShare();
         initCalActions();
         initFooterAvatarPop();

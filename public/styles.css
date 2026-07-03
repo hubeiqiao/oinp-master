@@ -2412,9 +2412,10 @@ body.film-landscape-lock { overflow: hidden; }
 
     .story-footer {
         min-height: 0 !important;
+        min-block-size: 0 !important;
         height: auto;
-        display: flex;
-        flex-direction: column;
+        block-size: auto;
+        display: block;
         border-top-color: rgba(251, 247, 238, 0.18);
         overflow-x: clip;
         overflow-y: visible;
@@ -2422,8 +2423,10 @@ body.film-landscape-lock { overflow: hidden; }
     .footer-photo {
         position: relative;
         inset: auto;
-        height: min(51svh, 420px);
-        min-height: 390px;
+        height: 390px;
+        height: clamp(300px, 51svh, 390px);
+        min-height: 0;
+        min-block-size: 0;
         overflow: hidden;
     }
     .footer-photo img {
@@ -2451,6 +2454,9 @@ body.film-landscape-lock { overflow: hidden; }
     }
     .footer-canvas {
         min-height: 0 !important;
+        min-block-size: 0 !important;
+        height: auto;
+        block-size: auto;
         display: block;
         margin-top: -40px;
         padding: 0 clamp(24px, 6vw, 34px) max(26px, env(safe-area-inset-bottom));
