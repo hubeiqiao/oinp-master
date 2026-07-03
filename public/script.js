@@ -660,6 +660,7 @@
         var askEl = root.querySelector("[data-support-ask]");
         var thanksEl = root.querySelector("[data-support-thanks]");
         var btn = root.querySelector("[data-support-btn]");
+        var btnLabel = root.querySelector(".btn-support-label");
         var errEl = root.querySelector("[data-support-error]");
         var countEl = root.querySelector("[data-support-count]");
         var receiptEl = root.querySelector("[data-support-receipt]");
@@ -691,6 +692,16 @@
             if (thanksEl) { thanksEl.hidden = false; if (!animate) thanksEl.style.animation = "none"; }
             showReceipt(); refreshCount();
         }
+        var btnText = btnLabel ? btnLabel.textContent : "";
+        function setSupportLoading(on) {
+            if (!btn) return;
+            if (on) btn.classList.add("is-loading");
+            else btn.classList.remove("is-loading");
+            btn.disabled = !!on;
+            if (on) btn.setAttribute("aria-busy", "true");
+            else btn.removeAttribute("aria-busy");
+            if (btnLabel) btnLabel.textContent = on ? "Counting your support" : btnText;
+        }
         function showError(msg) { if (errEl) { errEl.textContent = msg; errEl.hidden = false; } }
         function clearError() { if (errEl) errEl.hidden = true; }
 
@@ -698,7 +709,7 @@
 
         function submit(isRetry) {
             clearError();
-            btn.classList.add("is-loading");
+            setSupportLoading(true);
             Promise.all([getNonce(), getTurnstileToken()]).then(function (vals) {
                 return postJSONFull("/api/support", { token: state.token, nonce: vals[0], turnstileToken: vals[1], source: "oinp-homepage", company: "" });
             }).then(function (res) {
@@ -707,7 +718,7 @@
                     state.supported = true; state.receipt = d.receipt;
                     if (d.updateToken) state.updateToken = d.updateToken;
                     saveState(state);
-                    btn.classList.remove("is-loading");
+                    setSupportLoading(false);
                     showThanks(true);
                     fetchNonce(); // prime a fresh single-use nonce for a possible story submission
                     return;
@@ -715,7 +726,7 @@
                 if (d && (d.reason === "nonce" || d.reason === "too_fast" || d.reason === "nonce_used") && !isRetry) {
                     return fetchNonce().then(function () { return new Promise(function (rs) { setTimeout(rs, 900); }); }).then(function () { submit(true); });
                 }
-                btn.classList.remove("is-loading");
+                setSupportLoading(false);
                 if (res.status === 0) showError("Couldn\u2019t reach the server \u2014 your support may not be saved. Please try again.");
                 else if (d && d.reason === "rate") showError("Too many attempts right now. Please try again in a few minutes.");
                 else showError("Something went wrong \u2014 your support wasn\u2019t saved. Please try again.");

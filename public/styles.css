@@ -82,7 +82,6 @@ html {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-size-adjust: 100%;
-    overflow-x: hidden;
 }
 body {
     margin: 0;
@@ -1060,7 +1059,12 @@ body.film-landscape-lock { overflow: hidden; }
 .support-lead { text-align: center; }
 .support-lead .display { font-size: clamp(30px, 4.4vw, 50px); }
 .support-lead .lede { font-size: clamp(16.5px, 1.5vw, 18.5px); max-width: 940px; margin-inline: auto; }
-.btn-support { margin: 30px auto 0; }
+.btn-support {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin: 30px auto 0;
+}
 .support-micro { margin: 16px auto 0; max-width: min(100%, 92ch); font-size: 13px; color: var(--quiet); line-height: 1.5; white-space: nowrap; }
 .support-micro a, .support-count a { color: var(--ink); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: color var(--dur) var(--ease-smooth); }
 .support-micro a:hover, .support-count a:hover { color: var(--amber-bright); }
@@ -1137,8 +1141,26 @@ body.film-landscape-lock { overflow: hidden; }
     color: var(--quiet);
 }
 /* heart-fill micro-moment while the signal is being counted */
+.btn-support .ico-heart,
+.btn-support .btn-support-label { position: relative; z-index: 1; }
 .btn-support .ico-heart { transform-origin: center; }
+.btn-support.is-loading {
+    cursor: wait;
+    transform: translateY(-1px);
+    box-shadow: 0 18px 48px -12px rgba(246,180,80,0.62), 0 0 0 1px rgba(255,234,190,0.42) inset;
+}
+.btn-support.is-loading::after {
+    content: "";
+    position: absolute;
+    inset: -45% -18%;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(100deg, transparent 16%, rgba(255,255,255,0.35) 42%, transparent 68%);
+    transform: translateX(-75%) rotate(4deg);
+    animation: supportSweep 1.05s var(--ease-smooth) infinite;
+}
 .btn-support.is-loading .ico-heart { animation: heartbeat 0.9s var(--ease-smooth) infinite; }
+@keyframes supportSweep { to { transform: translateX(75%) rotate(4deg); } }
 @keyframes heartbeat { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.22); } 55% { transform: scale(1.04); } 70% { transform: scale(1.16); } }
 @keyframes rise-in { from { opacity: 0; transform: translateY(14px); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
 .support-check { display: grid; place-items: center; width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: var(--amber-soft); box-shadow: 0 0 0 1px var(--amber-line) inset; animation: pop var(--dur-slow) var(--ease-spring) both; }
@@ -1984,7 +2006,6 @@ body.film-landscape-lock { overflow: hidden; }
 }
 
 @media (max-width: 760px) {
-    html,
     body {
         max-width: 100%;
         overflow-x: hidden;
@@ -2720,6 +2741,7 @@ body.film-landscape-lock { overflow: hidden; }
     .film-flag-dot, .film-play-ring { animation: none; }
     .support-thanks, .support-check { animation: none; }
     .btn-support.is-loading .ico-heart { animation: none; }
+    .btn-support.is-loading::after { display: none; }
     .photo img, .ask-photo img { transition: none; }
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }

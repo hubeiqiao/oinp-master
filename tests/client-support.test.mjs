@@ -10,7 +10,7 @@ async function loadSupportHelpers() {
   const source = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const instrumented = source.replace(
     "    var _nonce = null, _noncePromise = null;",
-    "    globalThis.__supportTest = { ensureToken: ensureToken };\n    var _nonce = null, _noncePromise = null;",
+    "    globalThis.__supportTest = { ensureToken: ensureToken, initSupport: initSupport };\n    var _nonce = null, _noncePromise = null;",
   );
   const storage = new Map();
   const context = vm.createContext({
@@ -50,7 +50,16 @@ async function loadSupportHelpers() {
   context.window.document = context.document;
   context.window.localStorage = context.localStorage;
   vm.runInContext(instrumented, context, { filename: "public/script.js" });
-  return context.__supportTest;
+  return { ...context.__supportTest, context };
+}
+
+function classList() {
+  const names = new Set();
+  return {
+    add(name) { names.add(name); },
+    remove(name) { names.delete(name); },
+    contains(name) { return names.has(name); },
+  };
 }
 
 test("support token is regenerated when stored browser state is malformed", async () => {
@@ -69,4 +78,43 @@ test("support token is regenerated when stored browser state is malformed", asyn
   assert.equal(state.supported, false);
   assert.equal(state.receipt, "");
   assert.equal(state.updateToken, "");
+});
+
+test("support click gives immediate in-flight feedback while saving", async () => {
+  const { initSupport, context } = await loadSupportHelpers();
+  const label = { textContent: "I support fair pathways" };
+  const button = {
+    classList: classList(),
+    disabled: false,
+    attrs: {},
+    setAttribute(name, value) { this.attrs[name] = String(value); },
+    removeAttribute(name) { delete this.attrs[name]; },
+    addEventListener(_event, handler) { this.click = handler; },
+  };
+  const elements = {
+    "[data-support-ask]": { hidden: false },
+    "[data-support-thanks]": { hidden: true, style: {} },
+    "[data-support-btn]": button,
+    "[data-support-error]": { hidden: true, textContent: "" },
+    "[data-support-count]": null,
+    "[data-support-receipt]": null,
+    "[data-signature-num]": null,
+    "[data-signature-count]": null,
+    ".btn-support-label": label,
+  };
+  const rootNode = {
+    querySelector(selector) {
+      return elements[selector] || null;
+    },
+  };
+  context.fetch = () => new Promise(() => {});
+  context.document.querySelector = (selector) => selector === "[data-support]" ? rootNode : null;
+
+  initSupport();
+  button.click();
+
+  assert.equal(button.classList.contains("is-loading"), true);
+  assert.equal(button.disabled, true);
+  assert.equal(button.attrs["aria-busy"], "true");
+  assert.equal(label.textContent, "Counting your support");
 });
