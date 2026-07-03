@@ -743,14 +743,14 @@ body.film-landscape-lock { overflow: hidden; }
 .res-card:hover::after { background: var(--amber-bright); color: #160d02; transform: translate(2px, -2px) scale(1.05); }
 .res-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-elevated); background: var(--surface-2); }
 .res-thumb { display: flex; align-items: center; justify-content: center; aspect-ratio: 16 / 10; overflow: hidden; padding: 10px; background: #14110d; border-bottom: 1px solid var(--line-soft); }
-.res-thumb img {
+.res-thumb img, .res-thumb video {
     max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain;
     border-radius: 5px;
     box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.06), 0 8px 20px -8px rgba(0, 0, 0, 0.7);
     filter: brightness(0.94) saturate(0.96);
     transition: transform var(--dur) var(--ease-smooth), filter var(--dur) var(--ease-smooth);
 }
-.res-card:hover .res-thumb img { transform: scale(1.03); filter: none; }
+.res-card:hover .res-thumb img, .res-card:hover .res-thumb video { transform: scale(1.03); filter: none; }
 .res-body { display: flex; flex-direction: column; gap: 9px; padding: clamp(18px, 2vw, 24px); flex: 1; }
 .res-label { font-family: var(--sans); font-weight: 600; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--quiet); }
 .res-title { font-family: var(--sans); font-weight: 650; font-size: clamp(18px, 1.8vw, 21px); line-height: 1.15; letter-spacing: -0.01em; }
