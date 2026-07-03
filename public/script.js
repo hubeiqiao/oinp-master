@@ -162,6 +162,31 @@
                 });
             } catch (e) {}
         }
+        var FULL_SRC = "media/oinp-feedback-story-full.mp4";
+        // Engaging plays the whole ~2:03 story (hook included) from one continuous file —
+        // it's a different hook than the hero's own background loop (this one belongs to
+        // the video itself, played only once the viewer opts in), not a stand-in for it.
+        // No quality-tier picking here: Cloudflare Workers Assets caps individual files at
+        // 25MiB, which only leaves room for one well-optimized 720p file for a ~2:03 clip —
+        // a genuinely better 1080p tier isn't feasible without moving video delivery off
+        // Workers Assets (e.g. R2 or Stream), which is a bigger call than this fix.
+        // Calling play() synchronously right after changing `src` doesn't reliably start
+        // playback — the browser hasn't loaded the new source yet, and the request can
+        // silently go nowhere. Waiting for loadedmetadata before calling play() is what
+        // actually works.
+        function swapSrcAndPlay(src) {
+            function tryPlay() {
+                var p = video.play();
+                if (p && p.catch) p.catch(function () { setTimeout(function () { video.play().catch(function () {}); }, 60); });
+            }
+            function onReady() {
+                video.removeEventListener("loadedmetadata", onReady);
+                try { video.currentTime = 0; } catch (e) {}
+                tryPlay();
+            }
+            video.addEventListener("loadedmetadata", onReady);
+            video.src = src;
+        }
         function engage(options) {
             var reset = !options || options.reset !== false;
             engaged = true;
@@ -170,13 +195,8 @@
             video.loop = false;
             video.muted = false;
             setLockScreenArtwork();
-            if (reset) {
-                try { video.currentTime = 0; } catch (e) {}
-            }
-            // Playback starts controls-free — a clear, clean video. Native controls only
-            // show up if the viewer explicitly taps the video itself (see the toggle
-            // listener below), not automatically the moment playback begins.
-            var p = video.play(); if (p && p.catch) p.catch(function () {});
+            if (reset) swapSrcAndPlay(FULL_SRC);
+            else { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
         }
         // Two different "landscape" stories, handled on purpose:
         // - Android can genuinely rotate the OS via Fullscreen + Orientation-Lock, so try that first.
@@ -265,12 +285,14 @@
         }
         if (playBtn) playBtn.addEventListener("click", playInPlace);
         if (fullscreenBtn) fullscreenBtn.addEventListener("click", openFullscreen);
-        // Once engaged, tapping the video itself (not the play/fullscreen/exit buttons)
-        // toggles the native controls — that's the "click the video" the clear-video-by-
-        // default request refers to.
+        // Native controls stay OFF through playback start — real iOS force-shows its
+        // control overlay (pause, ±10s, AirPlay...) the moment `controls` flips to true
+        // during playback, so even enabling it on the "playing" event still splashed the
+        // overlay over the opening frame on real iPhones (simulator/desktop don't do
+        // this). Instead the first tap on the video itself turns native controls on;
+        // from then on the browser owns everything (seek bar, pause, fullscreen).
         video.addEventListener("click", function () {
-            if (!engaged) return;
-            video.controls = !video.controls;
+            if (engaged && !video.controls) video.controls = true;
         });
         var heroCta = document.querySelector(".btn-watch");
         if (heroCta) heroCta.addEventListener("click", navigateAndEngage);
@@ -909,41 +931,6 @@
 
     /* ---- ask descriptions wrap normally to ~two lines (see CSS) ---- */
 
-    /* ---- iOS Safari ignores `overscroll-behavior` on the root scroller (it only honors it
-       on nested scroll containers), so the page still elastic-bounces past the top/bottom —
-       this blocks the bounce there while leaving normal scrolling and inner scrollers (e.g.
-       the story textarea) untouched. */
-    function initEdgeBounceGuard() {
-        var lastY = 0;
-        var trackedTouch = null;
-        function isInsideScrollable(el) {
-            while (el && el !== document.body) {
-                if (el.tagName === "TEXTAREA" || el.tagName === "SELECT") return true;
-                if (el.scrollHeight > el.clientHeight + 1) {
-                    var oy = getComputedStyle(el).overflowY;
-                    if (oy === "auto" || oy === "scroll") return true;
-                }
-                el = el.parentElement;
-            }
-            return false;
-        }
-        document.addEventListener("touchstart", function (e) {
-            trackedTouch = e.touches[0].identifier;
-            lastY = e.touches[0].clientY;
-        }, { passive: true });
-        document.addEventListener("touchmove", function (e) {
-            var touch = e.touches[0];
-            if (!touch || touch.identifier !== trackedTouch) return;
-            var y = touch.clientY, movingDown = y > lastY;
-            lastY = y;
-            if (isInsideScrollable(e.target)) return;
-            var doc = document.documentElement;
-            var atTop = window.scrollY <= 0;
-            var atBottom = Math.ceil(window.scrollY + window.innerHeight) >= doc.scrollHeight;
-            if ((atTop && movingDown) || (atBottom && !movingDown)) e.preventDefault();
-        }, { passive: false });
-    }
-
     document.addEventListener("DOMContentLoaded", function () {
         initSmoothScroll();
         initTopmark();
@@ -961,6 +948,5 @@
         initTurnstile();
         initSupport();
         initStoryPortal();
-        initEdgeBounceGuard();
     });
 })();
