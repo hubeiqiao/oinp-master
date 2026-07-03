@@ -139,7 +139,11 @@ test("homepage exposes visible answer sections for search and answer engines", a
   assert.match(html, /The work is visible/);
   assert.doesNotMatch(html, /The proof is real/);
   assert.match(html, /The former graduate streams will issue no more invitations\./);
-  assert.match(html, /The question is bigger: <em>does Canada know how to keep builders\?<\/em>/);
+  assert.match(html, /The question is bigger:<br class="mobile-line-break"> <span class="answer-highlight arc-question"><em>does Canada know how to keep builders\?<\/em><\/span>/);
+  assert.match(html, /href="https:\/\/joespeaking\.com" target="_blank" rel="noopener">a product<\/a>/);
+  assert.match(html, /href="https:\/\/justjoetech\.ca" target="_blank" rel="noopener">a company<\/a>/);
+  assert.match(html, /<a class="person-link" href="https:\/\/www\.ontario\.ca\/page\/2026-ontario-immigrant-nominee-program-updates" target="_blank" rel="noopener">Ontario redesigned the Ontario Immigrant Nominee Program \(OINP\)<\/a>/);
+  assert.doesNotMatch(html, /<span class="arc-source">/);
   assert.match(html, /id="story-summary"/);
   assert.match(html, /The short version/);
   assert.match(html, /Evidence and resources/);
@@ -160,7 +164,8 @@ test("homepage exposes visible answer sections for search and answer engines", a
 test("film copy uses Joe in third person", async () => {
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
 
-  assert.match(html, /This is a 2-minute story about how Canada helped Joe become a builder/);
+  assert.match(html, /This is a 2-minute story about how Canada helped <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> <span class="answer-highlight">become a builder<\/span>/);
+  assert.match(html, /why people already building here need <span class="answer-highlight">fair ways to be recognized<\/span>/);
   assert.doesNotMatch(html, /Canada helped me/);
   assert.doesNotMatch(html, /how Canada helped me/);
 });
@@ -168,8 +173,9 @@ test("film copy uses Joe in third person", async () => {
 test("answer copy uses highlights, full program name, and Joe profile links", async () => {
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
 
+  assert.match(html, /Canada helped <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> become a builder\. Here, he studied, built, registered a company, and found community\. Then the pathway changed\. Can Canada recognize builders in time\?/);
   assert.match(html, /<span class="answer-highlight">studied, built his first product, registered a company, and found community<\/span>/);
-  assert.match(html, /<span class="answer-highlight">Joe became one story in a broader question<\/span>/);
+  assert.match(html, /<span class="answer-highlight"><a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> became one story in a broader question<\/span>/);
   assert.match(html, /early-stage contributors it helped train/);
   assert.match(html, /Ontario redesigned the Ontario Immigrant Nominee Program \(OINP\)/);
   assert.doesNotMatch(html, /Ontario redesigned OINP/);
@@ -177,24 +183,47 @@ test("answer copy uses highlights, full program name, and Joe profile links", as
   assert.match(html, /<a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe Hu<\/a>/);
 });
 
-test("resources are two exhibits plus three official record rows", async () => {
+test("resources are three exhibits plus two official record rows", async () => {
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
   const resources = html.match(/<section class="resources"[\s\S]*?<\/section>/)?.[0] || "";
 
   assert.match(resources, /<div class="resources-title-line">/);
   assert.match(resources, /<h2>Proof behind the story<\/h2>/);
   assert.match(resources, /What <a class="person-link" href="https:\/\/hubeiqiao\.com\/" target="_blank" rel="noopener">Joe<\/a> built, who&rsquo;s vouched for it/);
+  assert.match(resources, /Hand-picked for Y Combinator&rsquo;s Startup School 2026/);
+  assert.match(resources, /selected from a highly competitive founder pool/);
+  assert.match(resources, /The longer essay: leaving an old work rhythm, rebuilding confidence in Canada, and turning that space into Joe Speaking\./);
 
-  const exhibits = [...resources.matchAll(/<span class="res-title">([^<]+)<\/span>/g)].map((match) => match[1]);
+  const exhibits = [...resources.matchAll(/<span class="res-title res-title-link">([^<]+)<svg class="res-arrow res-title-arrow"/g)].map((match) => match[1]);
   assert.deepEqual(exhibits, ["Joe Speaking", "YC Startup School 2026", "Joe&rsquo;s Canada journey"]);
+  assert.doesNotMatch(resources, /<span class="res-link">joespeaking\.com/);
+  assert.doesNotMatch(resources, /<span class="res-link">events\.ycombinator\.com/);
+  assert.doesNotMatch(resources, /<span class="res-link">hubeiqiao\.com/);
 
-  const records = [...resources.matchAll(/<span class="record-title">([^<]+)<\/span>/g)].map((match) => match[1]);
+  const recordList = resources.match(/<ol class="record-list[\s\S]*?<\/ol>/)?.[0] || "";
+  const records = [...recordList.matchAll(/<span class="record-title">([^<]+)<\/span>/g)].map((match) => match[1]);
   assert.deepEqual(records, ["OINP redesign", "Start-Up Visa status"]);
 
   assert.match(resources, /1,200\+/);
   assert.match(resources, /30\+/);
   assert.match(resources, /hubeiqiao\.com\/blog\/38b0df12-ec77-80dd-8670-fecc77f7b51b/);
   assert.doesNotMatch(html, /notion\.so/);
+});
+
+test("resources include external story between proof cards and official records", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const resources = html.match(/<section class="resources"[\s\S]*?<\/section>/)?.[0] || "";
+
+  const proofCardIndex = resources.indexOf("Joe Speaking");
+  const externalStoryIndex = resources.indexOf("Built the examiner he needed");
+  const officialRecordIndex = resources.indexOf("OINP redesign");
+
+  assert.ok(proofCardIndex >= 0, "proof cards should be present before the external story");
+  assert.ok(externalStoryIndex > proofCardIndex, "external story should appear after proof cards");
+  assert.ok(officialRecordIndex > externalStoryIndex, "official records should appear after the external story");
+  assert.match(resources, /External story/);
+  assert.match(resources, /A third-party story on how he turned his English-speaking struggle into Joe Speaking\./);
+  assert.match(resources, /https:\/\/byvi\.co\/2026\/07\/02\/joe-hu-built-his-own-ielts-examiner\//);
 });
 
 test("faq details use single-open accordion behavior", async () => {
@@ -226,4 +255,13 @@ test("AEO guards: video uploadDate, FAQ count, and markdown twins stay aligned",
     assert.match(surface, /will issue no more invitations/);
     assert.match(surface, /the people caught in that gap/);
   }
+});
+
+test("ask section highlights the core policy argument", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const asks = html.match(/<section class="asks"[\s\S]*?<\/section>/)?.[0] || "";
+
+  assert.match(asks, /<span class="signal-context">Job offers and language scores matter\. So do the products, companies, and research people build first\.<\/span>/);
+  assert.doesNotMatch(asks, /class="ask-highlight"/);
+  assert.match(asks, /<strong class="ask-line-highlight">fair policy should protect the people caught in that gap\.<\/strong>/);
 });
