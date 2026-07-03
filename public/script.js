@@ -194,9 +194,8 @@
             stage.classList.add("playing");
             video.loop = false;
             video.muted = false;
+            video.controls = true;
             setLockScreenArtwork();
-            // Playback starts controls-free — a clear, clean video. Native controls are
-            // never shown; tapping the video itself toggles play/pause (see below).
             if (reset) swapSrcAndPlay(FULL_SRC);
             else { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
         }
@@ -287,18 +286,6 @@
         }
         if (playBtn) playBtn.addEventListener("click", playInPlace);
         if (fullscreenBtn) fullscreenBtn.addEventListener("click", openFullscreen);
-        // Once engaged, tapping the video itself (not the play/fullscreen/exit buttons)
-        // pauses/resumes playback directly — no native controls involved, ever. The
-        // paused state shows the same ring icon as the initial play button (as a plain
-        // visual cue, pointer-events disabled so the tap-to-resume still lands on the
-        // video's own listener below, not the button).
-        video.addEventListener("play", function () { stage.classList.remove("user-paused"); });
-        video.addEventListener("pause", function () { if (engaged) stage.classList.add("user-paused"); });
-        video.addEventListener("click", function () {
-            if (!engaged) return;
-            if (video.paused) { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
-            else video.pause();
-        });
         var heroCta = document.querySelector(".btn-watch");
         if (heroCta) heroCta.addEventListener("click", navigateAndEngage);
 

@@ -323,9 +323,7 @@ html.video-fallback .hero-video { display: none !important; }
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
     transition: opacity var(--dur) var(--ease-smooth), visibility var(--dur);
 }
-.film-stage.playing .film-play { opacity: 0; visibility: hidden; pointer-events: none; }
-.film-stage.playing .film-play-meta { display: none; }
-.film-stage.playing.user-paused .film-play { opacity: 1; visibility: visible; }
+.film-stage.playing .film-play { opacity: 0; visibility: hidden; }
 .film-play-ring {
     display: grid; place-items: center;
     width: clamp(74px, 8vw, 96px); aspect-ratio: 1; border-radius: 50%;
