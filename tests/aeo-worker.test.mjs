@@ -265,3 +265,18 @@ test("ask section highlights the core policy argument", async () => {
   assert.doesNotMatch(asks, /class="ask-highlight"/);
   assert.match(asks, /<strong class="ask-line-highlight">fair policy should protect the people caught in that gap\.<\/strong>/);
 });
+
+test("mobile CSS prevents horizontal viewport overflow", async () => {
+  const css = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+  const mobile = css.match(/@media \(max-width: 760px\) \{([\s\S]*?)\n\}\n\n@media \(max-width: 400px\)/)?.[1] || "";
+
+  assert.match(css, /html \{[\s\S]*overflow-x: hidden;/);
+  assert.match(css, /body \{[\s\S]*width: 100%;[\s\S]*max-width: 100%;[\s\S]*overflow-x: hidden;/);
+  assert.match(mobile, /html,\n    body \{[\s\S]*overflow-x: hidden;[\s\S]*overscroll-behavior-x: none;/);
+  assert.match(mobile, /\.hero-eyebrow \{[\s\S]*white-space: normal;[\s\S]*overflow-wrap: anywhere;/);
+  assert.match(mobile, /\.hero-actions \{ max-width: 100%; min-width: 0;/);
+  assert.match(mobile, /\.film-title \{[\s\S]*white-space: normal;[\s\S]*overflow-wrap: break-word;/);
+  assert.match(mobile, /\.film-stage \{ width: 100%; max-width: 100%;/);
+  assert.match(mobile, /\.arc-question \{[\s\S]*white-space: normal;[\s\S]*overflow-wrap: break-word;/);
+  assert.match(mobile, /\.footer-copy-open \{[\s\S]*white-space: normal;/);
+});
