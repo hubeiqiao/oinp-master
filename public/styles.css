@@ -76,7 +76,6 @@ p, .res-desc, .record-desc, .ask-desc { text-wrap: balance; text-wrap: pretty; }
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 28px;
-    overflow-x: hidden;
     overscroll-behavior-y: none;
     background: var(--bg);
     color: var(--ink);
