@@ -169,11 +169,13 @@
             stage.classList.add("playing");
             video.loop = false;
             video.muted = false;
-            video.controls = true;
             setLockScreenArtwork();
             if (reset) {
                 try { video.currentTime = 0; } catch (e) {}
             }
+            // Playback starts controls-free — a clear, clean video. Native controls only
+            // show up if the viewer explicitly taps the video itself (see the toggle
+            // listener below), not automatically the moment playback begins.
             var p = video.play(); if (p && p.catch) p.catch(function () {});
         }
         // Two different "landscape" stories, handled on purpose:
@@ -263,6 +265,13 @@
         }
         if (playBtn) playBtn.addEventListener("click", playInPlace);
         if (fullscreenBtn) fullscreenBtn.addEventListener("click", openFullscreen);
+        // Once engaged, tapping the video itself (not the play/fullscreen/exit buttons)
+        // toggles the native controls — that's the "click the video" the clear-video-by-
+        // default request refers to.
+        video.addEventListener("click", function () {
+            if (!engaged) return;
+            video.controls = !video.controls;
+        });
         var heroCta = document.querySelector(".btn-watch");
         if (heroCta) heroCta.addEventListener("click", navigateAndEngage);
 
