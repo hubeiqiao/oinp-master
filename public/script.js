@@ -166,8 +166,18 @@
             if (!engaged) engage();
             else engage({ reset: false });
 
-            if (typeof video.webkitEnterFullscreen === "function") {
-                try { video.webkitEnterFullscreen(); } catch (err) {}
+            function tryWebkitFullscreen() {
+                if (typeof video.webkitEnterFullscreen !== "function") return false;
+                try { video.webkitEnterFullscreen(); } catch (err) { return false; }
+                return true;
+            }
+
+            if (tryWebkitFullscreen()) {
+                // iOS: if the video wasn't buffered enough yet, the first call can silently
+                // no-op — retry once it has actually entered its native fullscreen player.
+                setTimeout(function () {
+                    if (!video.webkitDisplayingFullscreen) tryWebkitFullscreen();
+                }, 250);
                 return;
             }
 

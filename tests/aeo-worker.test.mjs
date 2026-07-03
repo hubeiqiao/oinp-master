@@ -139,7 +139,7 @@ test("homepage exposes visible answer sections for search and answer engines", a
   assert.match(html, /The work is visible/);
   assert.doesNotMatch(html, /The proof is real/);
   assert.match(html, /The former graduate streams will issue no more invitations\./);
-  assert.match(html, /The question is bigger:<br class="mobile-line-break"> <span class="answer-highlight arc-question"><em>does Canada know how to keep builders\?<\/em><\/span>/);
+  assert.match(html, /The question is bigger:<\/span><br class="mobile-line-break"> <span class="answer-highlight arc-question"><em>does Canada know how to keep builders\?<\/em><\/span>/);
   assert.match(html, /href="https:\/\/joespeaking\.com" target="_blank" rel="noopener">a product<\/a>/);
   assert.match(html, /href="https:\/\/justjoetech\.ca" target="_blank" rel="noopener">a company<\/a>/);
   assert.match(html, /<a class="person-link" href="https:\/\/www\.ontario\.ca\/page\/2026-ontario-immigrant-nominee-program-updates" target="_blank" rel="noopener">Ontario redesigned the Ontario Immigrant Nominee Program \(OINP\)<\/a>/);
