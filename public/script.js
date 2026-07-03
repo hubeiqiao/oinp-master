@@ -162,8 +162,14 @@
                 });
             } catch (e) {}
         }
-        var STORY_SRC = video.querySelector("source") ? video.querySelector("source").src : video.currentSrc;
-        var HOOK_SRC = "media/hero-hook.mp4";
+        var FULL_SRC = "media/oinp-feedback-story-full.mp4";
+        // Engaging plays the whole ~2:03 story (hook included) from one continuous file —
+        // it's a different hook than the hero's own background loop (this one belongs to
+        // the video itself, played only once the viewer opts in), not a stand-in for it.
+        // No quality-tier picking here: Cloudflare Workers Assets caps individual files at
+        // 25MiB, which only leaves room for one well-optimized 720p file for a ~2:03 clip —
+        // a genuinely better 1080p tier isn't feasible without moving video delivery off
+        // Workers Assets (e.g. R2 or Stream), which is a bigger call than this fix.
         // Calling play() synchronously right after changing `src` doesn't reliably start
         // playback — the browser hasn't loaded the new source yet, and the request can
         // silently go nowhere. Waiting for loadedmetadata before calling play() is what
@@ -171,9 +177,6 @@
         function swapSrcAndPlay(src) {
             function tryPlay() {
                 var p = video.play();
-                // The hook clip has no audio track, and some browsers aggressively power-
-                // save/pause video-only background media right after a source swap — a
-                // single retry clears it up.
                 if (p && p.catch) p.catch(function () { setTimeout(function () { video.play().catch(function () {}); }, 60); });
             }
             function onReady() {
@@ -183,21 +186,6 @@
             }
             video.addEventListener("loadedmetadata", onReady);
             video.src = src;
-        }
-        // The muted ambient preview plays the story file alone (it already opens on Joe's
-        // intro), but engaging with sound should play the full ~2:03 — hook included. The
-        // hook lives in a separate, shorter file (it's also reused standalone in the hero),
-        // so playing "the whole thing" means chaining hook -> story rather than one file.
-        function onHookEnded() {
-            video.removeEventListener("ended", onHookEnded);
-            video.removeEventListener("pause", onHookStalled);
-            swapSrcAndPlay(STORY_SRC);
-        }
-        // The hook has no audio track, and some browsers power-save-pause silent
-        // background video right at the tail end, a beat before it actually fires
-        // "ended" — if it's paused essentially at the end, treat that as ended.
-        function onHookStalled() {
-            if (video.duration && video.currentTime >= video.duration - 0.35) onHookEnded();
         }
         function engage(options) {
             var reset = !options || options.reset !== false;
@@ -209,15 +197,8 @@
             setLockScreenArtwork();
             // Playback starts controls-free — a clear, clean video. Native controls are
             // never shown; tapping the video itself toggles play/pause (see below).
-            if (reset) {
-                video.removeEventListener("ended", onHookEnded);
-                video.addEventListener("ended", onHookEnded);
-                video.removeEventListener("pause", onHookStalled);
-                video.addEventListener("pause", onHookStalled);
-                swapSrcAndPlay(HOOK_SRC);
-            } else {
-                var p = video.play(); if (p && p.catch) p.catch(function () {});
-            }
+            if (reset) swapSrcAndPlay(FULL_SRC);
+            else { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
         }
         // Two different "landscape" stories, handled on purpose:
         // - Android can genuinely rotate the OS via Fullscreen + Orientation-Lock, so try that first.
