@@ -195,15 +195,6 @@
             video.loop = false;
             video.muted = false;
             setLockScreenArtwork();
-            // Native controls — never a custom player — but turning them on only once
-            // playback has actually started, not the instant the button is tapped. Doing
-            // it immediately shows the (opaque, mobile-width) native control bar sitting
-            // over a still-blank frame, which reads as "controls first, video second".
-            if (!video.controls) {
-                video.addEventListener("playing", function showControls() {
-                    video.controls = true;
-                }, { once: true });
-            }
             if (reset) swapSrcAndPlay(FULL_SRC);
             else { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
         }
@@ -294,6 +285,15 @@
         }
         if (playBtn) playBtn.addEventListener("click", playInPlace);
         if (fullscreenBtn) fullscreenBtn.addEventListener("click", openFullscreen);
+        // Native controls stay OFF through playback start — real iOS force-shows its
+        // control overlay (pause, ±10s, AirPlay...) the moment `controls` flips to true
+        // during playback, so even enabling it on the "playing" event still splashed the
+        // overlay over the opening frame on real iPhones (simulator/desktop don't do
+        // this). Instead the first tap on the video itself turns native controls on;
+        // from then on the browser owns everything (seek bar, pause, fullscreen).
+        video.addEventListener("click", function () {
+            if (engaged && !video.controls) video.controls = true;
+        });
         var heroCta = document.querySelector(".btn-watch");
         if (heroCta) heroCta.addEventListener("click", navigateAndEngage);
 
