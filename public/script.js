@@ -162,6 +162,43 @@
                 });
             } catch (e) {}
         }
+        var STORY_SRC = video.querySelector("source") ? video.querySelector("source").src : video.currentSrc;
+        var HOOK_SRC = "media/hero-hook.mp4";
+        // Calling play() synchronously right after changing `src` doesn't reliably start
+        // playback — the browser hasn't loaded the new source yet, and the request can
+        // silently go nowhere. Waiting for loadedmetadata before calling play() is what
+        // actually works.
+        function swapSrcAndPlay(src) {
+            function tryPlay() {
+                var p = video.play();
+                // The hook clip has no audio track, and some browsers aggressively power-
+                // save/pause video-only background media right after a source swap — a
+                // single retry clears it up.
+                if (p && p.catch) p.catch(function () { setTimeout(function () { video.play().catch(function () {}); }, 60); });
+            }
+            function onReady() {
+                video.removeEventListener("loadedmetadata", onReady);
+                try { video.currentTime = 0; } catch (e) {}
+                tryPlay();
+            }
+            video.addEventListener("loadedmetadata", onReady);
+            video.src = src;
+        }
+        // The muted ambient preview plays the story file alone (it already opens on Joe's
+        // intro), but engaging with sound should play the full ~2:03 — hook included. The
+        // hook lives in a separate, shorter file (it's also reused standalone in the hero),
+        // so playing "the whole thing" means chaining hook -> story rather than one file.
+        function onHookEnded() {
+            video.removeEventListener("ended", onHookEnded);
+            video.removeEventListener("pause", onHookStalled);
+            swapSrcAndPlay(STORY_SRC);
+        }
+        // The hook has no audio track, and some browsers power-save-pause silent
+        // background video right at the tail end, a beat before it actually fires
+        // "ended" — if it's paused essentially at the end, treat that as ended.
+        function onHookStalled() {
+            if (video.duration && video.currentTime >= video.duration - 0.35) onHookEnded();
+        }
         function engage(options) {
             var reset = !options || options.reset !== false;
             engaged = true;
@@ -170,13 +207,17 @@
             video.loop = false;
             video.muted = false;
             setLockScreenArtwork();
+            // Playback starts controls-free — a clear, clean video. Native controls are
+            // never shown; tapping the video itself toggles play/pause (see below).
             if (reset) {
-                try { video.currentTime = 0; } catch (e) {}
+                video.removeEventListener("ended", onHookEnded);
+                video.addEventListener("ended", onHookEnded);
+                video.removeEventListener("pause", onHookStalled);
+                video.addEventListener("pause", onHookStalled);
+                swapSrcAndPlay(HOOK_SRC);
+            } else {
+                var p = video.play(); if (p && p.catch) p.catch(function () {});
             }
-            // Playback starts controls-free — a clear, clean video. Native controls only
-            // show up if the viewer explicitly taps the video itself (see the toggle
-            // listener below), not automatically the moment playback begins.
-            var p = video.play(); if (p && p.catch) p.catch(function () {});
         }
         // Two different "landscape" stories, handled on purpose:
         // - Android can genuinely rotate the OS via Fullscreen + Orientation-Lock, so try that first.
@@ -266,11 +307,16 @@
         if (playBtn) playBtn.addEventListener("click", playInPlace);
         if (fullscreenBtn) fullscreenBtn.addEventListener("click", openFullscreen);
         // Once engaged, tapping the video itself (not the play/fullscreen/exit buttons)
-        // toggles the native controls — that's the "click the video" the clear-video-by-
-        // default request refers to.
+        // pauses/resumes playback directly — no native controls involved, ever. The
+        // paused state shows the same ring icon as the initial play button (as a plain
+        // visual cue, pointer-events disabled so the tap-to-resume still lands on the
+        // video's own listener below, not the button).
+        video.addEventListener("play", function () { stage.classList.remove("user-paused"); });
+        video.addEventListener("pause", function () { if (engaged) stage.classList.add("user-paused"); });
         video.addEventListener("click", function () {
             if (!engaged) return;
-            video.controls = !video.controls;
+            if (video.paused) { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
+            else video.pause();
         });
         var heroCta = document.querySelector(".btn-watch");
         if (heroCta) heroCta.addEventListener("click", navigateAndEngage);

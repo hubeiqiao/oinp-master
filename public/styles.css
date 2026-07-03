@@ -323,7 +323,9 @@ html.video-fallback .hero-video { display: none !important; }
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
     transition: opacity var(--dur) var(--ease-smooth), visibility var(--dur);
 }
-.film-stage.playing .film-play { opacity: 0; visibility: hidden; }
+.film-stage.playing .film-play { opacity: 0; visibility: hidden; pointer-events: none; }
+.film-stage.playing .film-play-meta { display: none; }
+.film-stage.playing.user-paused .film-play { opacity: 1; visibility: visible; }
 .film-play-ring {
     display: grid; place-items: center;
     width: clamp(74px, 8vw, 96px); aspect-ratio: 1; border-radius: 50%;
@@ -2332,9 +2334,20 @@ body.film-landscape-lock { overflow: hidden; }
         overflow: hidden;
     }
     .footer-photo img {
+        /* A tighter crop needs a bigger box for object-fit:cover to sample from at full
+           source resolution — a CSS transform:scale() here would just stretch the already-
+           rasterized 100%-size bitmap, which is what was causing the softness on mobile.
+           Percentage width/height (not transform) makes object-fit:cover resample directly
+           from the source at the enlarged size; translate (not scale) keeps the recenter
+           free of any extra raster interpolation. */
+        width: 144%;
+        height: 144%;
+        max-width: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         object-position: 88% 47%;
-        transform: scale(1.44);
-        transform-origin: 77% 47%;
         filter: saturate(1.05) contrast(1.03) brightness(0.94);
     }
     .footer-grade {
