@@ -1,4 +1,4 @@
-# Comment on Proposal 25-MLITSD019: A Pragmatic Path for Ontario's Graduate Talent
+# Comment on [Proposal 25-MLITSD019](https://www.regulatoryregistry.gov.on.ca/proposal/52773): A Pragmatic Path for Ontario's Graduate Talent
 
 # Executive Summary
 
@@ -34,11 +34,11 @@ Because AI-focused graduates are highly mobile, predictable and fair pathways ma
 
 ---
 
-# 3. Specific concerns with Proposal 25-MLITSD019
+# 3. Specific concerns with [Proposal 25-MLITSD019](https://www.regulatoryregistry.gov.on.ca/proposal/52773)
 
 ## 3.1 Consolidation into employer-driven pathways
 
-As described, Proposal 25-MLITSD019 would consolidate the current eight OINP streams into a redesigned Employer Job Offer (EJO) stream. For non-healthcare, non-entrepreneur graduate talent, this leaves employer job offer pathways as the primary route to nomination.
+As described, [Proposal 25-MLITSD019](https://www.regulatoryregistry.gov.on.ca/proposal/52773) would consolidate the current eight OINP streams into a redesigned Employer Job Offer (EJO) stream. For non-healthcare, non-entrepreneur graduate talent, this leaves employer job offer pathways as the primary route to nomination.
 
 This structure assumes that the best or only way for international graduates to contribute is to fit quickly into a single stable full-time job. It does not reflect the reality of how many master's and PhD graduates actually create value in early stages: through contract work, startup projects, research collaborations and community teaching that does not always map neatly onto a single employer-driven job offer.
 
@@ -70,7 +70,7 @@ Federal policy is moving in the opposite direction. Starting January 1, 2026, ma
 
 At the same time, national policy discussions, such as the [**"Recognize Commitment to Canada in Immigration"**](https://www.buildcanada.com/memos/recognize-commitment-immigration) proposal by Shopify CEO Tobi Lütke from *Build Canada*, argue that immigrants should be rewarded for ongoing contributions, including Canadian education.
 
-Proposal 25-MLITSD019 cuts against both of these trends. It would remove the main provincial pathway for exactly the group that the federal government and business leaders say Canada should prioritize.
+[Proposal 25-MLITSD019](https://www.regulatoryregistry.gov.on.ca/proposal/52773) cuts against both of these trends. It would remove the main provincial pathway for exactly the group that the federal government and business leaders say Canada should prioritize.
 
 ---
 
@@ -128,7 +128,7 @@ I respectfully ask that the government:
 2. **If the government proceeds with eliminating the existing graduate streams, provide robust transitional protection (grandfathering) for current master’s and PhD students** who began their programs under the existing OINP graduate framework.
 3. **Publish a detailed impact analysis** and commit to transparent review of the new system within 2 to 3 years.
 
-Ontario has an opportunity to align its immigration program with both federal priorities and its own economic goals in the AI era. I urge you to adjust Proposal 25-MLITSD019 so that it retains and supports the graduate talent that is already here and already working to build Ontario's future.
+Ontario has an opportunity to align its immigration program with both federal priorities and its own economic goals in the AI era. I urge you to adjust [Proposal 25-MLITSD019](https://www.regulatoryregistry.gov.on.ca/proposal/52773) so that it retains and supports the graduate talent that is already here and already working to build Ontario's future.
 
 Thank you for considering these comments.
 
