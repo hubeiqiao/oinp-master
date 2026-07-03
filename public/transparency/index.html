@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How we count · Canada helped me become a builder</title>
+    <meta name="description" content="How the supporter count works: one action per browser, de-duplicated, bot-screened, never seeded — recorded in an append-only, tamper-evident ledger.">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://oinp.hubeiqiao.com/transparency/">
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .tp-wrap { max-width: 760px; margin: 0 auto; padding: clamp(28px, 6vw, 72px) clamp(20px, 5vw, 40px) 96px; }
+        .tp-back { display: inline-flex; align-items: center; gap: 8px; font-family: var(--sans); font-weight: 600; font-size: 13px; letter-spacing: 0.02em; color: var(--muted); text-decoration: none; }
+        .tp-back:hover { color: var(--amber-bright); }
+        .tp-kicker { font-family: var(--sans); font-weight: 600; font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber-bright); margin: 40px 0 12px; }
+        .tp-title { font-family: var(--footer-serif); font-weight: 600; font-size: clamp(34px, 6vw, 56px); line-height: 1.05; color: var(--ink); margin: 0 0 14px; letter-spacing: 0; }
+        .tp-lede { font-family: var(--serif); font-size: clamp(16px, 1.6vw, 18.5px); line-height: 1.6; color: var(--muted); margin: 0 0 36px; max-width: 60ch; }
+        .tp-card { border: 1px solid var(--ring, rgba(251,247,238,0.14)); border-radius: var(--r-lg, 18px); background: rgba(8,7,5,0.6); padding: clamp(22px, 3vw, 34px); margin: 26px 0; }
+        .tp-snap-n { font-family: var(--display); font-weight: 600; font-size: clamp(44px, 9vw, 84px); line-height: 1; color: var(--amber-bright); letter-spacing: -0.01em; }
+        .tp-snap-sub { font-family: var(--sans); font-size: 14px; color: var(--quiet); margin-top: 10px; }
+        .tp-h2 { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2.6vw, 26px); color: var(--ink); margin: 44px 0 14px; }
+        .tp-list { list-style: none; margin: 0; padding: 0; }
+        .tp-list li { position: relative; padding-left: 26px; margin: 0 0 14px; font-family: var(--serif); font-size: 15.5px; line-height: 1.6; color: var(--muted); }
+        .tp-list li::before { content: ""; position: absolute; left: 4px; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: var(--amber-bright); }
+        .tp-list b { color: var(--ink); font-weight: 600; }
+        .tp-kv { display: grid; grid-template-columns: 150px 1fr; gap: 8px 16px; font-family: var(--sans); font-size: 13.5px; }
+        .tp-kv dt { color: var(--quiet); }
+        .tp-kv dd { margin: 0; color: var(--ink); }
+        .tp-mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--amber-bright); word-break: break-all; line-height: 1.5; }
+        .tp-foot { margin-top: 48px; padding-top: 22px; border-top: 1px solid var(--line, rgba(251,247,238,0.12)); font-family: var(--sans); font-size: 13px; color: var(--quiet); }
+        .tp-foot a { color: var(--ink); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; }
+        .tp-foot a:hover { color: var(--amber-bright); }
+        .tp-muted { color: var(--faint); }
+    </style>
+</head>
+<body>
+    <main class="tp-wrap">
+        <a class="tp-back" href="/">&larr; Back to the story</a>
+
+        <p class="tp-kicker"><span data-tp-label>Public support</span></p>
+        <h1 class="tp-title">How we count</h1>
+        <p class="tp-lede">A number on an advocacy page is a claim. So here is exactly how this one is produced &mdash; and how you can check it. We would rather show a small honest number than a big unverifiable one.</p>
+
+        <div class="tp-card">
+            <div class="tp-snap-n" data-tp-number>&mdash;</div>
+            <div class="tp-snap-sub" data-tp-sub>Loading the latest figures&hellip;</div>
+        </div>
+
+        <h2 class="tp-h2">The rules</h2>
+        <ul class="tp-list">
+            <li><b>One action per browser, de-duplicated.</b> Refreshes and repeat visits never add up.</li>
+            <li><b>Bot-screened.</b> A honeypot, a minimum time-on-page, per-network rate limits, and (when enabled) an invisible challenge. We do not claim perfect one-person-one-count.</li>
+            <li><b>Never seeded, padded, or purchased.</b> The count starts at zero and only ever reflects real actions.</li>
+            <li><b>Hidden until it&rsquo;s meaningful.</b> The number stays private until it passes a threshold, so a tiny early count is never shown as social proof.</li>
+            <li><b>Append-only, hash-chained ledger.</b> Every change is one entry chained to the last; the displayed total equals the number of active supporters and can be recomputed from the records.</li>
+            <li><b>Your own receipt.</b> Supporting gives you a private receipt code &mdash; you can verify or remove your entry at any time.</li>
+        </ul>
+
+        <h2 class="tp-h2">Verify it yourself</h2>
+        <p class="tp-lede" style="margin-bottom:18px;">This is the current fingerprint of the ledger. We publish it periodically so the history can&rsquo;t be quietly rewritten &mdash; record it and check it later.</p>
+        <div class="tp-card">
+            <dl class="tp-kv">
+                <dt>As of</dt><dd data-tp-asof>&mdash;</dd>
+                <dt>Collecting since</dt><dd data-tp-since>&mdash;</dd>
+                <dt>Ledger root</dt><dd class="tp-mono" data-tp-root>&mdash;</dd>
+                <dt>Last anchor</dt><dd data-tp-anchor>&mdash;</dd>
+            </dl>
+        </div>
+
+        <h2 class="tp-h2">Privacy</h2>
+        <ul class="tp-list">
+            <li><b>What we store.</b> A random per-browser token so you&rsquo;re counted once (no account, no tracking pixels). If you share a story, your name, email, and message.</li>
+            <li><b>Your email.</b> Used only to follow up about this message &mdash; never shown publicly, never sold. Ask us to stop anytime.</li>
+            <li><b>Where it lives.</b> Records are stored on Cloudflare and may be processed outside Canada.</li>
+            <li><b>Removal &amp; correction.</b> To remove or update anything, contact Joe at <a href="mailto:hi@hubeiqiao.com" style="color:var(--amber-bright)">hi@hubeiqiao.com</a> &mdash; your support and any story are deleted and the count adjusts.</li>
+        </ul>
+
+        <div class="tp-foot">
+            Part of <a href="/">Canada helped me become a builder</a> &middot; built in Ottawa by Joe Hu &middot;
+            <a href="/archive/proposal-25-mlitsd019/">the full policy feedback</a>.
+        </div>
+    </main>
+
+    <script>
+        (function () {
+            function t(sel) { return document.querySelector(sel); }
+            function fmtDate(s) { if (!s) return "\u2014"; try { var d = new Date(s); return d.toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" }); } catch (e) { return s; } }
+            fetch("/api/transparency").then(function (r) { return r.json(); }).then(function (d) {
+                if (!d) throw new Error("no data");
+                if (d.show && typeof d.total === "number") {
+                    t("[data-tp-number]").textContent = d.total.toLocaleString();
+                    t("[data-tp-sub]").textContent = "people support this message" + (typeof d.removed === "number" && d.removed > 0 ? " \u00b7 " + d.removed + " removed in moderation" : "");
+                } else {
+                    t("[data-tp-number]").textContent = "Collecting";
+                    t("[data-tp-number]").style.fontSize = "clamp(28px,5vw,44px)";
+                    t("[data-tp-sub]").textContent = "The count appears here once it passes " + (d.threshold || 50) + " supporters.";
+                }
+                t("[data-tp-asof]").textContent = fmtDate(d.as_of);
+                t("[data-tp-since]").textContent = d.since || "\u2014";
+                t("[data-tp-root]").textContent = d.ledger_root || "\u2014";
+                t("[data-tp-anchor]").textContent = d.last_anchor && d.last_anchor.published_at
+                    ? fmtDate(d.last_anchor.published_at) + " (seq " + d.last_anchor.seq + ")"
+                    : "not yet anchored";
+            }).catch(function () {
+                t("[data-tp-sub]").textContent = "Couldn\u2019t load the latest figures right now.";
+            });
+        })();
+    </script>
+</body>
+</html>

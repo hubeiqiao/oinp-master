@@ -2,5 +2,36 @@ name = "oinp"
 main = "worker.js"
 compatibility_date = "2025-12-05"
 
-# Serve static files from the repo root
-assets = { directory = ".", binding = "ASSETS" }
+# Reuse the EXISTING Worker service "oinp" on this account (do NOT create a new Worker).
+# `wrangler deploy` matches by name + account_id and updates that same service in place.
+account_id = "715eeba5ac9c4d46450860c95870f56a"
+
+# Serve static files from the dedicated public/ directory.
+# Private/source files (worker.js, wrangler.toml, docs/, assets/, README.md,
+# the policy-comment .md, .claude/, .wrangler/, .DS_Store) stay OUTSIDE public/
+# so Workers Assets never exposes them.
+# run_worker_first: route requests through worker.js so the AEO layer
+# (markdown negotiation, Content-Signal, Link headers) actually executes.
+# Without it, Workers Assets serves "/" directly and that code never runs.
+assets = { directory = "public", binding = "ASSETS", run_worker_first = true }
+
+# Backend lives in the SAME Worker: worker.js routes /api/* (D1-backed),
+# everything else falls through to the ASSETS (static frontend) binding above.
+[[d1_databases]]
+binding = "DB"
+database_name = "oinp-support"
+database_id = "7f2fad81-4cb2-4950-bba6-a2646e04493a"
+
+# Non-secret config (secrets like HMAC_SECRET / TURNSTILE_SECRET come from
+# .dev.vars locally and `wrangler secret put` in production).
+[vars]
+SUPPORT_THRESHOLD = "50"      # count stays hidden until total >= this (Phase 1 = collect quietly)
+DWELL_MIN_MS = "800"          # server-computed min time-on-page before a support counts
+RATE_LIMIT_MAX = "30"         # max support/story writes per IP-prefix per window
+RATE_WINDOW_MS = "600000"     # 10 minutes
+NONCE_TTL_MS = "1800000"      # 30 minutes
+ABUSE_RETENTION_DAYS = "7"    # Cron purges abuse_ephemeral rows older than this
+
+# Daily Cron purge of expired rate-limit rows + consumed nonces (worker.js scheduled()).
+[triggers]
+crons = ["0 3 * * *"]
