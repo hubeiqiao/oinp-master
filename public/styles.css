@@ -2014,7 +2014,11 @@ body.film-landscape-lock { overflow: hidden; }
     .film-slate-tag, .film-slate-meta, .film-lede { opacity: 1 !important; transform: none !important; }
     .film-slate-rule { transform: scaleX(1) !important; }
     .film-stage { height: auto; aspect-ratio: 16 / 9; min-height: 0; }
-    .film-video { object-fit: contain; background: #000; }
+    /* Mobile: show a clear, undimmed frame at rest — the darken/badge treatment
+       below is a desktop cinematic touch, not something to fight for on a small screen. */
+    .film-video { object-fit: contain; background: #000; filter: none; }
+    .film-flag { display: none; }
+    .film-grade { opacity: 0; }
     .film-fullscreen { display: flex; }
     .film-stage { margin-bottom: 12px; }
     .story-summary {

@@ -146,16 +146,19 @@
         }
         function setLockScreenArtwork() {
             // Without this, iOS guesses an image for the lock-screen/Control-Center
-            // "Now Playing" widget from whatever it finds on the page — it was picking
-            // the footer avatar, which has visible white padding baked into the file,
-            // instead of the full-bleed app icon. Pin it explicitly so that never happens.
+            // "Now Playing" widget from whatever it finds on the page. It was picking
+            // the footer avatar (visible white padding baked into that file), and the
+            // apple-touch-icon isn't safe to reuse here either — it has transparent
+            // corners meant for iOS's own home-screen rounding mask, which iOS renders
+            // as solid white in this widget instead. lockscreen-artwork.png is that same
+            // icon pre-flattened onto an opaque brand-black square — no rounding, no alpha.
             if (!("mediaSession" in navigator) || window.__lockScreenArtworkSet) return;
             window.__lockScreenArtworkSet = true;
             try {
                 navigator.mediaSession.metadata = new MediaMetadata({
                     title: "Canada helped Joe become a builder.",
                     artist: "Joe Hu",
-                    artwork: [{ src: "assets/apple-touch-icon.png", sizes: "180x180", type: "image/png" }]
+                    artwork: [{ src: "assets/lockscreen-artwork.png", sizes: "180x180", type: "image/png" }]
                 });
             } catch (e) {}
         }
@@ -178,6 +181,10 @@
         // - iOS Safari has no orientation-lock API at all (and fullscreen support on <video>/arbitrary
         //   elements is inconsistent), so real rotation there isn't reliable — fall back to a CSS-only
         //   "pretend landscape" that rotates the player in place instead of fighting the platform.
+        // The page must come back exactly where it was when fullscreen was requested —
+        // toggling position:fixed + body overflow:hidden (and real fullscreen/orientation-lock
+        // on some browsers) can otherwise leave the scroll position drifted after exit.
+        var savedScrollY = null;
         function enterPseudoLandscape() {
             document.body.classList.add("film-landscape-lock");
             stage.classList.add("pseudo-landscape");
@@ -185,6 +192,11 @@
         function exitPseudoLandscape() {
             document.body.classList.remove("film-landscape-lock");
             stage.classList.remove("pseudo-landscape");
+            if (savedScrollY !== null) {
+                var y = savedScrollY;
+                savedScrollY = null;
+                window.scrollTo(0, y);
+            }
         }
         // Set right before we exit fullscreen ourselves as part of the native-landscape cleanup,
         // so the fullscreenchange listener below can tell "we're cleaning up a failed attempt"
@@ -211,6 +223,7 @@
         }
         function openFullscreen(e) {
             if (e) { e.preventDefault(); e.stopPropagation(); }
+            if (savedScrollY === null) savedScrollY = window.scrollY;
             if (!engaged) engage();
             else engage({ reset: false });
 
@@ -234,22 +247,21 @@
         document.addEventListener("keydown", function (e) {
             if (e.key === "Escape" && stage.classList.contains("pseudo-landscape")) exitFullscreen();
         });
-        // "special move": glide to the video, play on arrival, then nudge it flush to the top
-        // (a few passes catch any late layout settle so there's no gap/black edge)
-        function alignVideoTop() {
-            var s = document.querySelector(".film-stage");
-            if (!s) return;
-            var t = Math.round(s.getBoundingClientRect().top);
-            if (t !== 0) window.scrollBy(0, t);
+        // The in-video play button is already sitting on top of the video — tapping it
+        // should just start playback, never move the page (that was causing an unwanted
+        // scroll-jump and, on mobile, re-triggering the browser's address/tool bar).
+        function playInPlace(e) {
+            if (e) e.preventDefault();
+            engage();
         }
+        // The hero CTA is real navigation (hero section -> video section further down),
+        // so it still glides there — just without the old post-arrival "nudge" loop, which
+        // was extra unwanted movement after landing.
         function navigateAndEngage(e) {
             if (e) e.preventDefault();
-            animScrollTo(videoFullY(), null, function () {
-                engage();
-                [50, 260, 620].forEach(function (d) { setTimeout(alignVideoTop, d); });
-            });
+            animScrollTo(videoFullY(), null, engage);
         }
-        if (playBtn) playBtn.addEventListener("click", navigateAndEngage);
+        if (playBtn) playBtn.addEventListener("click", playInPlace);
         if (fullscreenBtn) fullscreenBtn.addEventListener("click", openFullscreen);
         var heroCta = document.querySelector(".btn-watch");
         if (heroCta) heroCta.addEventListener("click", navigateAndEngage);
@@ -888,6 +900,41 @@
 
     /* ---- ask descriptions wrap normally to ~two lines (see CSS) ---- */
 
+    /* ---- iOS Safari ignores `overscroll-behavior` on the root scroller (it only honors it
+       on nested scroll containers), so the page still elastic-bounces past the top/bottom —
+       this blocks the bounce there while leaving normal scrolling and inner scrollers (e.g.
+       the story textarea) untouched. */
+    function initEdgeBounceGuard() {
+        var lastY = 0;
+        var trackedTouch = null;
+        function isInsideScrollable(el) {
+            while (el && el !== document.body) {
+                if (el.tagName === "TEXTAREA" || el.tagName === "SELECT") return true;
+                if (el.scrollHeight > el.clientHeight + 1) {
+                    var oy = getComputedStyle(el).overflowY;
+                    if (oy === "auto" || oy === "scroll") return true;
+                }
+                el = el.parentElement;
+            }
+            return false;
+        }
+        document.addEventListener("touchstart", function (e) {
+            trackedTouch = e.touches[0].identifier;
+            lastY = e.touches[0].clientY;
+        }, { passive: true });
+        document.addEventListener("touchmove", function (e) {
+            var touch = e.touches[0];
+            if (!touch || touch.identifier !== trackedTouch) return;
+            var y = touch.clientY, movingDown = y > lastY;
+            lastY = y;
+            if (isInsideScrollable(e.target)) return;
+            var doc = document.documentElement;
+            var atTop = window.scrollY <= 0;
+            var atBottom = Math.ceil(window.scrollY + window.innerHeight) >= doc.scrollHeight;
+            if ((atTop && movingDown) || (atBottom && !movingDown)) e.preventDefault();
+        }, { passive: false });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         initSmoothScroll();
         initTopmark();
@@ -905,5 +952,6 @@
         initTurnstile();
         initSupport();
         initStoryPortal();
+        initEdgeBounceGuard();
     });
 })();
