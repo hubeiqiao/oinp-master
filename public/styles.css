@@ -301,6 +301,15 @@ html.video-fallback .hero-video { display: none !important; }
 }
 .film-video { width: 100%; height: 100%; object-fit: cover; background: #000; filter: brightness(0.62) saturate(1.04); transition: filter var(--dur-slow) var(--ease-smooth); }
 .film-stage.playing .film-video { filter: none; }
+.film-stage.loading::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: #000 url("media/hero-hook-poster.jpg") center / cover no-repeat;
+    filter: brightness(0.78) saturate(1.04);
+}
 .film-grade {
     position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(120% 90% at 50% 42%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.45) 100%),

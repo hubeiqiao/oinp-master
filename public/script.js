@@ -125,7 +125,7 @@
         });
     }
 
-    /* ---------- FILM: muted preview from Joe's intro -> click plays with sound ---------- */
+    /* ---------- FILM: muted preview -> click plays the story with sound ---------- */
     function initFilm() {
         var stage = document.querySelector("[data-film]");
         if (!stage) return;
@@ -137,8 +137,8 @@
         var engaged = false;
         video.muted = true; video.playsInline = true; video.setAttribute("playsinline", "");
 
-        // The story file already starts at Joe's introduction (the hook lives in the hero),
-        // so the muted preview simply plays/loops from 0, and a click plays it with sound.
+        // Keep the quiet preview lightweight. Once the visitor explicitly plays,
+        // select the right full-story file and hold the opening hook frame while it buffers.
         function ambientPlay() {
             if (engaged || reducedMotion.matches) return;
             video.muted = true; video.loop = true;
@@ -162,30 +162,68 @@
                 });
             } catch (e) {}
         }
-        var FULL_SRC = "media/oinp-feedback-story-full.mp4";
-        // Engaging plays the whole ~2:03 story (hook included) from one continuous file —
-        // it's a different hook than the hero's own background loop (this one belongs to
-        // the video itself, played only once the viewer opts in), not a stand-in for it.
-        // No quality-tier picking here: Cloudflare Workers Assets caps individual files at
-        // 25MiB, which only leaves room for one well-optimized 720p file for a ~2:03 clip —
-        // a genuinely better 1080p tier isn't feasible without moving video delivery off
-        // Workers Assets (e.g. R2 or Stream), which is a bigger call than this fix.
+        var FULL_SRC = video.dataset.fullSrc || "media/oinp-feedback-story-full.mp4";
+        var MOBILE_SRC = video.dataset.mobileSrc || FULL_SRC;
+        var LOADING_POSTER = video.dataset.loadingPoster || video.poster;
+
+        function selectStorySrc() {
+            if (window.matchMedia && window.matchMedia("(max-width: 760px)").matches) return MOBILE_SRC;
+            return FULL_SRC;
+        }
+        function absoluteSrc(src) {
+            try { return new URL(src, document.baseURI).href; }
+            catch (e) { return src; }
+        }
+        function isCurrentSource(src) {
+            var absolute = absoluteSrc(src);
+            return video.currentSrc === absolute || video.src === absolute;
+        }
+        function primeMobileStorySource() {
+            if (selectStorySrc() !== MOBILE_SRC || isCurrentSource(MOBILE_SRC)) return;
+            var source = video.querySelector("source");
+            if (source) source.setAttribute("src", MOBILE_SRC);
+            if (LOADING_POSTER) video.poster = LOADING_POSTER;
+            video.load();
+        }
+        function showLoadingFrame() {
+            if (LOADING_POSTER) video.poster = LOADING_POSTER;
+            stage.classList.add("loading");
+        }
+        function hideLoadingFrame() {
+            stage.classList.remove("loading");
+        }
+        video.addEventListener("playing", hideLoadingFrame);
+        video.addEventListener("error", hideLoadingFrame);
+
         // Calling play() synchronously right after changing `src` doesn't reliably start
-        // playback — the browser hasn't loaded the new source yet, and the request can
-        // silently go nowhere. Waiting for loadedmetadata before calling play() is what
-        // actually works.
+        // playback: the browser may not have enough media buffered. Wait for canplay,
+        // keep the hook frame visible during that gap, then reveal the actual video.
         function swapSrcAndPlay(src) {
+            showLoadingFrame();
             function tryPlay() {
                 var p = video.play();
-                if (p && p.catch) p.catch(function () { setTimeout(function () { video.play().catch(function () {}); }, 60); });
+                if (p && p.catch) {
+                    p.catch(function () {
+                        setTimeout(function () {
+                            video.play().catch(function () { hideLoadingFrame(); });
+                        }, 60);
+                    });
+                }
             }
             function onReady() {
-                video.removeEventListener("loadedmetadata", onReady);
+                video.removeEventListener("canplay", onReady);
                 try { video.currentTime = 0; } catch (e) {}
                 tryPlay();
             }
-            video.addEventListener("loadedmetadata", onReady);
-            video.src = src;
+            try { video.pause(); } catch (e) {}
+            video.addEventListener("canplay", onReady);
+            if (isCurrentSource(src)) {
+                if (video.readyState >= 3) onReady();
+                else video.load();
+            } else {
+                video.src = src;
+                video.load();
+            }
         }
         function engage(options) {
             var reset = !options || options.reset !== false;
@@ -195,7 +233,7 @@
             video.loop = false;
             video.muted = false;
             setLockScreenArtwork();
-            if (reset) swapSrcAndPlay(FULL_SRC);
+            if (reset) swapSrcAndPlay(selectStorySrc());
             else { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
         }
         // Two different "landscape" stories, handled on purpose:
@@ -296,6 +334,7 @@
         });
         var heroCta = document.querySelector(".btn-watch");
         if (heroCta) heroCta.addEventListener("click", navigateAndEngage);
+        primeMobileStorySource();
 
         if ("IntersectionObserver" in window) {
             var io = new IntersectionObserver(function (entries) {
@@ -547,10 +586,19 @@
     }
     function loadState() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); } catch (e) { return {}; } }
     function saveState(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {} }
+    function validSupportToken(token) {
+        return typeof token === "string" && /^[A-Za-z0-9._-]{8,80}$/.test(token);
+    }
+    function createSupportToken() {
+        return (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+            : ("t-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12));
+    }
     function ensureToken(state) {
-        if (!state.token) {
-            state.token = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
-                : ("t-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12));
+        if (!validSupportToken(state.token)) {
+            state.token = createSupportToken();
+            state.supported = false;
+            state.receipt = "";
+            state.updateToken = "";
             saveState(state);
         }
         return state.token;

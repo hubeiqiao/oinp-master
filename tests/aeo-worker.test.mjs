@@ -280,3 +280,19 @@ test("mobile CSS prevents horizontal viewport overflow", async () => {
   assert.match(mobile, /\.arc-question \{[\s\S]*white-space: normal;[\s\S]*overflow-wrap: break-word;/);
   assert.match(mobile, /\.footer-copy-open \{[\s\S]*white-space: normal;/);
 });
+
+test("story video uses a mobile source and hook frame while loading", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
+  const css = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+
+  assert.match(html, /data-full-src="media\/oinp-feedback-story-full\.mp4"/);
+  assert.match(html, /data-mobile-src="media\/oinp-feedback-story-mobile-720p\.mp4"/);
+  assert.match(html, /data-loading-poster="media\/hero-hook-poster\.jpg"/);
+  assert.match(script, /function selectStorySrc\(\)/);
+  assert.match(script, /matchMedia\("\(max-width: 760px\)"/);
+  assert.match(script, /stage\.classList\.add\("loading"\)/);
+  assert.match(script, /stage\.classList\.remove\("loading"\)/);
+  assert.match(css, /\.film-stage\.loading::before \{[\s\S]*hero-hook-poster\.jpg/);
+  await fs.stat(path.join(root, "public", "media", "oinp-feedback-story-mobile-720p.mp4"));
+});

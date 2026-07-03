@@ -139,7 +139,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600;700&family=Oswald:wght@600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&display=swap">
-    <link rel="stylesheet" href="styles.css?v=95">
+    <link rel="stylesheet" href="styles.css?v=96">
 </head>
 <body>
     <a class="skip-link" href="#video">Skip to the story</a>
@@ -205,6 +205,9 @@
                     class="film-video"
                     muted playsinline preload="metadata"
                     poster="media/oinp-feedback-story-poster.jpg"
+                    data-full-src="media/oinp-feedback-story-full.mp4"
+                    data-mobile-src="media/oinp-feedback-story-mobile-720p.mp4"
+                    data-loading-poster="media/hero-hook-poster.jpg"
                     aria-label="Joe Hu's 2-minute story about building in Canada and the graduate-pathway changes."
                 >
                     <source src="media/oinp-feedback-story.mp4" type="video/mp4">
@@ -651,7 +654,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=39"></script>
+    <script src="script.js?v=40"></script>
     <script type="text/javascript">
         (function (C, A, L) { var p = function (a, ar) { a.q.push(ar); }; var d = C.document; C.Cal = C.Cal || function () { var cal = C.Cal; var ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { var api = function () { p(api, arguments); }; var namespace = ar[1]; api.q = api.q || []; if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar); return; } p(cal, ar); }; })(window, "https://app.cal.com/embed/embed.js", "init");
         Cal("init", "talk", { origin: "https://app.cal.com" });
