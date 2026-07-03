@@ -2061,8 +2061,7 @@ body.film-landscape-lock { overflow: hidden; }
         color: rgba(251, 247, 238, 0.94);
         text-shadow: none;
         overflow-wrap: break-word;
-        text-wrap: balance;
-        text-wrap: pretty;
+        text-wrap: initial;
     }
     .hero-lead-full { display: inline; }
     .hero-lead-min { display: none; }
@@ -2092,7 +2091,7 @@ body.film-landscape-lock { overflow: hidden; }
     .film-lede {
         font-size: clamp(15px, 3.75vw, 16px);
         line-height: 1.58;
-        text-wrap: balance; text-wrap: pretty;
+        text-wrap: initial;
     }
     .film-slate { flex-wrap: wrap; gap: 9px 16px; }
     .film-head .ft-l { clip-path: none !important; transform: none !important; }
@@ -2120,7 +2119,7 @@ body.film-landscape-lock { overflow: hidden; }
     .story-summary-body p {
         font-size: 14.4px;
         line-height: 1.44;
-        text-wrap: balance; text-wrap: pretty;
+        text-wrap: initial;
     }
 
     .change-bridge {
@@ -2152,7 +2151,7 @@ body.film-landscape-lock { overflow: hidden; }
         font-size: clamp(16.5px, 4.15vw, 17.5px);
         line-height: 1.44;
         overflow-wrap: break-word;
-        text-wrap: balance; text-wrap: pretty;
+        text-wrap: initial;
     }
     .mobile-line-break { display: block; }
     .arc-lead { display: inline-block; white-space: nowrap; font-size: clamp(14px, 3.85vw, 17.5px); }
@@ -2183,6 +2182,7 @@ body.film-landscape-lock { overflow: hidden; }
         font-size: 15.5px;
         line-height: 1.44;
         white-space: normal;
+        text-wrap: initial;
     }
     .exhibit-grid { grid-template-columns: 1fr; gap: 14px; }
     .exhibit-grid .res-card { --reveal-delay: 0ms; }
@@ -2237,6 +2237,7 @@ body.film-landscape-lock { overflow: hidden; }
     .asks .section-head .ask-signal {
         width: 100%;
         max-width: none;
+        text-wrap: initial;
     }
     .signal-context {
         max-width: none;
@@ -2245,13 +2246,14 @@ body.film-landscape-lock { overflow: hidden; }
         font-size: 14px;
         letter-spacing: 0.01em;
         line-height: 1.46;
+        text-wrap: initial;
     }
     .signal-main {
         max-width: none;
         font-size: 13.6px;
         line-height: 1.46;
         color: rgba(251, 247, 238, 0.66);
-        text-wrap: balance; text-wrap: pretty;
+        text-wrap: initial;
     }
     .signal-main strong {
         color: rgba(251, 247, 238, 0.88);
@@ -2409,10 +2411,13 @@ body.film-landscape-lock { overflow: hidden; }
     .share-btn { flex: 1 1 calc(50% - 5px); justify-content: center; }
 
     .story-footer {
-        min-height: auto;
+        min-height: 0 !important;
+        height: auto;
         display: flex;
         flex-direction: column;
         border-top-color: rgba(251, 247, 238, 0.18);
+        overflow-x: clip;
+        overflow-y: visible;
     }
     .footer-photo {
         position: relative;
@@ -2445,10 +2450,10 @@ body.film-landscape-lock { overflow: hidden; }
             linear-gradient(90deg, rgba(5,4,3,0.38) 0%, rgba(5,4,3,0) 48%, rgba(5,4,3,0.16) 100%);
     }
     .footer-canvas {
-        min-height: auto;
+        min-height: 0 !important;
         display: block;
         margin-top: -40px;
-        padding: 0 clamp(24px, 6vw, 34px) 34px;
+        padding: 0 clamp(24px, 6vw, 34px) max(26px, env(safe-area-inset-bottom));
     }
     .footer-topline { display: block; transform: none; }
     .footer-brand-panel {
@@ -2707,6 +2712,14 @@ body.film-landscape-lock { overflow: hidden; }
         height: 30px;
         transform: translateY(-50%);
         background: rgba(251, 247, 238, 0.16);
+    }
+}
+
+@media (min-width: 375px) and (max-width: 760px) {
+    .arc-question {
+        display: inline-block;
+        font-size: 0.94em;
+        white-space: nowrap;
     }
 }
 
