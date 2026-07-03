@@ -909,41 +909,6 @@
 
     /* ---- ask descriptions wrap normally to ~two lines (see CSS) ---- */
 
-    /* ---- iOS Safari ignores `overscroll-behavior` on the root scroller (it only honors it
-       on nested scroll containers), so the page still elastic-bounces past the top/bottom —
-       this blocks the bounce there while leaving normal scrolling and inner scrollers (e.g.
-       the story textarea) untouched. */
-    function initEdgeBounceGuard() {
-        var lastY = 0;
-        var trackedTouch = null;
-        function isInsideScrollable(el) {
-            while (el && el !== document.body) {
-                if (el.tagName === "TEXTAREA" || el.tagName === "SELECT") return true;
-                if (el.scrollHeight > el.clientHeight + 1) {
-                    var oy = getComputedStyle(el).overflowY;
-                    if (oy === "auto" || oy === "scroll") return true;
-                }
-                el = el.parentElement;
-            }
-            return false;
-        }
-        document.addEventListener("touchstart", function (e) {
-            trackedTouch = e.touches[0].identifier;
-            lastY = e.touches[0].clientY;
-        }, { passive: true });
-        document.addEventListener("touchmove", function (e) {
-            var touch = e.touches[0];
-            if (!touch || touch.identifier !== trackedTouch) return;
-            var y = touch.clientY, movingDown = y > lastY;
-            lastY = y;
-            if (isInsideScrollable(e.target)) return;
-            var doc = document.documentElement;
-            var atTop = window.scrollY <= 0;
-            var atBottom = Math.ceil(window.scrollY + window.innerHeight) >= doc.scrollHeight;
-            if ((atTop && movingDown) || (atBottom && !movingDown)) e.preventDefault();
-        }, { passive: false });
-    }
-
     document.addEventListener("DOMContentLoaded", function () {
         initSmoothScroll();
         initTopmark();
@@ -961,6 +926,5 @@
         initTurnstile();
         initSupport();
         initStoryPortal();
-        initEdgeBounceGuard();
     });
 })();
