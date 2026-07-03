@@ -194,8 +194,16 @@
             stage.classList.add("playing");
             video.loop = false;
             video.muted = false;
-            video.controls = true;
             setLockScreenArtwork();
+            // Native controls — never a custom player — but turning them on only once
+            // playback has actually started, not the instant the button is tapped. Doing
+            // it immediately shows the (opaque, mobile-width) native control bar sitting
+            // over a still-blank frame, which reads as "controls first, video second".
+            if (!video.controls) {
+                video.addEventListener("playing", function showControls() {
+                    video.controls = true;
+                }, { once: true });
+            }
             if (reset) swapSrcAndPlay(FULL_SRC);
             else { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
         }
