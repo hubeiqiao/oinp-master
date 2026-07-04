@@ -1975,6 +1975,27 @@ body.film-landscape-lock { overflow: hidden; }
     pointer-events: none;
 }
 
+.footer-probe-panel {
+    position: absolute;
+    z-index: 8;
+    right: 14px;
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    width: min(390px, calc(100% - 28px));
+    max-height: min(58svh, 520px);
+    margin: 0;
+    padding: 12px 14px;
+    overflow: auto;
+    border: 1px solid rgba(233, 185, 104, 0.72);
+    border-radius: 14px;
+    background: rgba(8, 6, 4, 0.94);
+    color: #fff7e8;
+    box-shadow: 0 18px 56px rgba(0, 0, 0, 0.42);
+    font: 11px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    text-align: left;
+    user-select: text;
+}
+
 /* =========================================================================
    REVEAL
    ========================================================================= */

@@ -634,6 +634,7 @@
         var frame = null;
         var debug = /(?:\?|&)footerProbe=1(?:&|$)/.test(window.location.search || "");
         var overlay = null;
+        var panel = null;
 
         function clearTrim() {
             footer.classList.remove("footer-tail-trimmed");
@@ -676,6 +677,17 @@
             overlay.textContent = JSON.stringify(report, null, 2);
         }
 
+        function renderFooterProbePanel(report) {
+            if (!debug) return;
+            if (!panel) {
+                panel = document.createElement("pre");
+                panel.className = "footer-probe-panel";
+                panel.setAttribute("aria-label", "Footer layout probe");
+                footer.appendChild(panel);
+            }
+            panel.textContent = JSON.stringify(report, null, 2);
+        }
+
         function collect(reason) {
             clearTrim();
             var footerRect = footer.getBoundingClientRect();
@@ -703,6 +715,10 @@
                 viewportWidth: Math.round(viewportWidth),
                 viewportHeight: Math.round(viewportHeight),
                 innerHeight: Math.round(window.innerHeight || 0),
+                screenHeight: window.screen ? Math.round(window.screen.height || 0) : 0,
+                screenAvailHeight: window.screen ? Math.round(window.screen.availHeight || 0) : 0,
+                visualViewportOffsetTop: Math.round((window.visualViewport && window.visualViewport.offsetTop) || 0),
+                visualViewportPageTop: Math.round((window.visualViewport && window.visualViewport.pageTop) || 0),
                 pageYOffset: Math.round(window.pageYOffset || 0),
                 htmlClientHeight: Math.round(doc.clientHeight || 0),
                 htmlScrollHeight: Math.round(doc.scrollHeight || 0),
@@ -745,6 +761,7 @@
 
             window.__oinpFooterProbeLast = report;
             renderFooterProbeOverlay(report);
+            renderFooterProbePanel(report);
             if ((debug || report.trimmed) && window.console && console.info) {
                 console.info("[OINP footer probe]", report);
             }
