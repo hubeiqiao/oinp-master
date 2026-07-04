@@ -2452,7 +2452,7 @@ body.film-landscape-lock { overflow: hidden; }
     .share-btn { flex: 1 1 calc(50% - 5px); justify-content: center; }
 
     .story-footer {
-        min-height: 0 !important;
+        min-height: auto !important;
         min-block-size: 0 !important;
         height: auto;
         block-size: auto;
@@ -2460,7 +2460,7 @@ body.film-landscape-lock { overflow: hidden; }
         border-top-color: rgba(251, 247, 238, 0.18);
         /* iOS WebViews can treat mixed-axis overflow as a scroll container,
            preserving a viewport-height blank area after the footer content. */
-        overflow: visible;
+        overflow: hidden;
     }
     .story-footer.footer-tail-trimmed {
         min-height: 0 !important;
@@ -2507,6 +2507,7 @@ body.film-landscape-lock { overflow: hidden; }
         height: auto;
         block-size: auto;
         display: block;
+        grid-template-rows: none;
         margin-top: -40px;
         padding: 0 clamp(24px, 6vw, 34px) max(26px, env(safe-area-inset-bottom));
     }

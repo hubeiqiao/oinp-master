@@ -131,12 +131,12 @@ test("mobile X and LinkedIn actions prefer app-scheme links with web fallback", 
   assert.match(script, /linkedin:\/\/shareArticle\?mini=true/);
 });
 
-test("mobile footer avoids axis-mixed overflow that creates iOS WebView bottom gaps", async () => {
+test("mobile footer avoids inherited viewport height and axis-mixed overflow", async () => {
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
-  const mobileFooter = styles.match(/\.story-footer\s*{\s*\n\s*min-height: 0 !important;[\s\S]*?\n    }/);
+  const mobileFooter = styles.match(/\.story-footer\s*{\s*\n\s*min-height: auto !important;[\s\S]*?\n    }/);
 
   assert.ok(mobileFooter, "expected to find the mobile story-footer override");
-  assert.match(mobileFooter[0], /overflow:\s*visible;/);
+  assert.match(mobileFooter[0], /overflow:\s*hidden;/);
   assert.doesNotMatch(mobileFooter[0], /overflow-x:\s*clip;/);
 });
 
@@ -145,8 +145,8 @@ test("mobile footer has a runtime tail guard for real iOS WebView layout drift",
   const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
 
-  assert.match(html, /styles\.css\?v=105/);
-  assert.match(html, /script\.js\?v=46/);
+  assert.match(html, /styles\.css\?v=106/);
+  assert.match(html, /script\.js\?v=47/);
   assert.match(script, /function initFooterTailGuard\(\)/);
   assert.match(script, /footer-tail-trimmed/);
   assert.match(script, /__oinpFooterProbe/);
@@ -160,8 +160,8 @@ test("footer probe can be shown on real phones without changing page layout", as
   const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
 
-  assert.match(html, /styles\.css\?v=105/);
-  assert.match(html, /script\.js\?v=46/);
+  assert.match(html, /styles\.css\?v=106/);
+  assert.match(html, /script\.js\?v=47/);
   assert.match(script, /function renderFooterProbeOverlay/);
   assert.match(script, /function renderFooterProbePanel/);
   assert.match(script, /footerProbe=1/);
@@ -172,4 +172,19 @@ test("footer probe can be shown on real phones without changing page layout", as
   assert.match(styles, /\.footer-probe-panel/);
   assert.match(styles, /position:\s*fixed/);
   assert.match(styles, /pointer-events:\s*none/);
+});
+
+test("mobile footer trim is based on real content tail, not viewport spacer height", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
+  const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+
+  assert.match(html, /styles\.css\?v=106/);
+  assert.match(html, /script\.js\?v=47/);
+  assert.match(script, /function getFooterContentBottom/);
+  assert.match(script, /contentTailGap/);
+  assert.match(script, /contentDrivenHeight/);
+  assert.match(styles, /\.story-footer\s*\{[\s\S]*?min-height:\s*auto !important;/);
+  assert.match(styles, /\.story-footer\s*\{[\s\S]*?overflow:\s*hidden;/);
+  assert.match(styles, /\.footer-canvas\s*\{[\s\S]*?grid-template-rows:\s*none;/);
 });

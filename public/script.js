@@ -666,6 +666,23 @@
             return tail.slice(0, 10).map(summarizeNode).filter(Boolean);
         }
 
+        function getFooterContentBottom() {
+            var selectors = [
+                ".footer-photo",
+                ".footer-brand-panel",
+                ".footer-map",
+                ".footer-statement",
+                ".footer-actions",
+                ".footer-bottom > p"
+            ];
+            return selectors.reduce(function (max, selector) {
+                var node = footer.querySelector(selector);
+                if (!node || !node.getBoundingClientRect) return max;
+                var rect = node.getBoundingClientRect();
+                return Math.max(max, rect.bottom || 0);
+            }, footer.getBoundingClientRect().top);
+        }
+
         function renderFooterProbeOverlay(report) {
             if (!debug) return;
             if (!overlay) {
@@ -692,6 +709,7 @@
             clearTrim();
             var footerRect = footer.getBoundingClientRect();
             var bottomRect = bottom.getBoundingClientRect();
+            var contentBottom = getFooterContentBottom();
             var canvas = footer.querySelector(".footer-canvas");
             var photo = footer.querySelector(".footer-photo");
             var canvasRect = canvas ? canvas.getBoundingClientRect() : { top: 0, bottom: 0, height: 0 };
@@ -703,8 +721,10 @@
             var viewportWidth = (window.visualViewport && window.visualViewport.width) || window.innerWidth || doc.clientWidth || 0;
             var pad = 28;
             var desiredHeight = Math.max(0, Math.ceil(bottomRect.bottom - footerRect.top + pad));
+            var contentDrivenHeight = Math.max(0, Math.ceil(contentBottom - footerRect.top + pad));
             var actualHeight = Math.max(0, Math.ceil(footerRect.height));
             var internalTailGap = actualHeight - desiredHeight;
+            var contentTailGap = actualHeight - contentDrivenHeight;
             var footerPageBottom = Math.round(window.pageYOffset + footerRect.bottom);
             var docTailGap = Math.round(doc.scrollHeight - footerPageBottom);
             var threshold = Math.max(120, Math.round(viewportHeight * 0.16));
@@ -726,7 +746,9 @@
                 bodyScrollHeight: body ? Math.round(body.scrollHeight || 0) : 0,
                 footerHeight: actualHeight,
                 desiredFooterHeight: desiredHeight,
+                contentDrivenHeight: contentDrivenHeight,
                 internalTailGap: internalTailGap,
+                contentTailGap: contentTailGap,
                 documentTailGap: docTailGap,
                 footerRect: {
                     top: Math.round(footerRect.top),
@@ -753,7 +775,11 @@
                 trimmed: false
             };
 
-            if (internalTailGap > threshold && desiredHeight > 0) {
+            if (contentTailGap > threshold && contentDrivenHeight > 0) {
+                footer.style.setProperty("--footer-trim-height", contentDrivenHeight + "px");
+                footer.classList.add("footer-tail-trimmed");
+                report.trimmed = true;
+            } else if (internalTailGap > threshold && desiredHeight > 0) {
                 footer.style.setProperty("--footer-trim-height", desiredHeight + "px");
                 footer.classList.add("footer-tail-trimmed");
                 report.trimmed = true;
