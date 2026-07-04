@@ -1,38 +1,63 @@
-# Your Voice Matters: Ontario Needs Its Graduates
+# Canada helped Joe become a builder. Does Canada know how to keep builders?
 
-This site is a public comment on [Proposal 25-MLITSD019](https://www.regulatoryregistry.gov.on.ca/proposal/52773). It explains why Ontario should keep an independent pathway for master's and PhD graduates and asks readers to act before January 1, 2026.
+This is the public-awareness site for [Joe Hu](https://hubeiqiao.com/)’s OINP story.
 
-## What’s happening
-- Ontario is considering folding the dedicated OINP stream for master’s and PhD graduates into broader employer-driven programs.
-- The proposed change removes a predictable path for researchers who already invested years under the existing rules.
-- Without a clear provincial option, graduates will follow talent pathways in provinces that keep independent streams.
+Canada helped Joe become a builder. Here, he studied, built, registered a company, and found community. Then the pathway changed. The question is bigger than one application: can Canada recognize and keep people who are already building here?
 
-## Why it matters to us
-- Ontario taxpayers already funded this talent; losing them exports that public investment.
-- Research teams, startups, and SMEs depend on these graduates to deliver products, IP, and jobs that anchor new industries.
-- Removing the stream mid-program breaks trust with students who chose Ontario based on the published pathway.
-- AI, health, and climate projects slow down when graduate founders and specialists leave for faster jurisdictions.
+This is personal, but it is not only about Joe.
 
-## What we’re asking for
-1) Preserve an independent OINP pathway for Ontario master’s and PhD graduates.  
-2) Grandfather current students who enrolled under existing rules.  
-3) Publish an impact analysis and review outcomes within 2–3 years.  
-4) Align provincial policy with the federal focus on retaining graduate talent.
+## What this is about
 
-## What other people can do
-- Submit a comment to the Ontario Regulatory Registry: https://www.regulatoryregistry.gov.on.ca/proposal/52773  
-- Share the page: https://oinp.hubeiqiao.com  
-- Ask faculty, employers, industry groups, and MPs/MPPs to endorse keeping an independent graduate stream.
-- Share data points: hiring delays, lost projects, or investments at risk without graduate retention.
+Joe came to Canada to study, build, and contribute. In Canada, he built his first real product, registered his first company, joined local communities, and found the confidence to keep building.
 
-## Who this speaks for
-- International graduates building AI, research, and innovation projects across SMEs, startups, and universities.
-- Ontario taxpayers who benefit when locally trained talent stays and builds here.
+Then Ontario redesigned the Ontario Immigrant Nominee Program (OINP). Former graduate streams will issue no more invitations, leaving some people who planned around those pathways in uncertainty.
 
-## Fast facts
-- Deadline: January 1, 2026.  
-- Most vulnerable: master’s and PhD graduates who planned around the existing stream.  
-- Risk: talent leaves for regions that still offer independent pathways.
+The site uses Joe’s story as one concrete example of a broader question: how can Canada retain early-stage contributors before their value is easy to classify?
+
+## What the site asks
+
+This is not a formal petition. It is a public signal.
+
+The ask is simple:
+
+- Protect people caught mid-change.
+- Keep independent graduate pathways.
+- Build better bridges from graduate talent into Canada’s economy, research, startups, companies, public-interest work, and communities.
+
+Job offers and language scores matter. So do the products, companies, research, teaching, and community work people build first.
+
+## Why it matters
+
+Canada says it wants builders, founders, researchers, and people who create value. But early-stage contribution often appears before it fits a traditional category.
+
+Joe is one example:
+
+- He built [Joe Speaking](https://joespeaking.com/), an AI speaking coach born from his own English-speaking struggle.
+- He registered a Canadian company.
+- He was selected for Y Combinator’s Startup School 2026.
+- He wrote about his two-year journey of rebuilding confidence and building in Canada.
+
+The broader question is whether Canada can keep more people like this before they leave, stop building here, or move their ambition somewhere else.
+
+## How people can help
+
+If the story resonates with you:
+
+- Watch and share the 2-minute video.
+- Add a support signal on the site.
+- Send the page to someone in Canada’s tech, startup, university, media, or policy community.
+- Share your own story if you are seeing the same pattern.
+- If you work in policy, education, startups, or media, use this as one real example when discussing how Canada keeps the people it helps train.
+
+The site is here:
+
+[oinp.hubeiqiao.com](https://oinp.hubeiqiao.com/)
 
 ## Contact
-Created by Joe (Beiqiao) Hu — hubeiqiao.com / x.com/hubeiqiao / linkedin.com/in/hubeiqiao
+
+Joe is currently in Ottawa and open to conversations, interviews, events, and building with the right team.
+
+- Personal site: [hubeiqiao.com](https://hubeiqiao.com/)
+- Build with Joe: [hubeiqiao.com/co](https://hubeiqiao.com/co)
+- X: [@hubeiqiao](https://x.com/hubeiqiao)
+- LinkedIn: [linkedin.com/in/hubeiqiao](https://linkedin.com/in/hubeiqiao)
