@@ -139,3 +139,18 @@ test("mobile footer avoids axis-mixed overflow that creates iOS WebView bottom g
   assert.match(mobileFooter[0], /overflow:\s*visible;/);
   assert.doesNotMatch(mobileFooter[0], /overflow-x:\s*clip;/);
 });
+
+test("mobile footer has a runtime tail guard for real iOS WebView layout drift", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
+  const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+
+  assert.match(html, /styles\.css\?v=103/);
+  assert.match(html, /script\.js\?v=44/);
+  assert.match(script, /function initFooterTailGuard\(\)/);
+  assert.match(script, /footer-tail-trimmed/);
+  assert.match(script, /__oinpFooterProbe/);
+  assert.match(script, /initFooterTailGuard\(\)/);
+  assert.match(styles, /\.story-footer\.footer-tail-trimmed/);
+  assert.match(styles, /height:\s*var\(--footer-trim-height\)/);
+});

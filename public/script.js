@@ -624,6 +624,79 @@
         button.addEventListener("blur", resetMagnet);
     }
 
+    function initFooterTailGuard() {
+        var footer = document.querySelector(".story-footer");
+        var bottom = footer && footer.querySelector(".footer-bottom");
+        if (!footer || !bottom) return;
+        var mobile = window.matchMedia("(max-width: 760px)");
+        if (!mobile.matches) return;
+
+        var frame = null;
+        var debug = /(?:\?|&)footerProbe=1(?:&|$)/.test(window.location.search || "");
+
+        function clearTrim() {
+            footer.classList.remove("footer-tail-trimmed");
+            footer.style.removeProperty("--footer-trim-height");
+        }
+
+        function collect(reason) {
+            clearTrim();
+            var footerRect = footer.getBoundingClientRect();
+            var bottomRect = bottom.getBoundingClientRect();
+            var doc = document.documentElement;
+            var viewportHeight = (window.visualViewport && window.visualViewport.height) || window.innerHeight || doc.clientHeight || 0;
+            var pad = 28;
+            var desiredHeight = Math.max(0, Math.ceil(bottomRect.bottom - footerRect.top + pad));
+            var actualHeight = Math.max(0, Math.ceil(footerRect.height));
+            var internalTailGap = actualHeight - desiredHeight;
+            var footerPageBottom = Math.round(window.pageYOffset + footerRect.bottom);
+            var docTailGap = Math.round(doc.scrollHeight - footerPageBottom);
+            var threshold = Math.max(120, Math.round(viewportHeight * 0.16));
+            var report = {
+                reason: reason || "manual",
+                viewportHeight: Math.round(viewportHeight),
+                footerHeight: actualHeight,
+                desiredFooterHeight: desiredHeight,
+                internalTailGap: internalTailGap,
+                documentTailGap: docTailGap,
+                threshold: threshold,
+                trimmed: false
+            };
+
+            if (internalTailGap > threshold && desiredHeight > 0) {
+                footer.style.setProperty("--footer-trim-height", desiredHeight + "px");
+                footer.classList.add("footer-tail-trimmed");
+                report.trimmed = true;
+            }
+
+            window.__oinpFooterProbeLast = report;
+            if ((debug || report.trimmed) && window.console && console.info) {
+                console.info("[OINP footer probe]", report);
+            }
+            return report;
+        }
+
+        function schedule(reason) {
+            if (frame) cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(function () {
+                frame = null;
+                collect(reason);
+            });
+        }
+
+        window.__oinpFooterProbe = function () { return collect("manual"); };
+        requestAnimationFrame(function () { schedule("init"); });
+        window.addEventListener("load", function () { schedule("load"); }, { passive: true });
+        window.addEventListener("resize", function () { schedule("resize"); }, { passive: true });
+        window.addEventListener("orientationchange", function () { schedule("orientationchange"); }, { passive: true });
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener("resize", function () { schedule("visualViewport-resize"); }, { passive: true });
+            window.visualViewport.addEventListener("scroll", function () { schedule("visualViewport-scroll"); }, { passive: true });
+        }
+        setTimeout(function () { schedule("settle-350"); }, 350);
+        setTimeout(function () { schedule("settle-1200"); }, 1200);
+    }
+
     /* ---------- support + story portal ---------- */
     var STORE_KEY = "oinp_support_v1";
     function postJSON(path, payload) {
@@ -1055,6 +1128,7 @@
         initFooterAvatarPop();
         initFooterPremiumMotion();
         initFooterMagneticBuild();
+        initFooterTailGuard();
         initTurnstile();
         initSupport();
         initStoryPortal();
