@@ -130,3 +130,12 @@ test("mobile X and LinkedIn actions prefer app-scheme links with web fallback", 
   assert.match(script, /twitter:\/\/post\?message=/);
   assert.match(script, /linkedin:\/\/shareArticle\?mini=true/);
 });
+
+test("mobile footer avoids axis-mixed overflow that creates iOS WebView bottom gaps", async () => {
+  const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+  const mobileFooter = styles.match(/\.story-footer\s*{\s*\n\s*min-height: 0 !important;[\s\S]*?\n    }/);
+
+  assert.ok(mobileFooter, "expected to find the mobile story-footer override");
+  assert.match(mobileFooter[0], /overflow:\s*visible;/);
+  assert.doesNotMatch(mobileFooter[0], /overflow-x:\s*clip;/);
+});

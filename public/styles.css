@@ -2417,8 +2417,9 @@ body.film-landscape-lock { overflow: hidden; }
         block-size: auto;
         display: block;
         border-top-color: rgba(251, 247, 238, 0.18);
-        overflow-x: clip;
-        overflow-y: visible;
+        /* iOS WebViews can treat mixed-axis overflow as a scroll container,
+           preserving a viewport-height blank area after the footer content. */
+        overflow: visible;
     }
     .footer-photo {
         position: relative;
