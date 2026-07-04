@@ -633,18 +633,62 @@
 
         var frame = null;
         var debug = /(?:\?|&)footerProbe=1(?:&|$)/.test(window.location.search || "");
+        var overlay = null;
 
         function clearTrim() {
             footer.classList.remove("footer-tail-trimmed");
             footer.style.removeProperty("--footer-trim-height");
         }
 
+        function summarizeNode(node) {
+            if (!node || node.nodeType !== 1) return null;
+            var rect = node.getBoundingClientRect ? node.getBoundingClientRect() : { top: 0, bottom: 0, height: 0, width: 0 };
+            var cs = window.getComputedStyle ? window.getComputedStyle(node) : {};
+            return {
+                tag: node.tagName ? node.tagName.toLowerCase() : "",
+                id: node.id || "",
+                cls: (node.className && typeof node.className === "string") ? node.className.slice(0, 80) : "",
+                top: Math.round(rect.top || 0),
+                bottom: Math.round(rect.bottom || 0),
+                height: Math.round(rect.height || 0),
+                width: Math.round(rect.width || 0),
+                position: cs.position || "",
+                display: cs.display || "",
+                overflow: cs.overflow || ""
+            };
+        }
+
+        function getTailChildren() {
+            var children = Array.prototype.slice.call(document.body ? document.body.children : []);
+            var footerIndex = children.indexOf(footer);
+            var tail = footerIndex >= 0 ? children.slice(footerIndex + 1) : children.slice(-8);
+            return tail.slice(0, 10).map(summarizeNode).filter(Boolean);
+        }
+
+        function renderFooterProbeOverlay(report) {
+            if (!debug) return;
+            if (!overlay) {
+                overlay = document.createElement("pre");
+                overlay.className = "footer-probe-overlay";
+                overlay.setAttribute("aria-hidden", "true");
+                document.body.appendChild(overlay);
+            }
+            overlay.textContent = JSON.stringify(report, null, 2);
+        }
+
         function collect(reason) {
             clearTrim();
             var footerRect = footer.getBoundingClientRect();
             var bottomRect = bottom.getBoundingClientRect();
+            var canvas = footer.querySelector(".footer-canvas");
+            var photo = footer.querySelector(".footer-photo");
+            var canvasRect = canvas ? canvas.getBoundingClientRect() : { top: 0, bottom: 0, height: 0 };
+            var photoRect = photo ? photo.getBoundingClientRect() : { top: 0, bottom: 0, height: 0 };
             var doc = document.documentElement;
+            var body = document.body;
+            var footerStyle = window.getComputedStyle ? window.getComputedStyle(footer) : {};
             var viewportHeight = (window.visualViewport && window.visualViewport.height) || window.innerHeight || doc.clientHeight || 0;
+            var viewportWidth = (window.visualViewport && window.visualViewport.width) || window.innerWidth || doc.clientWidth || 0;
             var pad = 28;
             var desiredHeight = Math.max(0, Math.ceil(bottomRect.bottom - footerRect.top + pad));
             var actualHeight = Math.max(0, Math.ceil(footerRect.height));
@@ -654,11 +698,41 @@
             var threshold = Math.max(120, Math.round(viewportHeight * 0.16));
             var report = {
                 reason: reason || "manual",
+                url: window.location.href,
+                ua: navigator.userAgent,
+                viewportWidth: Math.round(viewportWidth),
                 viewportHeight: Math.round(viewportHeight),
+                innerHeight: Math.round(window.innerHeight || 0),
+                pageYOffset: Math.round(window.pageYOffset || 0),
+                htmlClientHeight: Math.round(doc.clientHeight || 0),
+                htmlScrollHeight: Math.round(doc.scrollHeight || 0),
+                bodyHeight: body ? Math.round(body.getBoundingClientRect().height || 0) : 0,
+                bodyScrollHeight: body ? Math.round(body.scrollHeight || 0) : 0,
                 footerHeight: actualHeight,
                 desiredFooterHeight: desiredHeight,
                 internalTailGap: internalTailGap,
                 documentTailGap: docTailGap,
+                footerRect: {
+                    top: Math.round(footerRect.top),
+                    bottom: Math.round(footerRect.bottom)
+                },
+                canvasRect: {
+                    top: Math.round(canvasRect.top || 0),
+                    bottom: Math.round(canvasRect.bottom || 0),
+                    height: Math.round(canvasRect.height || 0)
+                },
+                photoRect: {
+                    top: Math.round(photoRect.top || 0),
+                    bottom: Math.round(photoRect.bottom || 0),
+                    height: Math.round(photoRect.height || 0)
+                },
+                footerStyle: {
+                    minHeight: footerStyle.minHeight || "",
+                    height: footerStyle.height || "",
+                    overflow: footerStyle.overflow || "",
+                    display: footerStyle.display || ""
+                },
+                tailChildren: getTailChildren(),
                 threshold: threshold,
                 trimmed: false
             };
@@ -670,6 +744,7 @@
             }
 
             window.__oinpFooterProbeLast = report;
+            renderFooterProbeOverlay(report);
             if ((debug || report.trimmed) && window.console && console.info) {
                 console.info("[OINP footer probe]", report);
             }

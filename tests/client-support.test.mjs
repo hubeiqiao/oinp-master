@@ -145,12 +145,29 @@ test("mobile footer has a runtime tail guard for real iOS WebView layout drift",
   const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
 
-  assert.match(html, /styles\.css\?v=103/);
-  assert.match(html, /script\.js\?v=44/);
+  assert.match(html, /styles\.css\?v=104/);
+  assert.match(html, /script\.js\?v=45/);
   assert.match(script, /function initFooterTailGuard\(\)/);
   assert.match(script, /footer-tail-trimmed/);
   assert.match(script, /__oinpFooterProbe/);
   assert.match(script, /initFooterTailGuard\(\)/);
   assert.match(styles, /\.story-footer\.footer-tail-trimmed/);
   assert.match(styles, /height:\s*var\(--footer-trim-height\)/);
+});
+
+test("footer probe can be shown on real phones without changing page layout", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
+  const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+
+  assert.match(html, /styles\.css\?v=104/);
+  assert.match(html, /script\.js\?v=45/);
+  assert.match(script, /function renderFooterProbeOverlay/);
+  assert.match(script, /footerProbe=1/);
+  assert.match(script, /tailChildren/);
+  assert.match(script, /bodyHeight/);
+  assert.match(script, /window\.__oinpFooterProbeLast/);
+  assert.match(styles, /\.footer-probe-overlay/);
+  assert.match(styles, /position:\s*fixed/);
+  assert.match(styles, /pointer-events:\s*none/);
 });
