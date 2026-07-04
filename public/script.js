@@ -624,6 +624,166 @@
         button.addEventListener("blur", resetMagnet);
     }
 
+    function initFooterDebug() {
+        var flagKey = "oinp_footer_debug";
+        var params = new URLSearchParams(window.location.search || "");
+        var queryFlag = params.get("debugFooter");
+        try {
+            if (queryFlag === "1") localStorage.setItem(flagKey, "1");
+            if (queryFlag === "0") localStorage.removeItem(flagKey);
+        } catch (e) {}
+        var enabled = queryFlag === "1";
+        try { enabled = enabled || localStorage.getItem(flagKey) === "1"; } catch (e) {}
+        if (!enabled) return;
+
+        var footer = document.querySelector(".story-footer");
+        if (!footer) return;
+        footer.classList.add("footer-debug-active");
+
+        var panel = document.createElement("section");
+        panel.className = "footer-debug";
+        panel.setAttribute("aria-label", "Footer layout debug");
+        panel.innerHTML =
+            '<div class="footer-debug-head">' +
+                '<strong>Footer debug</strong>' +
+                '<span>Use <code>?debugFooter=0</code> to hide</span>' +
+            '</div>' +
+            '<div class="footer-debug-actions">' +
+                '<button type="button" data-footer-debug-copy>Copy report</button>' +
+                '<button type="button" data-footer-debug-refresh>Refresh</button>' +
+            '</div>' +
+            '<pre data-footer-debug-output></pre>';
+        footer.appendChild(panel);
+
+        var output = panel.querySelector("[data-footer-debug-output]");
+        var copy = panel.querySelector("[data-footer-debug-copy]");
+        var refresh = panel.querySelector("[data-footer-debug-refresh]");
+        var latest = null;
+        var timer = null;
+
+        function rectFor(selector) {
+            var el = document.querySelector(selector);
+            if (!el) return null;
+            var r = el.getBoundingClientRect();
+            var cs = window.getComputedStyle(el);
+            return {
+                selector: selector,
+                top: Math.round(r.top),
+                bottom: Math.round(r.bottom),
+                height: Math.round(r.height),
+                display: cs.display,
+                position: cs.position,
+                heightCss: cs.height,
+                minHeight: cs.minHeight,
+                marginTop: cs.marginTop,
+                marginBottom: cs.marginBottom,
+                paddingTop: cs.paddingTop,
+                paddingBottom: cs.paddingBottom,
+                overflowX: cs.overflowX,
+                overflowY: cs.overflowY
+            };
+        }
+
+        function collectFooterDebug() {
+            var html = document.documentElement;
+            var body = document.body;
+            var footerRect = rectFor(".story-footer");
+            var canvasRect = rectFor(".footer-canvas");
+            var vv = window.visualViewport;
+            return {
+                time: new Date().toISOString(),
+                url: window.location.href,
+                ua: navigator.userAgent,
+                viewport: {
+                    innerWidth: window.innerWidth,
+                    innerHeight: window.innerHeight,
+                    dpr: window.devicePixelRatio || 1,
+                    visual: vv ? {
+                        width: Math.round(vv.width),
+                        height: Math.round(vv.height),
+                        offsetTop: Math.round(vv.offsetTop),
+                        pageTop: Math.round(vv.pageTop),
+                        scale: vv.scale
+                    } : null
+                },
+                document: {
+                    clientWidth: html.clientWidth,
+                    scrollWidth: html.scrollWidth,
+                    scrollHeight: html.scrollHeight,
+                    bodyScrollWidth: body.scrollWidth,
+                    bodyScrollHeight: body.scrollHeight,
+                    overflowX: html.scrollWidth - html.clientWidth
+                },
+                footer: {
+                    storyFooter: footerRect,
+                    photo: rectFor(".footer-photo"),
+                    grade: rectFor(".footer-grade"),
+                    canvas: canvasRect,
+                    topline: rectFor(".footer-topline"),
+                    map: rectFor(".footer-map"),
+                    statement: rectFor(".footer-statement"),
+                    bottom: rectFor(".footer-bottom"),
+                    gapAfterCanvas: footerRect && canvasRect ? Math.round(footerRect.bottom - canvasRect.bottom) : null,
+                    gapAfterFooter: footerRect ? Math.round(html.scrollHeight - (window.pageYOffset + footerRect.bottom)) : null
+                },
+                runtime: {
+                    calElements: document.querySelectorAll("cal-modal-box, cal-floating-button, cal-inline, iframe[name^='cal-embed'], iframe[src*='cal.com']").length,
+                    bodyClasses: body.className || "",
+                    footerClasses: footer.className || ""
+                },
+                bodyTail: Array.prototype.slice.call(body.children).slice(-10).map(function (el) {
+                    var r = el.getBoundingClientRect();
+                    var cs = window.getComputedStyle(el);
+                    return {
+                        tag: el.tagName,
+                        id: el.id || "",
+                        cls: String(el.className || "").slice(0, 120),
+                        top: Math.round(r.top),
+                        bottom: Math.round(r.bottom),
+                        height: Math.round(r.height),
+                        display: cs.display,
+                        position: cs.position,
+                        visibility: cs.visibility
+                    };
+                })
+            };
+        }
+
+        function renderFooterDebug(reason) {
+            latest = collectFooterDebug();
+            latest.reason = reason || "manual";
+            output.textContent = JSON.stringify(latest, null, 2);
+            if (window.console && console.info) console.info("[OINP footer debug]", latest);
+        }
+
+        function schedule(reason) {
+            clearTimeout(timer);
+            timer = setTimeout(function () { renderFooterDebug(reason); }, 80);
+        }
+
+        refresh.addEventListener("click", function () { renderFooterDebug("refresh-click"); });
+        copy.addEventListener("click", function () {
+            var text = JSON.stringify(latest || collectFooterDebug(), null, 2);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function () {
+                    copy.textContent = "Copied";
+                    setTimeout(function () { copy.textContent = "Copy report"; }, 1400);
+                }).catch(function () { output.textContent = text; });
+            } else {
+                output.textContent = text;
+            }
+        });
+
+        window.__oinpFooterDebug = collectFooterDebug;
+        window.addEventListener("resize", function () { schedule("resize"); }, { passive: true });
+        window.addEventListener("orientationchange", function () { schedule("orientationchange"); }, { passive: true });
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener("resize", function () { schedule("visualViewport-resize"); }, { passive: true });
+            window.visualViewport.addEventListener("scroll", function () { schedule("visualViewport-scroll"); }, { passive: true });
+        }
+        renderFooterDebug("init");
+    }
+
     /* ---------- support + story portal ---------- */
     var STORE_KEY = "oinp_support_v1";
     function postJSON(path, payload) {
@@ -1055,6 +1215,7 @@
         initFooterAvatarPop();
         initFooterPremiumMotion();
         initFooterMagneticBuild();
+        initFooterDebug();
         initTurnstile();
         initSupport();
         initStoryPortal();

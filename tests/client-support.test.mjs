@@ -130,3 +130,18 @@ test("mobile X and LinkedIn actions prefer app-scheme links with web fallback", 
   assert.match(script, /twitter:\/\/post\?message=/);
   assert.match(script, /linkedin:\/\/shareArticle\?mini=true/);
 });
+
+test("footer layout diagnostics are gated behind debugFooter mode", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
+  const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+
+  assert.match(html, /styles\.css\?v=100/);
+  assert.match(html, /script\.js\?v=42/);
+  assert.match(script, /function initFooterDebug\(\)/);
+  assert.match(script, /debugFooter/);
+  assert.match(script, /window\.__oinpFooterDebug = collectFooterDebug/);
+  assert.match(script, /footer\.classList\.add\("footer-debug-active"\)/);
+  assert.match(styles, /\.footer-debug/);
+  assert.doesNotMatch(html, /footer-debug/);
+});

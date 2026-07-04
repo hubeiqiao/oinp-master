@@ -1271,6 +1271,7 @@ body.film-landscape-lock { overflow: hidden; }
     background: #080604;
     --footer-enter-duration: 420ms;
 }
+.story-footer.footer-debug-active { overflow: visible; }
 .footer-photo, .footer-grade { position: absolute; inset: 0; }
 .footer-photo { z-index: 0; background: #0b0704; }
 .footer-photo img {
@@ -1835,6 +1836,60 @@ body.film-landscape-lock { overflow: hidden; }
     color: rgba(251, 247, 238, 0.86);
 }
 .footer-mini { display: none; }
+.footer-debug {
+    position: relative;
+    z-index: 5;
+    width: min(100%, 760px);
+    margin: 28px auto 0;
+    padding: 16px;
+    border: 1px solid rgba(233, 185, 104, 0.32);
+    border-radius: 12px;
+    background: rgba(4, 3, 2, 0.82);
+    box-shadow: 0 22px 60px -40px rgba(0, 0, 0, 0.8);
+    color: rgba(251, 247, 238, 0.82);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    font-size: 11px;
+    line-height: 1.45;
+}
+.footer-debug-head,
+.footer-debug-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.footer-debug-head strong {
+    color: var(--amber-bright);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+.footer-debug-head span {
+    color: rgba(251, 247, 238, 0.5);
+    font-size: 10px;
+}
+.footer-debug-actions {
+    justify-content: flex-start;
+    margin-top: 12px;
+}
+.footer-debug button {
+    min-height: 32px;
+    padding: 0 12px;
+    border: 1px solid rgba(233, 185, 104, 0.34);
+    border-radius: 8px;
+    color: rgba(251, 247, 238, 0.86);
+    background: rgba(255, 255, 255, 0.05);
+}
+.footer-debug pre {
+    max-height: 260px;
+    margin: 14px 0 0;
+    padding-top: 12px;
+    overflow: auto;
+    border-top: 1px solid rgba(251, 247, 238, 0.12);
+    color: rgba(251, 247, 238, 0.68);
+    white-space: pre-wrap;
+    word-break: break-word;
+}
 
 @media (min-width: 761px) {
     .footer-action {
