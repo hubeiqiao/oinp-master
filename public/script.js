@@ -125,7 +125,7 @@
         });
     }
 
-    /* ---------- FILM: muted preview from Joe's intro -> click plays with sound ---------- */
+    /* ---------- FILM: muted preview -> click plays the story with sound ---------- */
     function initFilm() {
         var stage = document.querySelector("[data-film]");
         if (!stage) return;
@@ -137,8 +137,8 @@
         var engaged = false;
         video.muted = true; video.playsInline = true; video.setAttribute("playsinline", "");
 
-        // The story file already starts at Joe's introduction (the hook lives in the hero),
-        // so the muted preview simply plays/loops from 0, and a click plays it with sound.
+        // Keep the quiet preview lightweight. Once the visitor explicitly plays,
+        // select the right full-story file and hold the opening hook frame while it buffers.
         function ambientPlay() {
             if (engaged || reducedMotion.matches) return;
             video.muted = true; video.loop = true;
@@ -162,30 +162,68 @@
                 });
             } catch (e) {}
         }
-        var FULL_SRC = "media/oinp-feedback-story-full.mp4";
-        // Engaging plays the whole ~2:03 story (hook included) from one continuous file —
-        // it's a different hook than the hero's own background loop (this one belongs to
-        // the video itself, played only once the viewer opts in), not a stand-in for it.
-        // No quality-tier picking here: Cloudflare Workers Assets caps individual files at
-        // 25MiB, which only leaves room for one well-optimized 720p file for a ~2:03 clip —
-        // a genuinely better 1080p tier isn't feasible without moving video delivery off
-        // Workers Assets (e.g. R2 or Stream), which is a bigger call than this fix.
+        var FULL_SRC = video.dataset.fullSrc || "media/oinp-feedback-story-full.mp4";
+        var MOBILE_SRC = video.dataset.mobileSrc || FULL_SRC;
+        var LOADING_POSTER = video.dataset.loadingPoster || video.poster;
+
+        function selectStorySrc() {
+            if (window.matchMedia && window.matchMedia("(max-width: 760px)").matches) return MOBILE_SRC;
+            return FULL_SRC;
+        }
+        function absoluteSrc(src) {
+            try { return new URL(src, document.baseURI).href; }
+            catch (e) { return src; }
+        }
+        function isCurrentSource(src) {
+            var absolute = absoluteSrc(src);
+            return video.currentSrc === absolute || video.src === absolute;
+        }
+        function primeMobileStorySource() {
+            if (selectStorySrc() !== MOBILE_SRC || isCurrentSource(MOBILE_SRC)) return;
+            var source = video.querySelector("source");
+            if (source) source.setAttribute("src", MOBILE_SRC);
+            if (LOADING_POSTER) video.poster = LOADING_POSTER;
+            video.load();
+        }
+        function showLoadingFrame() {
+            if (LOADING_POSTER) video.poster = LOADING_POSTER;
+            stage.classList.add("loading");
+        }
+        function hideLoadingFrame() {
+            stage.classList.remove("loading");
+        }
+        video.addEventListener("playing", hideLoadingFrame);
+        video.addEventListener("error", hideLoadingFrame);
+
         // Calling play() synchronously right after changing `src` doesn't reliably start
-        // playback — the browser hasn't loaded the new source yet, and the request can
-        // silently go nowhere. Waiting for loadedmetadata before calling play() is what
-        // actually works.
+        // playback: the browser may not have enough media buffered. Wait for canplay,
+        // keep the hook frame visible during that gap, then reveal the actual video.
         function swapSrcAndPlay(src) {
+            showLoadingFrame();
             function tryPlay() {
                 var p = video.play();
-                if (p && p.catch) p.catch(function () { setTimeout(function () { video.play().catch(function () {}); }, 60); });
+                if (p && p.catch) {
+                    p.catch(function () {
+                        setTimeout(function () {
+                            video.play().catch(function () { hideLoadingFrame(); });
+                        }, 60);
+                    });
+                }
             }
             function onReady() {
-                video.removeEventListener("loadedmetadata", onReady);
+                video.removeEventListener("canplay", onReady);
                 try { video.currentTime = 0; } catch (e) {}
                 tryPlay();
             }
-            video.addEventListener("loadedmetadata", onReady);
-            video.src = src;
+            try { video.pause(); } catch (e) {}
+            video.addEventListener("canplay", onReady);
+            if (isCurrentSource(src)) {
+                if (video.readyState >= 3) onReady();
+                else video.load();
+            } else {
+                video.src = src;
+                video.load();
+            }
         }
         function engage(options) {
             var reset = !options || options.reset !== false;
@@ -195,7 +233,7 @@
             video.loop = false;
             video.muted = false;
             setLockScreenArtwork();
-            if (reset) swapSrcAndPlay(FULL_SRC);
+            if (reset) swapSrcAndPlay(selectStorySrc());
             else { var p = video.play(); if (p && p.catch) p.catch(function () {}); }
         }
         // Two different "landscape" stories, handled on purpose:
@@ -296,6 +334,7 @@
         });
         var heroCta = document.querySelector(".btn-watch");
         if (heroCta) heroCta.addEventListener("click", navigateAndEngage);
+        primeMobileStorySource();
 
         if ("IntersectionObserver" in window) {
             var io = new IntersectionObserver(function (entries) {
@@ -309,15 +348,65 @@
     }
 
     /* ---------- sharing ---------- */
+    function isMobileLike() {
+        var ua = navigator.userAgent || "";
+        return /Android|iPhone|iPad|iPod/i.test(ua) || (/Macintosh/i.test(ua) && navigator.maxTouchPoints > 1);
+    }
     function openShare(u) { window.open(u, "_blank", "noopener,noreferrer,width=640,height=600"); }
+    function openAppOrFallback(appHref, webHref) {
+        if (!appHref || !isMobileLike()) return false;
+        var fallbackHref = webHref || appHref;
+        var settled = false;
+        var timer = null;
+        function settle() {
+            settled = true;
+            if (timer) clearTimeout(timer);
+            document.removeEventListener("visibilitychange", onVisibility);
+            window.removeEventListener("pagehide", settle);
+        }
+        function onVisibility() {
+            if (document.hidden) settle();
+        }
+        document.addEventListener("visibilitychange", onVisibility);
+        window.addEventListener("pagehide", settle, { once: true });
+        timer = setTimeout(function () {
+            if (settled || document.hidden) return;
+            settle();
+            window.location.href = fallbackHref;
+        }, 900);
+        window.location.href = appHref;
+        return true;
+    }
+    function appShareUrl(kind, url) {
+        if (kind === "x") return "twitter://post?message=" + encodeURIComponent(SHARE_TEXT + "\n\n" + url);
+        if (kind === "linkedin") return "linkedin://shareArticle?mini=true&url=" + encodeURIComponent(url) + "&title=" + encodeURIComponent(SHARE_TITLE);
+        return "";
+    }
     function shareUrlFor(kind) { return SHARE_URL + "?utm_source=" + kind; }
     function shareTo(kind, btn) {
-        if (kind === "linkedin") openShare("https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(shareUrlFor("linkedin")));
-        else if (kind === "x") openShare("https://x.com/intent/post?text=" + encodeURIComponent(SHARE_TEXT) + "&url=" + encodeURIComponent(shareUrlFor("x")));
+        if (kind === "linkedin") {
+            var linkedInUrl = shareUrlFor("linkedin");
+            var linkedInWeb = "https://www.linkedin.com/sharing/share-offsite/?url=" + encodeURIComponent(linkedInUrl);
+            if (!openAppOrFallback(appShareUrl("linkedin", linkedInUrl), linkedInWeb)) openShare(linkedInWeb);
+        }
+        else if (kind === "x") {
+            var xUrl = shareUrlFor("x");
+            var xWeb = "https://x.com/intent/post?text=" + encodeURIComponent(SHARE_TEXT) + "&url=" + encodeURIComponent(xUrl);
+            if (!openAppOrFallback(appShareUrl("x", xUrl), xWeb)) openShare(xWeb);
+        }
         else if (kind === "email") emailShare();
         else if (kind === "copy") copyLink(btn);
         else if (kind === "native") nativeShare();
         else if (kind === "native-or-copy") { if (navigator.share) nativeShare(); else copyLink(btn); }
+    }
+    function initAppSchemeLinks() {
+        document.querySelectorAll("[data-app-href]").forEach(function (link) {
+            link.addEventListener("click", function (e) {
+                if (!isMobileLike()) return;
+                e.preventDefault();
+                openAppOrFallback(link.getAttribute("data-app-href"), link.getAttribute("data-web-href") || link.href);
+            });
+        });
     }
     function copyPayload() { return NATIVE_TEXT + "\n\n" + shareUrlFor("copy"); }
     function copyLink(btn) {
@@ -535,6 +624,165 @@
         button.addEventListener("blur", resetMagnet);
     }
 
+    function initFooterTailGuard() {
+        var footer = document.querySelector(".story-footer");
+        var bottom = footer && footer.querySelector(".footer-bottom");
+        if (!footer || !bottom) return;
+        var mobile = window.matchMedia("(max-width: 760px)");
+        if (!mobile.matches) return;
+
+        var frame = null;
+        function clearTrim() {
+            footer.classList.remove("footer-tail-trimmed");
+            footer.style.removeProperty("--footer-trim-height");
+        }
+
+        function summarizeNode(node) {
+            if (!node || node.nodeType !== 1) return null;
+            var rect = node.getBoundingClientRect ? node.getBoundingClientRect() : { top: 0, bottom: 0, height: 0, width: 0 };
+            var cs = window.getComputedStyle ? window.getComputedStyle(node) : {};
+            return {
+                tag: node.tagName ? node.tagName.toLowerCase() : "",
+                id: node.id || "",
+                cls: (node.className && typeof node.className === "string") ? node.className.slice(0, 80) : "",
+                top: Math.round(rect.top || 0),
+                bottom: Math.round(rect.bottom || 0),
+                height: Math.round(rect.height || 0),
+                width: Math.round(rect.width || 0),
+                position: cs.position || "",
+                display: cs.display || "",
+                overflow: cs.overflow || ""
+            };
+        }
+
+        function getTailChildren() {
+            var children = Array.prototype.slice.call(document.body ? document.body.children : []);
+            var footerIndex = children.indexOf(footer);
+            var tail = footerIndex >= 0 ? children.slice(footerIndex + 1) : children.slice(-8);
+            return tail.slice(0, 10).map(summarizeNode).filter(Boolean);
+        }
+
+        function getFooterContentBottom() {
+            var selectors = [
+                ".footer-photo",
+                ".footer-brand-panel",
+                ".footer-map",
+                ".footer-statement",
+                ".footer-actions",
+                ".footer-bottom > p"
+            ];
+            return selectors.reduce(function (max, selector) {
+                var node = footer.querySelector(selector);
+                if (!node || !node.getBoundingClientRect) return max;
+                var rect = node.getBoundingClientRect();
+                return Math.max(max, rect.bottom || 0);
+            }, footer.getBoundingClientRect().top);
+        }
+
+        function collect(reason) {
+            clearTrim();
+            var footerRect = footer.getBoundingClientRect();
+            var bottomRect = bottom.getBoundingClientRect();
+            var contentBottom = getFooterContentBottom();
+            var canvas = footer.querySelector(".footer-canvas");
+            var photo = footer.querySelector(".footer-photo");
+            var canvasRect = canvas ? canvas.getBoundingClientRect() : { top: 0, bottom: 0, height: 0 };
+            var photoRect = photo ? photo.getBoundingClientRect() : { top: 0, bottom: 0, height: 0 };
+            var doc = document.documentElement;
+            var body = document.body;
+            var footerStyle = window.getComputedStyle ? window.getComputedStyle(footer) : {};
+            var viewportHeight = (window.visualViewport && window.visualViewport.height) || window.innerHeight || doc.clientHeight || 0;
+            var viewportWidth = (window.visualViewport && window.visualViewport.width) || window.innerWidth || doc.clientWidth || 0;
+            var pad = 28;
+            var desiredHeight = Math.max(0, Math.ceil(bottomRect.bottom - footerRect.top + pad));
+            var contentDrivenHeight = Math.max(0, Math.ceil(contentBottom - footerRect.top + pad));
+            var actualHeight = Math.max(0, Math.ceil(footerRect.height));
+            var internalTailGap = actualHeight - desiredHeight;
+            var contentTailGap = actualHeight - contentDrivenHeight;
+            var footerPageBottom = Math.round(window.pageYOffset + footerRect.bottom);
+            var docTailGap = Math.round(doc.scrollHeight - footerPageBottom);
+            var threshold = Math.max(120, Math.round(viewportHeight * 0.16));
+            var report = {
+                reason: reason || "manual",
+                url: window.location.href,
+                ua: navigator.userAgent,
+                viewportWidth: Math.round(viewportWidth),
+                viewportHeight: Math.round(viewportHeight),
+                innerHeight: Math.round(window.innerHeight || 0),
+                screenHeight: window.screen ? Math.round(window.screen.height || 0) : 0,
+                screenAvailHeight: window.screen ? Math.round(window.screen.availHeight || 0) : 0,
+                visualViewportOffsetTop: Math.round((window.visualViewport && window.visualViewport.offsetTop) || 0),
+                visualViewportPageTop: Math.round((window.visualViewport && window.visualViewport.pageTop) || 0),
+                pageYOffset: Math.round(window.pageYOffset || 0),
+                htmlClientHeight: Math.round(doc.clientHeight || 0),
+                htmlScrollHeight: Math.round(doc.scrollHeight || 0),
+                bodyHeight: body ? Math.round(body.getBoundingClientRect().height || 0) : 0,
+                bodyScrollHeight: body ? Math.round(body.scrollHeight || 0) : 0,
+                footerHeight: actualHeight,
+                desiredFooterHeight: desiredHeight,
+                contentDrivenHeight: contentDrivenHeight,
+                internalTailGap: internalTailGap,
+                contentTailGap: contentTailGap,
+                documentTailGap: docTailGap,
+                footerRect: {
+                    top: Math.round(footerRect.top),
+                    bottom: Math.round(footerRect.bottom)
+                },
+                canvasRect: {
+                    top: Math.round(canvasRect.top || 0),
+                    bottom: Math.round(canvasRect.bottom || 0),
+                    height: Math.round(canvasRect.height || 0)
+                },
+                photoRect: {
+                    top: Math.round(photoRect.top || 0),
+                    bottom: Math.round(photoRect.bottom || 0),
+                    height: Math.round(photoRect.height || 0)
+                },
+                footerStyle: {
+                    minHeight: footerStyle.minHeight || "",
+                    height: footerStyle.height || "",
+                    overflow: footerStyle.overflow || "",
+                    display: footerStyle.display || ""
+                },
+                tailChildren: getTailChildren(),
+                threshold: threshold,
+                trimmed: false
+            };
+
+            if (contentTailGap > threshold && contentDrivenHeight > 0) {
+                footer.style.setProperty("--footer-trim-height", contentDrivenHeight + "px");
+                footer.classList.add("footer-tail-trimmed");
+                report.trimmed = true;
+            } else if (internalTailGap > threshold && desiredHeight > 0) {
+                footer.style.setProperty("--footer-trim-height", desiredHeight + "px");
+                footer.classList.add("footer-tail-trimmed");
+                report.trimmed = true;
+            }
+
+            return report;
+        }
+
+        function schedule(reason) {
+            if (frame) cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(function () {
+                frame = null;
+                collect(reason);
+            });
+        }
+
+        window.__oinpFooterProbe = function () { return collect("manual"); };
+        requestAnimationFrame(function () { schedule("init"); });
+        window.addEventListener("load", function () { schedule("load"); }, { passive: true });
+        window.addEventListener("resize", function () { schedule("resize"); }, { passive: true });
+        window.addEventListener("orientationchange", function () { schedule("orientationchange"); }, { passive: true });
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener("resize", function () { schedule("visualViewport-resize"); }, { passive: true });
+            window.visualViewport.addEventListener("scroll", function () { schedule("visualViewport-scroll"); }, { passive: true });
+        }
+        setTimeout(function () { schedule("settle-350"); }, 350);
+        setTimeout(function () { schedule("settle-1200"); }, 1200);
+    }
+
     /* ---------- support + story portal ---------- */
     var STORE_KEY = "oinp_support_v1";
     function postJSON(path, payload) {
@@ -547,10 +795,19 @@
     }
     function loadState() { try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); } catch (e) { return {}; } }
     function saveState(s) { try { localStorage.setItem(STORE_KEY, JSON.stringify(s)); } catch (e) {} }
+    function validSupportToken(token) {
+        return typeof token === "string" && /^[A-Za-z0-9._-]{8,80}$/.test(token);
+    }
+    function createSupportToken() {
+        return (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+            : ("t-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12));
+    }
     function ensureToken(state) {
-        if (!state.token) {
-            state.token = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
-                : ("t-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 12));
+        if (!validSupportToken(state.token)) {
+            state.token = createSupportToken();
+            state.supported = false;
+            state.receipt = "";
+            state.updateToken = "";
             saveState(state);
         }
         return state.token;
@@ -612,6 +869,7 @@
         var askEl = root.querySelector("[data-support-ask]");
         var thanksEl = root.querySelector("[data-support-thanks]");
         var btn = root.querySelector("[data-support-btn]");
+        var btnLabel = root.querySelector(".btn-support-label");
         var errEl = root.querySelector("[data-support-error]");
         var countEl = root.querySelector("[data-support-count]");
         var receiptEl = root.querySelector("[data-support-receipt]");
@@ -643,6 +901,16 @@
             if (thanksEl) { thanksEl.hidden = false; if (!animate) thanksEl.style.animation = "none"; }
             showReceipt(); refreshCount();
         }
+        var btnText = btnLabel ? btnLabel.textContent : "";
+        function setSupportLoading(on) {
+            if (!btn) return;
+            if (on) btn.classList.add("is-loading");
+            else btn.classList.remove("is-loading");
+            btn.disabled = !!on;
+            if (on) btn.setAttribute("aria-busy", "true");
+            else btn.removeAttribute("aria-busy");
+            if (btnLabel) btnLabel.textContent = on ? "Counting your support" : btnText;
+        }
         function showError(msg) { if (errEl) { errEl.textContent = msg; errEl.hidden = false; } }
         function clearError() { if (errEl) errEl.hidden = true; }
 
@@ -650,7 +918,7 @@
 
         function submit(isRetry) {
             clearError();
-            btn.classList.add("is-loading");
+            setSupportLoading(true);
             Promise.all([getNonce(), getTurnstileToken()]).then(function (vals) {
                 return postJSONFull("/api/support", { token: state.token, nonce: vals[0], turnstileToken: vals[1], source: "oinp-homepage", company: "" });
             }).then(function (res) {
@@ -659,7 +927,7 @@
                     state.supported = true; state.receipt = d.receipt;
                     if (d.updateToken) state.updateToken = d.updateToken;
                     saveState(state);
-                    btn.classList.remove("is-loading");
+                    setSupportLoading(false);
                     showThanks(true);
                     fetchNonce(); // prime a fresh single-use nonce for a possible story submission
                     return;
@@ -667,7 +935,7 @@
                 if (d && (d.reason === "nonce" || d.reason === "too_fast" || d.reason === "nonce_used") && !isRetry) {
                     return fetchNonce().then(function () { return new Promise(function (rs) { setTimeout(rs, 900); }); }).then(function () { submit(true); });
                 }
-                btn.classList.remove("is-loading");
+                setSupportLoading(false);
                 if (res.status === 0) showError("Couldn\u2019t reach the server \u2014 your support may not be saved. Please try again.");
                 else if (d && d.reason === "rate") showError("Too many attempts right now. Please try again in a few minutes.");
                 else showError("Something went wrong \u2014 your support wasn\u2019t saved. Please try again.");
@@ -940,11 +1208,13 @@
         initReveals();
         initFaqDetails();
         initFilm();
+        initAppSchemeLinks();
         initShare();
         initCalActions();
         initFooterAvatarPop();
         initFooterPremiumMotion();
         initFooterMagneticBuild();
+        initFooterTailGuard();
         initTurnstile();
         initSupport();
         initStoryPortal();

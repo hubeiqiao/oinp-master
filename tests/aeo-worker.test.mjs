@@ -265,3 +265,37 @@ test("ask section highlights the core policy argument", async () => {
   assert.doesNotMatch(asks, /class="ask-highlight"/);
   assert.match(asks, /<strong class="ask-line-highlight">fair policy should protect the people caught in that gap\.<\/strong>/);
 });
+
+test("mobile CSS prevents horizontal overflow without locking root touch scroll", async () => {
+  const css = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+  const mobile = css.match(/@media \(max-width: 760px\) \{([\s\S]*?)\n\}\n\n@media \(max-width: 400px\)/)?.[1] || "";
+  const htmlRule = css.match(/html \{([\s\S]*?)\n\}/)?.[1] || "";
+  const bodyRule = css.match(/body \{([\s\S]*?)\n\}/)?.[1] || "";
+
+  assert.doesNotMatch(htmlRule, /overflow-x:\s*(hidden|clip)/);
+  assert.doesNotMatch(mobile, /html,\n\s*body \{[\s\S]*overflow-x:\s*(hidden|clip)/);
+  assert.match(bodyRule, /width: 100%;[\s\S]*max-width: 100%;[\s\S]*overflow-x: hidden;/);
+  assert.match(mobile, /body \{[\s\S]*overflow-x: hidden;[\s\S]*overscroll-behavior-x: none;/);
+  assert.match(mobile, /\.hero-eyebrow \{[\s\S]*white-space: normal;[\s\S]*overflow-wrap: anywhere;/);
+  assert.match(mobile, /\.hero-actions \{ max-width: 100%; min-width: 0;/);
+  assert.match(mobile, /\.film-title \{[\s\S]*white-space: normal;[\s\S]*overflow-wrap: break-word;/);
+  assert.match(mobile, /\.film-stage \{ width: 100%; max-width: 100%;/);
+  assert.match(mobile, /\.arc-question \{[\s\S]*white-space: normal;[\s\S]*overflow-wrap: break-word;/);
+  assert.match(mobile, /\.footer-copy-open \{[\s\S]*white-space: normal;/);
+});
+
+test("story video uses a mobile source and hook frame while loading", async () => {
+  const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
+  const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
+  const css = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+
+  assert.match(html, /data-full-src="media\/oinp-feedback-story-full\.mp4"/);
+  assert.match(html, /data-mobile-src="media\/oinp-feedback-story-mobile-720p\.mp4"/);
+  assert.match(html, /data-loading-poster="media\/hero-hook-poster\.jpg"/);
+  assert.match(script, /function selectStorySrc\(\)/);
+  assert.match(script, /matchMedia\("\(max-width: 760px\)"/);
+  assert.match(script, /stage\.classList\.add\("loading"\)/);
+  assert.match(script, /stage\.classList\.remove\("loading"\)/);
+  assert.match(css, /\.film-stage\.loading::before \{[\s\S]*hero-hook-poster\.jpg/);
+  await fs.stat(path.join(root, "public", "media", "oinp-feedback-story-mobile-720p.mp4"));
+});

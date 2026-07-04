@@ -85,6 +85,8 @@ html {
 }
 body {
     margin: 0;
+    width: 100%;
+    max-width: 100%;
     min-width: 320px;
     font-family: var(--sans);
     font-size: 17px;
@@ -298,6 +300,15 @@ html.video-fallback .hero-video { display: none !important; }
 }
 .film-video { width: 100%; height: 100%; object-fit: cover; background: #000; filter: brightness(0.62) saturate(1.04); transition: filter var(--dur-slow) var(--ease-smooth); }
 .film-stage.playing .film-video { filter: none; }
+.film-stage.loading::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: #000 url("media/hero-hook-poster.jpg") center / cover no-repeat;
+    filter: brightness(0.78) saturate(1.04);
+}
 .film-grade {
     position: absolute; inset: 0; pointer-events: none;
     background: radial-gradient(120% 90% at 50% 42%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.45) 100%),
@@ -1048,7 +1059,12 @@ body.film-landscape-lock { overflow: hidden; }
 .support-lead { text-align: center; }
 .support-lead .display { font-size: clamp(30px, 4.4vw, 50px); }
 .support-lead .lede { font-size: clamp(16.5px, 1.5vw, 18.5px); max-width: 940px; margin-inline: auto; }
-.btn-support { margin: 30px auto 0; }
+.btn-support {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin: 30px auto 0;
+}
 .support-micro { margin: 16px auto 0; max-width: min(100%, 92ch); font-size: 13px; color: var(--quiet); line-height: 1.5; white-space: nowrap; }
 .support-micro a, .support-count a { color: var(--ink); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: color var(--dur) var(--ease-smooth); }
 .support-micro a:hover, .support-count a:hover { color: var(--amber-bright); }
@@ -1125,8 +1141,26 @@ body.film-landscape-lock { overflow: hidden; }
     color: var(--quiet);
 }
 /* heart-fill micro-moment while the signal is being counted */
+.btn-support .ico-heart,
+.btn-support .btn-support-label { position: relative; z-index: 1; }
 .btn-support .ico-heart { transform-origin: center; }
+.btn-support.is-loading {
+    cursor: wait;
+    transform: translateY(-1px);
+    box-shadow: 0 18px 48px -12px rgba(246,180,80,0.62), 0 0 0 1px rgba(255,234,190,0.42) inset;
+}
+.btn-support.is-loading::after {
+    content: "";
+    position: absolute;
+    inset: -45% -18%;
+    z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(100deg, transparent 16%, rgba(255,255,255,0.35) 42%, transparent 68%);
+    transform: translateX(-75%) rotate(4deg);
+    animation: supportSweep 1.05s var(--ease-smooth) infinite;
+}
 .btn-support.is-loading .ico-heart { animation: heartbeat 0.9s var(--ease-smooth) infinite; }
+@keyframes supportSweep { to { transform: translateX(75%) rotate(4deg); } }
 @keyframes heartbeat { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.22); } 55% { transform: scale(1.04); } 70% { transform: scale(1.16); } }
 @keyframes rise-in { from { opacity: 0; transform: translateY(14px); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
 .support-check { display: grid; place-items: center; width: 60px; height: 60px; margin: 0 auto 20px; border-radius: 50%; background: var(--amber-soft); box-shadow: 0 0 0 1px var(--amber-line) inset; animation: pop var(--dur-slow) var(--ease-spring) both; }
@@ -1972,7 +2006,28 @@ body.film-landscape-lock { overflow: hidden; }
 }
 
 @media (max-width: 760px) {
+    body {
+        max-width: 100%;
+        overflow-x: hidden;
+        overscroll-behavior-x: none;
+    }
+
     body { font-size: 16px; }
+
+    .hero,
+    .film,
+    .resources,
+    .asks,
+    .support,
+    .story-footer {
+        max-width: 100%;
+        overflow-x: clip;
+    }
+
+    .wrap,
+    .hero-content {
+        max-width: 100%;
+    }
 
     .support-micro {
         max-width: 50ch;
@@ -1988,13 +2043,32 @@ body.film-landscape-lock { overflow: hidden; }
     .hero-media::after { content: ""; position: absolute; inset: auto 0 0 0; height: 28%; background: linear-gradient(180deg, transparent, var(--bg)); pointer-events: none; }
     .hero-scrim { display: none; }
     .hero-content { position: relative; z-index: 5; left: auto; right: auto; bottom: auto; max-width: none; margin: 22px var(--gutter) 0; }
-    .hero-eyebrow { margin-bottom: 0; font-size: 13px; letter-spacing: 0.22em; text-shadow: none; }
-    .hero-lead { margin-top: 12px; font-size: clamp(14.7px, 3.72vw, 15.4px); line-height: 1.48; color: rgba(251, 247, 238, 0.94); text-shadow: none; max-width: none; text-wrap: balance; text-wrap: pretty; }
+    .hero-eyebrow {
+        max-width: 100%;
+        margin-bottom: 0;
+        font-size: clamp(10.5px, 3.05vw, 12px);
+        letter-spacing: 0.18em;
+        text-shadow: none;
+        white-space: normal;
+        text-wrap: balance;
+        overflow-wrap: anywhere;
+    }
+    .hero-lead {
+        max-width: 100%;
+        margin-top: 12px;
+        font-size: clamp(14.7px, 3.72vw, 15.4px);
+        line-height: 1.48;
+        color: rgba(251, 247, 238, 0.94);
+        text-shadow: none;
+        overflow-wrap: break-word;
+        text-wrap: initial;
+    }
     .hero-lead-full { display: inline; }
     .hero-lead-min { display: none; }
     .hero-lead-min-line { display: inline; }
-    .hero-actions { flex-direction: row; flex-wrap: nowrap; gap: 10px; margin-top: 18px; }
-    .hero .btn { flex: 1 1 0; min-width: 0; min-height: 50px; border-radius: 11px; font-size: 14.5px; padding: 0 12px; }
+    .hero-actions { max-width: 100%; min-width: 0; flex-direction: row; flex-wrap: nowrap; gap: 10px; margin-top: 18px; }
+    .hero .btn { flex: 1 1 0; min-width: 0; min-height: 50px; overflow: hidden; border-radius: 11px; font-size: 14.5px; padding: 0 12px; }
+    .hero .btn span { min-width: 0; }
     .hero .btn-watch { flex: 1.7 1 0; }
     .hero-actions .t-full { display: none; }
     .hero-actions .t-min { display: inline; }
@@ -2003,17 +2077,27 @@ body.film-landscape-lock { overflow: hidden; }
     .hero .btn-ghost { backdrop-filter: none; -webkit-backdrop-filter: none; }
 
     .film { margin-top: 0; border-radius: 0; box-shadow: none; padding-block: clamp(24px, 3.4vh, 38px) 0; }
-    .film-title { font-size: clamp(24px, 7.4vw, 40px); }
+    .film-title {
+        max-width: 100%;
+        font-size: clamp(24px, 7.4vw, 40px);
+        white-space: normal;
+        overflow-wrap: break-word;
+        text-wrap: balance;
+    }
+    .film-title .ft-l {
+        display: block;
+        max-width: 100%;
+    }
     .film-lede {
         font-size: clamp(15px, 3.75vw, 16px);
         line-height: 1.58;
-        text-wrap: balance; text-wrap: pretty;
+        text-wrap: initial;
     }
     .film-slate { flex-wrap: wrap; gap: 9px 16px; }
     .film-head .ft-l { clip-path: none !important; transform: none !important; }
     .film-slate-tag, .film-slate-meta, .film-lede { opacity: 1 !important; transform: none !important; }
     .film-slate-rule { transform: scaleX(1) !important; }
-    .film-stage { height: auto; aspect-ratio: 16 / 9; min-height: 0; }
+    .film-stage { width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; min-height: 0; }
     .film-video { object-fit: contain; background: #000; }
     .film-fullscreen { display: flex; }
     .film-stage { margin-bottom: 12px; }
@@ -2035,7 +2119,7 @@ body.film-landscape-lock { overflow: hidden; }
     .story-summary-body p {
         font-size: 14.4px;
         line-height: 1.44;
-        text-wrap: balance; text-wrap: pretty;
+        text-wrap: initial;
     }
 
     .change-bridge {
@@ -2063,13 +2147,18 @@ body.film-landscape-lock { overflow: hidden; }
         border-image: none;
     }
     .arc-beat {
+        max-width: 100%;
         font-size: clamp(16.5px, 4.15vw, 17.5px);
         line-height: 1.44;
-        text-wrap: balance; text-wrap: pretty;
+        overflow-wrap: break-word;
+        text-wrap: initial;
     }
     .mobile-line-break { display: block; }
     .arc-lead { display: inline-block; white-space: nowrap; font-size: clamp(14px, 3.85vw, 17.5px); }
-    .arc-question { white-space: nowrap; }
+    .arc-question {
+        white-space: normal;
+        overflow-wrap: break-word;
+    }
     .arc-beat::before {
         left: -36px;
         top: 0.52em;
@@ -2093,6 +2182,7 @@ body.film-landscape-lock { overflow: hidden; }
         font-size: 15.5px;
         line-height: 1.44;
         white-space: normal;
+        text-wrap: initial;
     }
     .exhibit-grid { grid-template-columns: 1fr; gap: 14px; }
     .exhibit-grid .res-card { --reveal-delay: 0ms; }
@@ -2147,6 +2237,7 @@ body.film-landscape-lock { overflow: hidden; }
     .asks .section-head .ask-signal {
         width: 100%;
         max-width: none;
+        text-wrap: initial;
     }
     .signal-context {
         max-width: none;
@@ -2155,13 +2246,14 @@ body.film-landscape-lock { overflow: hidden; }
         font-size: 14px;
         letter-spacing: 0.01em;
         line-height: 1.46;
+        text-wrap: initial;
     }
     .signal-main {
         max-width: none;
         font-size: 13.6px;
         line-height: 1.46;
         color: rgba(251, 247, 238, 0.66);
-        text-wrap: balance; text-wrap: pretty;
+        text-wrap: initial;
     }
     .signal-main strong {
         color: rgba(251, 247, 238, 0.88);
@@ -2319,16 +2411,30 @@ body.film-landscape-lock { overflow: hidden; }
     .share-btn { flex: 1 1 calc(50% - 5px); justify-content: center; }
 
     .story-footer {
-        min-height: auto;
-        display: flex;
-        flex-direction: column;
+        min-height: auto !important;
+        min-block-size: 0 !important;
+        height: auto;
+        block-size: auto;
+        display: block;
         border-top-color: rgba(251, 247, 238, 0.18);
+        /* iOS WebViews can treat mixed-axis overflow as a scroll container,
+           preserving a viewport-height blank area after the footer content. */
+        overflow: hidden;
+    }
+    .story-footer.footer-tail-trimmed {
+        min-height: 0 !important;
+        min-block-size: 0 !important;
+        height: var(--footer-trim-height) !important;
+        max-height: var(--footer-trim-height) !important;
+        overflow: hidden;
     }
     .footer-photo {
         position: relative;
         inset: auto;
-        height: min(51svh, 420px);
-        min-height: 390px;
+        height: 390px;
+        height: clamp(300px, 51svh, 390px);
+        min-height: 0;
+        min-block-size: 0;
         overflow: hidden;
     }
     .footer-photo img {
@@ -2355,10 +2461,14 @@ body.film-landscape-lock { overflow: hidden; }
             linear-gradient(90deg, rgba(5,4,3,0.38) 0%, rgba(5,4,3,0) 48%, rgba(5,4,3,0.16) 100%);
     }
     .footer-canvas {
-        min-height: auto;
+        min-height: 0 !important;
+        min-block-size: 0 !important;
+        height: auto;
+        block-size: auto;
         display: block;
+        grid-template-rows: none;
         margin-top: -40px;
-        padding: 0 clamp(24px, 6vw, 34px) 34px;
+        padding: 0 clamp(24px, 6vw, 34px) max(26px, env(safe-area-inset-bottom));
     }
     .footer-topline { display: block; transform: none; }
     .footer-brand-panel {
@@ -2528,7 +2638,9 @@ body.film-landscape-lock { overflow: hidden; }
         display: block;
     }
     .footer-copy-open {
-        white-space: nowrap;
+        max-width: 30rem;
+        margin-inline: auto;
+        white-space: normal;
         font-size: clamp(8.8px, 2.7vw, 10.5px);
         letter-spacing: 0.05em;
     }
@@ -2618,6 +2730,14 @@ body.film-landscape-lock { overflow: hidden; }
     }
 }
 
+@media (min-width: 375px) and (max-width: 760px) {
+    .arc-question {
+        display: inline-block;
+        font-size: 0.94em;
+        white-space: nowrap;
+    }
+}
+
 @media (max-width: 400px) {
     .hero-content { margin-inline: 20px; }
     .hero-lead { font-size: 14.7px; line-height: 1.48; }
@@ -2649,6 +2769,7 @@ body.film-landscape-lock { overflow: hidden; }
     .film-flag-dot, .film-play-ring { animation: none; }
     .support-thanks, .support-check { animation: none; }
     .btn-support.is-loading .ico-heart { animation: none; }
+    .btn-support.is-loading::after { display: none; }
     .photo img, .ask-photo img { transition: none; }
     *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
 }

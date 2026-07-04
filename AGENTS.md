@@ -102,6 +102,18 @@ node --test tests/aeo-worker.test.mjs
 
 If design or mobile layout changes are made, validate visually on desktop and mobile. Do not rely only on code inspection.
 
+## Deployment Rule
+
+Never deploy the Cloudflare Worker directly from a feature branch or work-in-progress branch.
+
+Required flow:
+1. Finish work on the feature branch.
+2. Commit and push the feature branch.
+3. Merge the feature branch into `main`.
+4. Deploy only from `main`.
+
+If asked to deploy while on any branch other than `main`, stop and explain that the project rule requires merging to `main` first.
+
 ## Git Hygiene
 
 - Do not commit `.DS_Store` metadata changes.
