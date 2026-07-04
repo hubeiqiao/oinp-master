@@ -145,8 +145,8 @@ test("mobile footer has a runtime tail guard for real iOS WebView layout drift",
   const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
 
-  assert.match(html, /styles\.css\?v=106/);
-  assert.match(html, /script\.js\?v=47/);
+  assert.match(html, /styles\.css\?v=107/);
+  assert.match(html, /script\.js\?v=48/);
   assert.match(script, /function initFooterTailGuard\(\)/);
   assert.match(script, /footer-tail-trimmed/);
   assert.match(script, /__oinpFooterProbe/);
@@ -155,23 +155,23 @@ test("mobile footer has a runtime tail guard for real iOS WebView layout drift",
   assert.match(styles, /height:\s*var\(--footer-trim-height\)/);
 });
 
-test("footer probe can be shown on real phones without changing page layout", async () => {
+test("footer probe diagnostics stay invisible in production", async () => {
   const html = await fs.readFile(path.join(root, "public", "index.html"), "utf8");
   const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
 
-  assert.match(html, /styles\.css\?v=106/);
-  assert.match(html, /script\.js\?v=47/);
-  assert.match(script, /function renderFooterProbeOverlay/);
-  assert.match(script, /function renderFooterProbePanel/);
-  assert.match(script, /footerProbe=1/);
+  assert.match(html, /styles\.css\?v=107/);
+  assert.match(html, /script\.js\?v=48/);
+  assert.match(script, /window\.__oinpFooterProbe/);
   assert.match(script, /tailChildren/);
   assert.match(script, /bodyHeight/);
-  assert.match(script, /window\.__oinpFooterProbeLast/);
-  assert.match(styles, /\.footer-probe-overlay/);
-  assert.match(styles, /\.footer-probe-panel/);
-  assert.match(styles, /position:\s*fixed/);
-  assert.match(styles, /pointer-events:\s*none/);
+  assert.doesNotMatch(script, /function renderFooterProbeOverlay/);
+  assert.doesNotMatch(script, /function renderFooterProbePanel/);
+  assert.doesNotMatch(script, /footerProbe=1/);
+  assert.doesNotMatch(script, /window\.__oinpFooterProbeLast/);
+  assert.doesNotMatch(script, /\[OINP footer probe\]/);
+  assert.doesNotMatch(styles, /\.footer-probe-overlay/);
+  assert.doesNotMatch(styles, /\.footer-probe-panel/);
 });
 
 test("mobile footer trim is based on real content tail, not viewport spacer height", async () => {
@@ -179,8 +179,8 @@ test("mobile footer trim is based on real content tail, not viewport spacer heig
   const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
 
-  assert.match(html, /styles\.css\?v=106/);
-  assert.match(html, /script\.js\?v=47/);
+  assert.match(html, /styles\.css\?v=107/);
+  assert.match(html, /script\.js\?v=48/);
   assert.match(script, /function getFooterContentBottom/);
   assert.match(script, /contentTailGap/);
   assert.match(script, /contentDrivenHeight/);

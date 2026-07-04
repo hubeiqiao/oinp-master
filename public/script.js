@@ -632,10 +632,6 @@
         if (!mobile.matches) return;
 
         var frame = null;
-        var debug = /(?:\?|&)footerProbe=1(?:&|$)/.test(window.location.search || "");
-        var overlay = null;
-        var panel = null;
-
         function clearTrim() {
             footer.classList.remove("footer-tail-trimmed");
             footer.style.removeProperty("--footer-trim-height");
@@ -681,28 +677,6 @@
                 var rect = node.getBoundingClientRect();
                 return Math.max(max, rect.bottom || 0);
             }, footer.getBoundingClientRect().top);
-        }
-
-        function renderFooterProbeOverlay(report) {
-            if (!debug) return;
-            if (!overlay) {
-                overlay = document.createElement("pre");
-                overlay.className = "footer-probe-overlay";
-                overlay.setAttribute("aria-hidden", "true");
-                document.body.appendChild(overlay);
-            }
-            overlay.textContent = JSON.stringify(report, null, 2);
-        }
-
-        function renderFooterProbePanel(report) {
-            if (!debug) return;
-            if (!panel) {
-                panel = document.createElement("pre");
-                panel.className = "footer-probe-panel";
-                panel.setAttribute("aria-label", "Footer layout probe");
-                footer.appendChild(panel);
-            }
-            panel.textContent = JSON.stringify(report, null, 2);
         }
 
         function collect(reason) {
@@ -785,12 +759,6 @@
                 report.trimmed = true;
             }
 
-            window.__oinpFooterProbeLast = report;
-            renderFooterProbeOverlay(report);
-            renderFooterProbePanel(report);
-            if ((debug || report.trimmed) && window.console && console.info) {
-                console.info("[OINP footer probe]", report);
-            }
             return report;
         }
 
