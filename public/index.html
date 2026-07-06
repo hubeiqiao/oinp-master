@@ -501,7 +501,7 @@
                             <svg class="support-toggle-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                         </summary>
                         <div class="support-toggle-body">
-                        <p class="portal-intro">A few honest lines to the people who write the rules. You can write as a constituent whatever your immigration status. Three quick steps: find your MPP, copy the note, then send it.</p>
+                        <p class="portal-intro">A few honest lines to the people who write the rules. You can write as a constituent whatever your immigration status. Find your MPP, then adapt the note and send it.</p>
 
                         <ol class="mpp-steps">
                             <li class="mpp-step" id="mppStep1">
@@ -546,39 +546,34 @@
                             </li>
 
                             <li class="mpp-step" id="mppStep2">
-                                <span class="mpp-step-eyebrow"><span class="mpp-step-num">Step 2</span>A reference note</span>
-                                <p class="mpp-reference-intro">A reference note. Adapt it in your own words, it lands better.</p>
-                                <div class="mpp-subject">
-                                    <span class="mpp-subject-label">Suggested subject</span>
-                                    <span class="mpp-subject-value" id="mppSubjectText">Transitional protection for people in the OINP graduate-stream process</span>
-                                    <button type="button" class="share-btn mpp-subject-copy" data-copy-target="mppSubjectField" data-status-target="mppSubjectStatus" aria-label="Copy suggested subject line">
-                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.5 19.5"/></svg>
-                                        <span data-copy-label>Copy</span>
-                                    </button>
-                                    <span class="copy-status-inline" id="mppSubjectStatus" aria-live="polite"></span>
-                                    <input type="text" id="mppSubjectField" class="mpp-visually-hidden" tabindex="-1" aria-hidden="true" readonly value="Transitional protection for people in the OINP graduate-stream process">
-                                </div>
-                                <div class="mpp-letter">
-                                    <div class="mpp-letter-head">
-                                        <span class="mpp-letter-label">Reference note</span>
-                                        <button type="button" class="share-btn mpp-copy" data-copy-target="mppLetterText" data-status-target="mppCopyStatus" aria-label="Copy the full reference note">
-                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.5 19.5"/></svg>
-                                            <span data-copy-label>Copy note</span>
-                                        </button>
-                                    </div>
-                                    <div class="mpp-letter-preview" id="mppLetterPreview" data-collapsed="true">
-                                        <p class="mpp-letter-line">Dear [your MPP],</p>
-                                        <p class="mpp-letter-line">I am writing as one of your constituents about the June 25 redesign of the Ontario Immigrant Nominee Program. People I know planned multi-year decisions around the published graduate pathways.</p>
-                                        <div class="mpp-letter-rest" id="mppLetterRest">
-                                            <p class="mpp-letter-line">I am asking for two things. First, transitional protection, or grandfathering, for people already in the process, so registrations made in good faith are honoured rather than withdrawn. Second, keep independent graduate pathways open, so early talent can build a future here on its own merit.</p>
-                                            <p class="mpp-letter-line">These are people Ontario helped train, and I hope you will help them stay and keep contributing. One example of who this affects: oinp.hubeiqiao.com</p>
-                                            <p class="mpp-letter-line">Thank you for your time.</p>
-                                            <p class="mpp-letter-line">Sincerely,<br>[Your name]<br>[Your address or riding]</p>
+                                <span class="mpp-step-eyebrow"><span class="mpp-step-num">Step 2</span>The note</span>
+                                <div class="mpp-note">
+                                    <div class="mpp-note-head">
+                                        <div class="mpp-note-headtext">
+                                            <span class="mpp-note-eyebrow">The note</span>
+                                            <p class="mpp-note-intro">Adapt it in your own words, it lands better.</p>
                                         </div>
-                                        <span class="mpp-letter-fade" aria-hidden="true"></span>
+                                        <button type="button" class="share-btn mpp-note-copy" data-copy-target="mppLetterText" data-status-target="mppCopyStatus" aria-label="Copy the note">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.5 19.5"/></svg>
+                                            <span data-copy-label>Copy</span>
+                                        </button>
+                                        <span class="copy-status-inline mpp-note-copy-status" id="mppCopyStatus" aria-live="polite"></span>
                                     </div>
-                                    <button type="button" class="mpp-letter-toggle" id="mppLetterToggle" aria-expanded="false" aria-controls="mppLetterRest">Show full note</button>
-                                    <textarea id="mppLetterText" class="mpp-visually-hidden" tabindex="-1" aria-hidden="true" readonly>Dear [your MPP],
+                                    <div class="mpp-note-body" id="mppLetterPreview" data-collapsed="true">
+                                        <div class="mpp-note-clamp" id="mppLetterClamp">
+                                            <p class="mpp-note-subject"><span class="mpp-note-subject-label">Subject:</span> Transitional protection for people in the OINP graduate-stream process</p>
+                                            <p class="mpp-note-line">Dear [your MPP],</p>
+                                            <p class="mpp-note-line">I am writing as one of your constituents about the June 25 redesign of the Ontario Immigrant Nominee Program. People I know planned multi-year decisions around the published graduate pathways.</p>
+                                            <p class="mpp-note-line">I am asking for two things. First, transitional protection, or grandfathering, for people already in the process, so registrations made in good faith are honoured rather than withdrawn. Second, keep independent graduate pathways open, so early talent can build a future here on its own merit.</p>
+                                            <p class="mpp-note-line">These are people Ontario helped train, and I hope you will help them stay and keep contributing. One example of who this affects: oinp.hubeiqiao.com</p>
+                                            <p class="mpp-note-line">Thank you for your time.</p>
+                                            <p class="mpp-note-line">Sincerely,<br>[Your name]<br>[Your address or riding]</p>
+                                        </div>
+                                        <button type="button" class="mpp-note-toggle" id="mppLetterToggle" aria-expanded="false" aria-controls="mppLetterClamp">Read the full note</button>
+                                    </div>
+                                    <textarea id="mppLetterText" class="mpp-visually-hidden" tabindex="-1" aria-hidden="true" readonly>Subject: Transitional protection for people in the OINP graduate-stream process
+
+Dear [your MPP],
 
 I am writing as one of your constituents about the June 25 redesign of the Ontario Immigrant Nominee Program. People I know planned multi-year decisions around the published graduate pathways.
 
@@ -591,14 +586,7 @@ Thank you for your time.
 Sincerely,
 [Your name]
 [Your address or riding]</textarea>
-                                    <p class="mpp-hint"><span id="mppCopyStatus" class="copy-status-inline" aria-live="polite"></span>Make it your own before sending.</p>
                                 </div>
-                            </li>
-
-                            <li class="mpp-step" id="mppStep3">
-                                <span class="mpp-step-eyebrow"><span class="mpp-step-num">Step 3</span>Send it</span>
-                                <p class="mpp-send-hint" id="mppSendHint">Look up your MPP in Step 1, then use the gold Email button in the card above. It opens a draft with the subject and note filled in. Or use the Copy buttons and paste into your own email. Send from your own inbox so the office knows a real constituent wrote.</p>
-                                <p class="mpp-send-target" id="mppSendTarget" hidden>Send to <a class="mpp-send-mailto" id="mppSendMailto" href="#">&mdash;</a></p>
                             </li>
                         </ol>
                         </div>

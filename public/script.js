@@ -1221,9 +1221,6 @@
         var verifyLink = document.getElementById("mppResultLink");
         var copyBtn = document.getElementById("mppEmailCopyBtn");
         var copyStatus = document.getElementById("mppEmailCopyStatus");
-        var sendHint = document.getElementById("mppSendHint");
-        var sendTarget = document.getElementById("mppSendTarget");
-        var sendMailto = document.getElementById("mppSendMailto");
         if (!form || !input || !btn || !statusEl || !result || !nameEl || !ridingEl || !emailEl) return;
 
         var currentEmail = "";
@@ -1340,14 +1337,6 @@
                         }
                     }
                     result.hidden = false;
-                    // Step 3: surface the MPP's email as a direct send target once known.
-                    if (sendTarget && sendMailto && currentEmail) {
-                        sendMailto.textContent = currentEmail;
-                        sendMailto.href = "mailto:" + encodeURIComponent(currentEmail) +
-                            "?subject=" + encodeURIComponent(MPP_SUBJECT) +
-                            "&body=" + encodeURIComponent(MPP_BODY);
-                        sendTarget.hidden = false;
-                    }
                     setStatus("Found your MPP. Use the gold Email button, or copy their email below.", "success");
                 })
                 .catch(function () {
@@ -1379,7 +1368,7 @@
             });
         }
 
-        // Step 2: expand/collapse the reference note preview.
+        // Step 2: expand/collapse the note preview.
         var letterToggle = document.getElementById("mppLetterToggle");
         var letterPreview = document.getElementById("mppLetterPreview");
         if (letterToggle && letterPreview) {
@@ -1387,7 +1376,7 @@
                 var collapsed = letterPreview.getAttribute("data-collapsed") !== "false";
                 letterPreview.setAttribute("data-collapsed", collapsed ? "false" : "true");
                 letterToggle.setAttribute("aria-expanded", collapsed ? "true" : "false");
-                letterToggle.textContent = collapsed ? "Show less" : "Show full note";
+                letterToggle.textContent = collapsed ? "Show less" : "Read the full note";
             });
         }
     }

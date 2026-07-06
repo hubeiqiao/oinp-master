@@ -1265,29 +1265,68 @@ body.film-landscape-lock { overflow: hidden; }
 .mpp { margin-top: 40px; }
 .mpp-find { align-self: flex-start; margin: 4px 0 22px; }
 .mpp-find .btn-arrow { fill: none; stroke: currentColor; }
-.mpp-letter {
+/* ---------- MPP note: single clean surface (subject + letter body) ---------- */
+.mpp-note {
     border-radius: var(--r-sm);
     border: 1px solid var(--line);
     background: rgba(5, 5, 5, 0.4);
-    padding: clamp(16px, 2vw, 22px);
+    padding: clamp(18px, 2.2vw, 26px);
 }
-.mpp-letter-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
-.mpp-letter-label { font-family: var(--sans); font-weight: 600; font-size: 13px; letter-spacing: 0.02em; color: var(--ink); }
-.mpp-copy { min-height: 40px; padding: 0 15px; font-size: 13.5px; }
-.mpp-copy svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.mpp-letter-text {
-    width: 100%; box-sizing: border-box; resize: vertical; min-height: 260px;
-    padding: 14px 15px; border-radius: var(--r-sm);
-    border: 1.5px solid var(--line); background: rgba(5, 5, 5, 0.55); color: var(--ink);
-    font-family: var(--sans); font-size: 15px; line-height: 1.6;
-    transition: border-color var(--dur) var(--ease-smooth), box-shadow var(--dur) var(--ease-smooth);
+.mpp-note-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 10px 16px; flex-wrap: wrap; margin-bottom: 16px;
 }
-.mpp-letter-text:focus { outline: none; border-color: var(--amber-line); box-shadow: 0 0 0 3px var(--amber-soft); }
-.mpp-hint { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; margin: 12px 0 0; font-size: 12.5px; color: var(--quiet); line-height: 1.5; }
+.mpp-note-headtext { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1 1 220px; }
+.mpp-note-eyebrow {
+    font-family: var(--sans); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber-bright);
+}
+.mpp-note-intro {
+    margin: 0; font-family: var(--serif); font-size: 15px; line-height: 1.5;
+    color: var(--muted); text-wrap: pretty;
+}
+.mpp-note-copy { min-height: 38px; padding: 0 15px; font-size: 13px; flex: 0 0 auto; }
+.mpp-note-copy svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mpp-note-copy-status { flex-basis: 100%; }
+
+/* The letter body: a normally-flowing block, clamped with max-height + overflow. */
+.mpp-note-body { position: relative; }
+.mpp-note-clamp {
+    max-height: none; overflow: hidden;
+    transition: max-height var(--dur-slow) var(--ease-smooth);
+}
+.mpp-note-body[data-collapsed="true"] .mpp-note-clamp {
+    max-height: 12.5em;
+    -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+}
+.mpp-note-subject {
+    margin: 0 0 14px; font-family: var(--sans); font-size: 14.5px; line-height: 1.5; color: var(--ink);
+}
+.mpp-note-subject-label {
+    font-family: var(--sans); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--quiet);
+    margin-right: 6px;
+}
+.mpp-note-line {
+    margin: 0 0 13px; font-family: var(--serif); font-size: 15.5px; line-height: 1.7; color: var(--ink);
+    text-wrap: pretty;
+}
+.mpp-note-line:last-child { margin-bottom: 0; }
+.mpp-note-toggle {
+    margin: 14px 0 0; padding: 0; border: 0; background: none; cursor: pointer;
+    display: block; width: 100%; text-align: center;
+    font-family: var(--sans); font-weight: 600; font-size: 13px; color: var(--amber-bright);
+    transition: opacity var(--dur) var(--ease-smooth);
+}
+.mpp-note-toggle:hover { opacity: 0.78; }
+.mpp-note-toggle:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 3px; border-radius: 4px; }
 .copy-status-inline { font-size: 12.5px; font-weight: 600; color: var(--amber-bright); }
+@media (prefers-reduced-motion: reduce) {
+    .mpp-note-clamp { transition: none; }
+}
 @media (max-width: 760px) {
     .mpp-find { align-self: stretch; width: 100%; justify-content: center; }
-    .mpp-copy { flex: none; }
 }
 
 /* ---------- collapsible support cards (share story + write MPP) ---------- */
@@ -1353,11 +1392,7 @@ body.film-landscape-lock { overflow: hidden; }
 }
 .mpp-step .mpp-lookup { margin: 0 0 16px; }
 .mpp-step .mpp-lookup-fallback { margin: 0; }
-.mpp-step .mpp-letter { margin: 0; }
-.mpp-send-hint { margin: 0; font-size: 14px; line-height: 1.6; color: var(--quiet); }
-.mpp-send-target { margin: 12px 0 0; font-size: 14.5px; color: var(--ink); }
-.mpp-send-mailto { color: var(--amber-bright); font-weight: 600; text-decoration: none; word-break: break-all; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: opacity var(--dur) var(--ease-smooth); }
-.mpp-send-mailto:hover { opacity: 0.8; }
+.mpp-step .mpp-note { margin: 0; }
 
 /* ---------- in-page MPP lookup by postal code ---------- */
 .mpp-lookup { margin: 4px 0 18px; }
@@ -1432,40 +1467,6 @@ body.film-landscape-lock { overflow: hidden; }
 .mpp-visually-hidden {
     position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
     overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-}
-.mpp-reference-intro { margin: 0 0 14px; font-family: var(--serif); font-size: 15.5px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
-.mpp-subject {
-    display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 0 0 16px;
-    padding: 12px 15px; border-radius: var(--r-sm); border: 1px solid var(--line); background: rgba(5, 5, 5, 0.4);
-}
-.mpp-subject-label { font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--quiet); }
-.mpp-subject-value { flex: 1 1 auto; min-width: 0; font-family: var(--sans); font-size: 14px; color: var(--ink); line-height: 1.4; }
-.mpp-subject-copy { min-height: 34px; padding: 0 12px; font-size: 12.5px; }
-.mpp-subject-copy svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.mpp-letter-preview { position: relative; }
-.mpp-letter-line { margin: 0 0 12px; font-family: var(--sans); font-size: 15px; line-height: 1.6; color: var(--ink); }
-.mpp-letter-line:last-child { margin-bottom: 0; }
-.mpp-letter-rest {
-    display: grid; grid-template-rows: 1fr; overflow: hidden;
-    transition: grid-template-rows var(--dur-slow) var(--ease-smooth);
-}
-.mpp-letter-rest > * { min-height: 0; }
-.mpp-letter-preview[data-collapsed="true"] .mpp-letter-rest { grid-template-rows: 0fr; }
-.mpp-letter-preview[data-collapsed="true"] .mpp-letter-line:nth-child(2) { margin-bottom: 0; }
-.mpp-letter-fade {
-    display: none; position: absolute; left: 0; right: 0; bottom: 0; height: 46px; pointer-events: none;
-    background: linear-gradient(180deg, rgba(5, 5, 5, 0), rgba(5, 5, 5, 0.55));
-}
-.mpp-letter-preview[data-collapsed="true"] .mpp-letter-fade { display: block; }
-.mpp-letter-toggle {
-    margin: 12px 0 0; padding: 0; border: 0; background: none; cursor: pointer;
-    font-family: var(--sans); font-weight: 600; font-size: 13px; color: var(--amber-bright);
-    background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
-    transition: background-size var(--dur) var(--ease-smooth);
-}
-.mpp-letter-toggle:hover { background-size: 100% 1px; }
-@media (prefers-reduced-motion: reduce) {
-    .mpp-letter-rest { transition: none; }
 }
 .mpp-lookup-fallback { margin: 0 0 22px; font-size: 13px; color: var(--quiet); line-height: 1.5; }
 .mpp-lookup-fallback a { color: var(--ink); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: color var(--dur) var(--ease-smooth); }
