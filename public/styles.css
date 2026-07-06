@@ -1377,20 +1377,96 @@ body.film-landscape-lock { overflow: hidden; }
 .mpp-lookup-status.error { color: var(--red); }
 .mpp-lookup-status.success { color: var(--amber-bright); }
 .mpp-result {
-    margin: 0 0 18px; padding: clamp(16px, 2vw, 22px);
-    border-radius: var(--r-sm); border: 1px solid var(--amber-line); background: var(--amber-soft);
+    display: flex; align-items: flex-start; gap: clamp(16px, 2.4vw, 24px);
+    margin: 0 0 18px; padding: clamp(18px, 2.4vw, 26px);
+    border-radius: var(--r); border: 1px solid var(--amber-line);
+    background:
+        linear-gradient(180deg, rgba(240, 168, 56, 0.10), rgba(240, 168, 56, 0.04)),
+        rgba(5, 5, 5, 0.55);
+    box-shadow: var(--shadow-card);
     animation: rise-in var(--dur-slow) var(--ease-smooth) both;
 }
+.mpp-result-photo {
+    position: relative; flex: 0 0 auto;
+    width: clamp(72px, 9vw, 92px); height: clamp(72px, 9vw, 92px);
+    border-radius: 50%; overflow: hidden;
+    background: linear-gradient(150deg, rgba(240, 168, 56, 0.22), rgba(240, 168, 56, 0.06));
+    box-shadow: 0 0 0 2px var(--amber-line), 0 0 0 4px rgba(5, 5, 5, 0.6), var(--shadow-card);
+}
+.mpp-result-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mpp-result-monogram {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: var(--footer-serif); font-weight: 600; font-size: clamp(26px, 3.4vw, 34px);
+    letter-spacing: 0.02em; color: var(--amber-bright);
+}
+.mpp-result-body { min-width: 0; flex: 1 1 auto; }
 .mpp-result-label { margin: 0 0 4px; font-family: var(--sans); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--quiet); }
-.mpp-result-name { margin: 0; font-family: var(--footer-serif); font-weight: 600; font-size: clamp(21px, 2.4vw, 27px); line-height: 1.1; color: var(--ink); }
-.mpp-result-riding { margin: 2px 0 12px; font-size: 14.5px; color: var(--muted); }
+.mpp-result-name { margin: 0; font-family: var(--footer-serif); font-weight: 600; font-size: clamp(22px, 2.6vw, 29px); line-height: 1.08; color: var(--ink); }
+.mpp-result-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; margin: 6px 0 13px; }
+.mpp-result-riding { font-size: 14.5px; color: var(--muted); }
+.mpp-result-party {
+    display: inline-flex; align-items: center; padding: 3px 10px;
+    border-radius: 999px; border: 1px solid var(--line);
+    background: var(--surface); font-family: var(--sans); font-weight: 600;
+    font-size: 11.5px; letter-spacing: 0.02em; color: var(--muted); white-space: nowrap;
+}
 .mpp-result-email { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .mpp-result-email-value { font-family: var(--sans); font-size: 14.5px; color: var(--ink); word-break: break-all; }
 .mpp-result-copy { min-height: 38px; padding: 0 14px; font-size: 13px; }
 .mpp-result-copy svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mpp-result-actions { margin: 14px 0 0; }
+.mpp-result-email-btn { min-height: 44px; padding: 0 20px; font-size: 14.5px; }
 .mpp-result-verify { margin: 12px 0 0; font-size: 13px; }
 .mpp-result-verify a { color: var(--muted); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: color var(--dur) var(--ease-smooth); }
 .mpp-result-verify a:hover { color: var(--ink); }
+@media (max-width: 560px) {
+    .mpp-result { flex-direction: column; align-items: center; text-align: center; }
+    .mpp-result-meta, .mpp-result-email, .mpp-result-actions { justify-content: center; }
+    .mpp-result-email-btn { width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mpp-result { animation: none; }
+}
+
+/* ---------- Step 2 reference note (framing + truncated preview) ---------- */
+.mpp-visually-hidden {
+    position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.mpp-reference-intro { margin: 0 0 14px; font-family: var(--serif); font-size: 15.5px; line-height: 1.55; color: var(--muted); text-wrap: pretty; }
+.mpp-subject {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 0 0 16px;
+    padding: 12px 15px; border-radius: var(--r-sm); border: 1px solid var(--line); background: rgba(5, 5, 5, 0.4);
+}
+.mpp-subject-label { font-family: var(--sans); font-weight: 700; font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--quiet); }
+.mpp-subject-value { flex: 1 1 auto; min-width: 0; font-family: var(--sans); font-size: 14px; color: var(--ink); line-height: 1.4; }
+.mpp-subject-copy { min-height: 34px; padding: 0 12px; font-size: 12.5px; }
+.mpp-subject-copy svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mpp-letter-preview { position: relative; }
+.mpp-letter-line { margin: 0 0 12px; font-family: var(--sans); font-size: 15px; line-height: 1.6; color: var(--ink); }
+.mpp-letter-line:last-child { margin-bottom: 0; }
+.mpp-letter-rest {
+    display: grid; grid-template-rows: 1fr; overflow: hidden;
+    transition: grid-template-rows var(--dur-slow) var(--ease-smooth);
+}
+.mpp-letter-rest > * { min-height: 0; }
+.mpp-letter-preview[data-collapsed="true"] .mpp-letter-rest { grid-template-rows: 0fr; }
+.mpp-letter-preview[data-collapsed="true"] .mpp-letter-line:nth-child(2) { margin-bottom: 0; }
+.mpp-letter-fade {
+    display: none; position: absolute; left: 0; right: 0; bottom: 0; height: 46px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(5, 5, 5, 0), rgba(5, 5, 5, 0.55));
+}
+.mpp-letter-preview[data-collapsed="true"] .mpp-letter-fade { display: block; }
+.mpp-letter-toggle {
+    margin: 12px 0 0; padding: 0; border: 0; background: none; cursor: pointer;
+    font-family: var(--sans); font-weight: 600; font-size: 13px; color: var(--amber-bright);
+    background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1px;
+    transition: background-size var(--dur) var(--ease-smooth);
+}
+.mpp-letter-toggle:hover { background-size: 100% 1px; }
+@media (prefers-reduced-motion: reduce) {
+    .mpp-letter-rest { transition: none; }
+}
 .mpp-lookup-fallback { margin: 0 0 22px; font-size: 13px; color: var(--quiet); line-height: 1.5; }
 .mpp-lookup-fallback a { color: var(--ink); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: color var(--dur) var(--ease-smooth); }
 .mpp-lookup-fallback a:hover { color: var(--amber-bright); }

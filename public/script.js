@@ -1211,7 +1211,12 @@
         var result = document.getElementById("mppResult");
         var nameEl = document.getElementById("mppResultName");
         var ridingEl = document.getElementById("mppResultRiding");
+        var partyEl = document.getElementById("mppResultParty");
         var emailEl = document.getElementById("mppResultEmail");
+        var photoWrap = document.getElementById("mppResultPhoto");
+        var photoImg = document.getElementById("mppResultImg");
+        var monogramEl = document.getElementById("mppResultMonogram");
+        var emailBtn = document.getElementById("mppEmailBtn");
         var verifyWrap = document.getElementById("mppResultVerify");
         var verifyLink = document.getElementById("mppResultLink");
         var copyBtn = document.getElementById("mppEmailCopyBtn");
@@ -1222,6 +1227,35 @@
         if (!form || !input || !btn || !statusEl || !result || !nameEl || !ridingEl || !emailEl) return;
 
         var currentEmail = "";
+
+        // Suggested subject + reference note body, shared with the primary Email button.
+        var MPP_SUBJECT = "Transitional protection for people in the OINP graduate-stream process";
+        var MPP_BODY = [
+            "Dear [your MPP],",
+            "",
+            "I am writing as one of your constituents about the June 25 redesign of the Ontario Immigrant Nominee Program. People I know planned multi-year decisions around the published graduate pathways.",
+            "",
+            "I am asking for two things. First, transitional protection, or grandfathering, for people already in the process, so registrations made in good faith are honoured rather than withdrawn. Second, keep independent graduate pathways open, so early talent can build a future here on its own merit.",
+            "",
+            "These are people Ontario helped train, and I hope you will help them stay and keep contributing. One example of who this affects: oinp.hubeiqiao.com",
+            "",
+            "Thank you for your time.",
+            "",
+            "Sincerely,",
+            "[Your name]",
+            "[Your address or riding]"
+        ].join("\r\n");
+
+        function initials(fullName) {
+            var parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+            if (!parts.length) return "MPP";
+            if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+            return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+        }
+        function firstNamePair(fullName) {
+            var parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+            return parts.slice(0, 2).join(" ") || (fullName || "your MPP");
+        }
 
         function setStatus(msg, kind) {
             statusEl.textContent = msg || "";
@@ -1262,9 +1296,30 @@
                         return;
                     }
                     currentEmail = mpp.email || "";
-                    nameEl.textContent = mpp.name || "Your MPP";
+                    var fullName = mpp.name || "Your MPP";
+                    nameEl.textContent = fullName;
                     ridingEl.textContent = mpp.district_name || "";
                     emailEl.textContent = currentEmail || "Email not listed";
+                    if (partyEl) {
+                        var party = mpp.party_name || "";
+                        partyEl.textContent = party;
+                        partyEl.hidden = !party;
+                    }
+                    // Photo with graceful monogram fallback.
+                    if (monogramEl) monogramEl.textContent = initials(fullName);
+                    if (photoImg && monogramEl) {
+                        var photo = mpp.photo_url || "";
+                        photoImg.hidden = true;
+                        monogramEl.hidden = false;
+                        if (photo) {
+                            photoImg.onload = function () { photoImg.hidden = false; monogramEl.hidden = true; };
+                            photoImg.onerror = function () { photoImg.hidden = true; monogramEl.hidden = false; };
+                            photoImg.alt = "Photo of " + fullName;
+                            photoImg.src = photo;
+                        } else {
+                            photoImg.removeAttribute("src");
+                        }
+                    }
                     var profile = mpp.url || mpp.personal_url || "";
                     if (profile && verifyWrap && verifyLink) {
                         verifyLink.href = profile;
@@ -1272,16 +1327,28 @@
                     } else if (verifyWrap) {
                         verifyWrap.hidden = true;
                     }
+                    // Primary gold Email button: prefilled mailto with subject + full note.
+                    if (emailBtn) {
+                        if (currentEmail) {
+                            emailBtn.href = "mailto:" + encodeURIComponent(currentEmail) +
+                                "?subject=" + encodeURIComponent(MPP_SUBJECT) +
+                                "&body=" + encodeURIComponent(MPP_BODY);
+                            emailBtn.textContent = "Email " + firstNamePair(fullName);
+                            emailBtn.hidden = false;
+                        } else {
+                            emailBtn.hidden = true;
+                        }
+                    }
                     result.hidden = false;
                     // Step 3: surface the MPP's email as a direct send target once known.
                     if (sendTarget && sendMailto && currentEmail) {
                         sendMailto.textContent = currentEmail;
-                        sendMailto.href = "mailto:" + currentEmail + "?subject=" +
-                            encodeURIComponent("Please protect people already in the OINP process");
+                        sendMailto.href = "mailto:" + encodeURIComponent(currentEmail) +
+                            "?subject=" + encodeURIComponent(MPP_SUBJECT) +
+                            "&body=" + encodeURIComponent(MPP_BODY);
                         sendTarget.hidden = false;
-                        if (sendHint) sendHint.textContent = "Send from your own inbox so your MPP's office knows a real constituent wrote. Address it to " + (nameEl.textContent || "your MPP") + ".";
                     }
-                    setStatus("Found your MPP. Copy their email, then adapt the note below.", "success");
+                    setStatus("Found your MPP. Use the gold Email button, or copy their email below.", "success");
                 })
                 .catch(function () {
                     setStatus("The lookup did not respond. Please use the ola.org link below to find your MPP.", "error");
@@ -1309,6 +1376,18 @@
                 } else if (copyStatus) {
                     copyStatus.textContent = "Copy manually: " + currentEmail;
                 }
+            });
+        }
+
+        // Step 2: expand/collapse the reference note preview.
+        var letterToggle = document.getElementById("mppLetterToggle");
+        var letterPreview = document.getElementById("mppLetterPreview");
+        if (letterToggle && letterPreview) {
+            letterToggle.addEventListener("click", function () {
+                var collapsed = letterPreview.getAttribute("data-collapsed") !== "false";
+                letterPreview.setAttribute("data-collapsed", collapsed ? "false" : "true");
+                letterToggle.setAttribute("aria-expanded", collapsed ? "true" : "false");
+                letterToggle.textContent = collapsed ? "Show less" : "Show full note";
             });
         }
     }
