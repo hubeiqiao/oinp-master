@@ -488,6 +488,88 @@
                     </div>
                 </div>
 
+                <!-- ============ WRITE YOUR MPP: turn support into a note to Ontario ============ -->
+                <div class="portal mpp reveal" data-mpp>
+                    <div class="portal-divider"><span>Or write your MPP</span></div>
+                    <details class="support-toggle portal-card mpp-card">
+                        <summary class="support-toggle-summary">
+                            <span class="support-toggle-text">
+                                <span class="kicker kicker-quiet"><span class="kicker-tick" aria-hidden="true"></span>Take action</span>
+                                <span class="support-toggle-title">Send a short note to your Ontario MPP</span>
+                                <span class="support-toggle-desc">Find your local MPP by postal code, then copy a short note you can make your own.</span>
+                            </span>
+                            <svg class="support-toggle-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                        </summary>
+                        <div class="support-toggle-body">
+                        <p class="portal-intro">A few honest lines to the people who write the rules. You can write as a constituent whatever your immigration status. Three quick steps: find your MPP, copy the note, then send it.</p>
+
+                        <ol class="mpp-steps">
+                            <li class="mpp-step" id="mppStep1">
+                                <span class="mpp-step-eyebrow"><span class="mpp-step-num">Step 1</span>Find your MPP</span>
+                                <form class="mpp-lookup" id="mppLookupForm" novalidate>
+                                    <label class="mpp-lookup-label" for="mppPostalInput">Enter your postal code</label>
+                                    <div class="mpp-lookup-row">
+                                        <input id="mppPostalInput" name="postal" type="text" inputmode="text" autocomplete="postal-code" maxlength="7" placeholder="K1S 5B6" aria-label="Enter your Ontario postal code" required>
+                                        <button type="submit" class="btn btn-primary mpp-lookup-submit" id="mppLookupBtn">Find my MPP</button>
+                                    </div>
+                                    <p class="mpp-lookup-status" id="mppLookupStatus" role="status" aria-live="polite"></p>
+                                </form>
+
+                                <div class="mpp-result" id="mppResult" hidden aria-live="polite">
+                                    <p class="mpp-result-label">Your local MPP</p>
+                                    <p class="mpp-result-name" id="mppResultName">&mdash;</p>
+                                    <p class="mpp-result-riding" id="mppResultRiding">&mdash;</p>
+                                    <div class="mpp-result-email">
+                                        <span class="mpp-result-email-value" id="mppResultEmail">&mdash;</span>
+                                        <button type="button" class="share-btn mpp-result-copy" id="mppEmailCopyBtn" aria-label="Copy MPP email">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.5 19.5"/></svg>
+                                            <span data-copy-label>Copy email</span>
+                                        </button>
+                                        <span class="copy-status-inline" id="mppEmailCopyStatus" aria-live="polite"></span>
+                                    </div>
+                                    <p class="mpp-result-verify" id="mppResultVerify" hidden><a id="mppResultLink" href="#" target="_blank" rel="noopener">Verify on official profile</a></p>
+                                </div>
+
+                                <p class="mpp-lookup-fallback">Lookup not working? <a href="https://www.ola.org/en/members/current" target="_blank" rel="noopener">Find your MPP on ola.org</a> instead.</p>
+                            </li>
+
+                            <li class="mpp-step" id="mppStep2">
+                                <span class="mpp-step-eyebrow"><span class="mpp-step-num">Step 2</span>Copy the note</span>
+                                <div class="mpp-letter">
+                                    <div class="mpp-letter-head">
+                                        <span class="mpp-letter-label">A note you can adapt</span>
+                                        <button type="button" class="share-btn mpp-copy" data-copy-target="mppLetterText" data-status-target="mppCopyStatus" aria-label="Copy letter to your MPP">
+                                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.5 19.5"/></svg>
+                                            <span data-copy-label>Copy letter</span>
+                                        </button>
+                                    </div>
+                                    <textarea id="mppLetterText" class="mpp-letter-text" rows="13" readonly aria-label="Draft letter to your MPP">Dear [your MPP],
+
+I am writing as one of your constituents about the June 25 redesign of the Ontario Immigrant Nominee Program. People I know, and people in my community, planned multi-year decisions around the published graduate pathways. [I am one of them / I know people affected.]
+
+I am asking for two things. First, transitional protection, or grandfathering, for people already in the process, so registrations made in good faith are honoured rather than withdrawn. Second, keep independent graduate pathways open, so early talent can build a future here on its own merit.
+
+These are people Ontario helped train, and I hope you will help them stay and keep contributing. One example of who this affects: oinp.hubeiqiao.com
+
+Thank you for your time.
+
+Sincerely,
+[Your name]
+[Your address or riding]</textarea>
+                                    <p class="mpp-hint"><span id="mppCopyStatus" class="copy-status-inline" aria-live="polite"></span>Paste it into an email, then make it your own before sending.</p>
+                                </div>
+                            </li>
+
+                            <li class="mpp-step" id="mppStep3">
+                                <span class="mpp-step-eyebrow"><span class="mpp-step-num">Step 3</span>Send it</span>
+                                <p class="mpp-send-hint" id="mppSendHint">Once you have looked up your MPP above, their email will appear here so you can address it directly. Send from your own inbox so your office knows a real constituent wrote.</p>
+                                <p class="mpp-send-target" id="mppSendTarget" hidden>Send to <a class="mpp-send-mailto" id="mppSendMailto" href="#">&mdash;</a></p>
+                            </li>
+                        </ol>
+                        </div>
+                    </details>
+                </div>
+
                 <div class="portal reveal" data-portal>
                     <div class="portal-divider"><span>Or add your voice</span></div>
                     <details class="support-toggle portal-card">
@@ -545,76 +627,6 @@
                             </div>
                             <p class="portal-howcount"><a href="/transparency/">How we count &amp; keep this honest</a></p>
                             <button type="button" class="portal-another" data-portal-another>Share another story</button>
-                        </div>
-                        </div>
-                    </details>
-                </div>
-
-                <!-- ============ WRITE YOUR MPP: step three, turn support into a note to Ontario ============ -->
-                <div class="portal mpp reveal" data-mpp>
-                    <div class="portal-divider"><span>Or write your MPP</span></div>
-                    <details class="support-toggle portal-card mpp-card">
-                        <summary class="support-toggle-summary">
-                            <span class="support-toggle-text">
-                                <span class="kicker kicker-quiet"><span class="kicker-tick" aria-hidden="true"></span>Step three</span>
-                                <span class="support-toggle-title">Send a short note to your Ontario MPP</span>
-                                <span class="support-toggle-desc">Find your local MPP by postal code, then copy a short note you can make your own.</span>
-                            </span>
-                            <svg class="support-toggle-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                        </summary>
-                        <div class="support-toggle-body">
-                        <p class="portal-intro">Support, then share, then this: a few honest lines to the people who write the rules. You can write as a constituent whatever your immigration status. Find your local Member of Provincial Parliament below, then paste the note and make it your own.</p>
-
-                        <form class="mpp-lookup" id="mppLookupForm" novalidate>
-                            <label class="mpp-lookup-label" for="mppPostalInput">Find your MPP by postal code</label>
-                            <div class="mpp-lookup-row">
-                                <input id="mppPostalInput" name="postal" type="text" inputmode="text" autocomplete="postal-code" maxlength="7" placeholder="K1S 5B6" aria-label="Enter your Ontario postal code" required>
-                                <button type="submit" class="btn btn-primary mpp-lookup-submit" id="mppLookupBtn">Find my MPP</button>
-                            </div>
-                            <p class="mpp-lookup-status" id="mppLookupStatus" role="status" aria-live="polite"></p>
-                        </form>
-
-                        <div class="mpp-result" id="mppResult" hidden aria-live="polite">
-                            <p class="mpp-result-label">Your local MPP</p>
-                            <p class="mpp-result-name" id="mppResultName">&mdash;</p>
-                            <p class="mpp-result-riding" id="mppResultRiding">&mdash;</p>
-                            <div class="mpp-result-email">
-                                <span class="mpp-result-email-value" id="mppResultEmail">&mdash;</span>
-                                <button type="button" class="share-btn mpp-result-copy" id="mppEmailCopyBtn" aria-label="Copy MPP email">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.5 19.5"/></svg>
-                                    <span data-copy-label>Copy email</span>
-                                </button>
-                                <span class="copy-status-inline" id="mppEmailCopyStatus" aria-live="polite"></span>
-                            </div>
-                            <p class="mpp-result-verify" id="mppResultVerify" hidden><a id="mppResultLink" href="#" target="_blank" rel="noopener">Verify on official profile</a></p>
-                        </div>
-
-                        <p class="mpp-lookup-fallback">Lookup not working? <a href="https://www.ola.org/en/members/current" target="_blank" rel="noopener">Find your MPP on ola.org</a> instead.</p>
-
-                        <div class="mpp-letter">
-                            <div class="mpp-letter-head">
-                                <span class="mpp-letter-label">A note you can adapt</span>
-                                <button type="button" class="share-btn mpp-copy" data-copy-target="mppLetterText" data-status-target="mppCopyStatus" aria-label="Copy letter to your MPP">
-                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.07 0l2.83-2.83a5 5 0 0 0-7.07-7.07L11.5 4.5M14 11a5 5 0 0 0-7.07 0L4.1 13.83a5 5 0 0 0 7.07 7.07L12.5 19.5"/></svg>
-                                    <span data-copy-label>Copy letter</span>
-                                </button>
-                            </div>
-                            <textarea id="mppLetterText" class="mpp-letter-text" rows="12" readonly aria-label="Draft letter to your MPP">Dear [your MPP],
-
-I am writing as one of your constituents. You can hear from constituents whatever their immigration status, and this issue affects many of us.
-
-Ontario has changed the Immigrant Nominee Program. People who registered under the former graduate streams, and who planned their studies and lives around them, now face their registrations being withdrawn before they were ever invited.
-
-I am asking for two things. First, a fair transition that protects people already in the process. Second, keep independent graduate pathways open, so early talent can build a future here on its own merit.
-
-These are people Ontario helped train. I hope you will help them stay and keep contributing. You can read my full story and the official sources at https://oinp.hubeiqiao.com.
-
-Thank you for your time.
-
-Sincerely,
-[Your name]
-[Your address or riding]</textarea>
-                            <p class="mpp-hint"><span id="mppCopyStatus" class="copy-status-inline" aria-live="polite"></span>Address it to your local MPP, then paste it into an email to their office.</p>
                         </div>
                         </div>
                     </details>

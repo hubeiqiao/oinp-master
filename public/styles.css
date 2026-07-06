@@ -1312,13 +1312,52 @@ body.film-landscape-lock { overflow: hidden; }
     stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
     transition: transform var(--dur) var(--ease-smooth);
 }
+.support-toggle > .support-toggle-summary:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: -3px; border-radius: var(--r-sm); }
 .support-toggle[open] > .support-toggle-summary .support-toggle-chevron { transform: rotate(180deg); }
 .support-toggle-body {
     padding: 0 clamp(22px, 3.2vw, 40px) clamp(26px, 3.2vw, 40px);
     border-top: 1px solid var(--line-soft);
     padding-top: clamp(20px, 2.4vw, 28px);
-    animation: rise-in var(--dur-slow) var(--ease-smooth) both;
 }
+
+/* Smooth, guided open: animate the details content height + fade on browsers
+   that support interpolate-size/::details-content; static reveal elsewhere. */
+@supports (interpolate-size: allow-keywords) {
+    :root { interpolate-size: allow-keywords; }
+    .support-toggle::details-content {
+        height: 0; opacity: 0; overflow: clip;
+        transition: height var(--dur-slow) var(--ease-smooth),
+            opacity var(--dur-slow) var(--ease-smooth),
+            content-visibility var(--dur-slow) allow-discrete;
+    }
+    .support-toggle[open]::details-content { height: auto; opacity: 1; }
+}
+@supports not (interpolate-size: allow-keywords) {
+    .support-toggle[open] > .support-toggle-body {
+        animation: rise-in var(--dur-slow) var(--ease-smooth) both;
+    }
+}
+
+/* ---------- MPP numbered steps ---------- */
+.mpp-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(24px, 3vw, 34px); }
+.mpp-step { margin: 0; padding: 0; }
+.mpp-step + .mpp-step { padding-top: clamp(24px, 3vw, 34px); border-top: 1px solid var(--line-soft); }
+.mpp-step-eyebrow {
+    display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px;
+    margin-bottom: 14px; font-family: var(--sans); font-weight: 600;
+    font-size: clamp(15px, 1.6vw, 17px); color: var(--ink); letter-spacing: 0.01em;
+}
+.mpp-step-num {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--amber-bright);
+}
+.mpp-step .mpp-lookup { margin: 0 0 16px; }
+.mpp-step .mpp-lookup-fallback { margin: 0; }
+.mpp-step .mpp-letter { margin: 0; }
+.mpp-send-hint { margin: 0; font-size: 14px; line-height: 1.6; color: var(--quiet); }
+.mpp-send-target { margin: 12px 0 0; font-size: 14.5px; color: var(--ink); }
+.mpp-send-mailto { color: var(--amber-bright); font-weight: 600; text-decoration: none; word-break: break-all; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: opacity var(--dur) var(--ease-smooth); }
+.mpp-send-mailto:hover { opacity: 0.8; }
 
 /* ---------- in-page MPP lookup by postal code ---------- */
 .mpp-lookup { margin: 4px 0 18px; }

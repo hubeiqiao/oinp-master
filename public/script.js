@@ -1057,7 +1057,10 @@
                 var head = pcard.querySelector(".portal-head"); if (head) head.hidden = true;
                 var intro = pcard.querySelector(".portal-intro:not(.portal-intro-center)"); if (intro) intro.hidden = true;
                 var lead = document.querySelector("[data-support]"); if (lead) lead.style.display = "none";
-                var divider = document.querySelector(".portal-divider"); if (divider) divider.style.display = "none";
+                // Hide only THIS story card's own divider (the MPP card is now first in the DOM,
+                // so a global querySelector would hide the wrong one). Scope to the story portal.
+                var portalWrap = form.closest("[data-portal]") || pcard;
+                var divider = portalWrap.querySelector(".portal-divider"); if (divider) divider.style.display = "none";
                 var sec = document.querySelector(".support"); if (sec) sec.classList.add("is-success");
                 if (card) { card.hidden = false; try { card.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }
             }
@@ -1213,6 +1216,9 @@
         var verifyLink = document.getElementById("mppResultLink");
         var copyBtn = document.getElementById("mppEmailCopyBtn");
         var copyStatus = document.getElementById("mppEmailCopyStatus");
+        var sendHint = document.getElementById("mppSendHint");
+        var sendTarget = document.getElementById("mppSendTarget");
+        var sendMailto = document.getElementById("mppSendMailto");
         if (!form || !input || !btn || !statusEl || !result || !nameEl || !ridingEl || !emailEl) return;
 
         var currentEmail = "";
@@ -1267,6 +1273,14 @@
                         verifyWrap.hidden = true;
                     }
                     result.hidden = false;
+                    // Step 3: surface the MPP's email as a direct send target once known.
+                    if (sendTarget && sendMailto && currentEmail) {
+                        sendMailto.textContent = currentEmail;
+                        sendMailto.href = "mailto:" + currentEmail + "?subject=" +
+                            encodeURIComponent("Please protect people already in the OINP process");
+                        sendTarget.hidden = false;
+                        if (sendHint) sendHint.textContent = "Send from your own inbox so your MPP's office knows a real constituent wrote. Address it to " + (nameEl.textContent || "your MPP") + ".";
+                    }
                     setStatus("Found your MPP. Copy their email, then adapt the note below.", "success");
                 })
                 .catch(function () {
