@@ -25,6 +25,8 @@
     --amber-soft: rgba(240, 168, 56, 0.14);
     --amber-line: rgba(240, 168, 56, 0.55);
 
+    --red: #e0623f;
+
     --display: "Oswald", "Avenir Next Condensed", "Arial Narrow", sans-serif;
     --serif: "Source Serif 4", Georgia, "Times New Roman", serif;
     --footer-serif: "Cormorant Garamond", "Source Serif 4", Georgia, "Times New Roman", serif;
@@ -1258,6 +1260,225 @@ body.film-landscape-lock { overflow: hidden; }
 .support-receipt { color: var(--faint); font-size: 12px; margin-top: 16px; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
 .consent-check { display: flex; gap: 9px; align-items: flex-start; font-size: 12.5px; color: var(--muted); line-height: 1.45; margin: 2px 0 12px; cursor: pointer; }
 .consent-check input { margin-top: 1px; flex: none; width: 15px; height: 15px; accent-color: var(--amber-bright); cursor: pointer; }
+
+/* ---------- write your MPP (step three) ---------- */
+.mpp { margin-top: 40px; }
+.mpp-find { align-self: flex-start; margin: 4px 0 22px; }
+.mpp-find .btn-arrow { fill: none; stroke: currentColor; }
+/* ---------- MPP note: single clean surface (subject + letter body) ---------- */
+.mpp-note {
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line);
+    background: rgba(5, 5, 5, 0.4);
+    padding: clamp(18px, 2.2vw, 26px);
+}
+.mpp-note-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 10px 16px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.mpp-note-headtext { display: flex; flex-direction: column; gap: 5px; min-width: 0; flex: 1 1 220px; }
+.mpp-note-eyebrow {
+    font-family: var(--sans); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber-bright);
+}
+.mpp-note-intro {
+    margin: 0; font-family: var(--serif); font-size: 15px; line-height: 1.5;
+    color: var(--muted); text-wrap: pretty;
+}
+.mpp-note-copy { min-height: 38px; padding: 0 15px; font-size: 13px; flex: 0 0 auto; }
+.mpp-note-copy svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mpp-note-copy-status { flex-basis: 100%; }
+
+/* The letter body: a normally-flowing block, clamped with max-height + overflow. */
+.mpp-note-body { position: relative; }
+.mpp-note-clamp {
+    max-height: none; overflow: hidden;
+    transition: max-height var(--dur-slow) var(--ease-smooth);
+}
+.mpp-note-body[data-collapsed="true"] .mpp-note-clamp {
+    max-height: 12.5em;
+    -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+    mask-image: linear-gradient(180deg, #000 62%, transparent 100%);
+}
+.mpp-note-subject {
+    margin: 0 0 14px; font-family: var(--sans); font-size: 14.5px; line-height: 1.5; color: var(--ink);
+}
+.mpp-note-subject-label {
+    font-family: var(--sans); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--quiet);
+    margin-right: 6px;
+}
+.mpp-note-line {
+    margin: 0 0 13px; font-family: var(--serif); font-size: 15.5px; line-height: 1.7; color: var(--ink);
+    text-wrap: pretty;
+}
+.mpp-note-line:last-child { margin-bottom: 0; }
+.mpp-note-toggle {
+    margin: 14px 0 0; padding: 0; border: 0; background: none; cursor: pointer;
+    display: block; width: 100%; text-align: center;
+    font-family: var(--sans); font-weight: 600; font-size: 13px; color: var(--amber-bright);
+    transition: opacity var(--dur) var(--ease-smooth);
+}
+.mpp-note-toggle:hover { opacity: 0.78; }
+.mpp-note-toggle:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 3px; border-radius: 4px; }
+.copy-status-inline { font-size: 12.5px; font-weight: 600; color: var(--amber-bright); }
+@media (prefers-reduced-motion: reduce) {
+    .mpp-note-clamp { transition: none; }
+}
+@media (max-width: 760px) {
+    .mpp-find { align-self: stretch; width: 100%; justify-content: center; }
+}
+
+/* ---------- collapsible support cards (share story + write MPP) ---------- */
+.support-toggle { padding: 0; overflow: hidden; }
+.support-toggle > .support-toggle-summary {
+    display: flex; align-items: center; justify-content: space-between; gap: 18px;
+    padding: clamp(20px, 2.6vw, 30px) clamp(22px, 3.2vw, 40px);
+    cursor: pointer; list-style: none; min-height: 72px;
+    transition: background var(--dur) var(--ease-smooth);
+}
+.support-toggle > .support-toggle-summary::-webkit-details-marker { display: none; }
+.support-toggle > .support-toggle-summary:hover { background: var(--surface); }
+.support-toggle-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.support-toggle-text .kicker { margin: 0; }
+.support-toggle-title {
+    font-family: var(--footer-serif); font-weight: 600;
+    font-size: clamp(22px, 2.5vw, 29px); line-height: 1.1; color: var(--ink);
+}
+.support-toggle-desc { color: var(--muted); font-size: 14.5px; line-height: 1.5; text-wrap: pretty; }
+.support-toggle-chevron {
+    width: 20px; height: 20px; flex: 0 0 auto; fill: none; stroke: var(--amber-bright);
+    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+    transition: transform var(--dur) var(--ease-smooth);
+}
+.support-toggle > .support-toggle-summary:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: -3px; border-radius: var(--r-sm); }
+.support-toggle[open] > .support-toggle-summary .support-toggle-chevron { transform: rotate(180deg); }
+.support-toggle-body {
+    padding: 0 clamp(22px, 3.2vw, 40px) clamp(26px, 3.2vw, 40px);
+    border-top: 1px solid var(--line-soft);
+    padding-top: clamp(20px, 2.4vw, 28px);
+}
+
+/* Smooth, guided open: animate the details content height + fade on browsers
+   that support interpolate-size/::details-content; static reveal elsewhere. */
+@supports (interpolate-size: allow-keywords) {
+    :root { interpolate-size: allow-keywords; }
+    .support-toggle::details-content {
+        height: 0; opacity: 0; overflow: clip;
+        transition: height var(--dur-slow) var(--ease-smooth),
+            opacity var(--dur-slow) var(--ease-smooth),
+            content-visibility var(--dur-slow) allow-discrete;
+    }
+    .support-toggle[open]::details-content { height: auto; opacity: 1; }
+}
+@supports not (interpolate-size: allow-keywords) {
+    .support-toggle[open] > .support-toggle-body {
+        animation: rise-in var(--dur-slow) var(--ease-smooth) both;
+    }
+}
+
+/* ---------- MPP numbered steps ---------- */
+.mpp-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: clamp(24px, 3vw, 34px); }
+.mpp-step { margin: 0; padding: 0; }
+.mpp-step + .mpp-step { padding-top: clamp(24px, 3vw, 34px); border-top: 1px solid var(--line-soft); }
+.mpp-step-eyebrow {
+    display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px;
+    margin-bottom: 14px; font-family: var(--sans); font-weight: 600;
+    font-size: clamp(15px, 1.6vw, 17px); color: var(--ink); letter-spacing: 0.01em;
+}
+.mpp-step-num {
+    font-size: 11.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--amber-bright);
+}
+.mpp-step .mpp-lookup { margin: 0 0 16px; }
+.mpp-step .mpp-lookup-fallback { margin: 0; }
+.mpp-step .mpp-note { margin: 0; }
+
+/* ---------- in-page MPP lookup by postal code ---------- */
+.mpp-lookup { margin: 4px 0 18px; }
+.mpp-lookup-label { display: block; font-family: var(--sans); font-weight: 600; font-size: 13px; letter-spacing: 0.02em; margin-bottom: 8px; color: var(--ink); }
+.mpp-lookup-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.mpp-lookup-row input {
+    flex: 1 1 200px; min-width: 0; box-sizing: border-box;
+    padding: 12px 15px; border-radius: var(--r-sm);
+    border: 1.5px solid var(--line); background: rgba(5, 5, 5, 0.55); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; text-transform: uppercase;
+    transition: border-color var(--dur) var(--ease-smooth), box-shadow var(--dur) var(--ease-smooth);
+}
+.mpp-lookup-row input::placeholder { text-transform: none; color: var(--faint); }
+.mpp-lookup-row input:focus { outline: none; border-color: var(--amber-line); box-shadow: 0 0 0 3px var(--amber-soft); }
+.mpp-lookup-submit { flex: 0 0 auto; }
+.mpp-lookup-status { margin: 10px 0 0; font-size: 13px; line-height: 1.5; color: var(--quiet); min-height: 1em; }
+.mpp-lookup-status.error { color: var(--red); }
+.mpp-lookup-status.success { color: var(--amber-bright); }
+.mpp-result {
+    display: flex; align-items: flex-start; gap: clamp(16px, 2.4vw, 24px);
+    margin: 0 0 18px; padding: clamp(18px, 2.4vw, 26px);
+    border-radius: var(--r); border: 1px solid var(--amber-line);
+    background:
+        linear-gradient(180deg, rgba(240, 168, 56, 0.10), rgba(240, 168, 56, 0.04)),
+        rgba(5, 5, 5, 0.55);
+    box-shadow: var(--shadow-card);
+    animation: rise-in var(--dur-slow) var(--ease-smooth) both;
+}
+.mpp-result-photo {
+    position: relative; flex: 0 0 auto;
+    width: clamp(72px, 9vw, 92px); height: clamp(72px, 9vw, 92px);
+    border-radius: 50%; overflow: hidden;
+    background: linear-gradient(150deg, rgba(240, 168, 56, 0.22), rgba(240, 168, 56, 0.06));
+    box-shadow: 0 0 0 2px var(--amber-line), 0 0 0 4px rgba(5, 5, 5, 0.6), var(--shadow-card);
+}
+.mpp-result-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mpp-result-monogram {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-family: var(--footer-serif); font-weight: 600; font-size: clamp(26px, 3.4vw, 34px);
+    letter-spacing: 0.02em; color: var(--amber-bright);
+}
+.mpp-result-body { min-width: 0; flex: 1 1 auto; }
+.mpp-result-label { margin: 0 0 4px; font-family: var(--sans); font-weight: 600; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--quiet); }
+.mpp-result-name { margin: 0; font-family: var(--footer-serif); font-weight: 600; font-size: clamp(22px, 2.6vw, 29px); line-height: 1.08; color: var(--ink); }
+.mpp-result-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; margin: 6px 0 13px; }
+.mpp-result-riding { font-size: 14.5px; color: var(--muted); }
+.mpp-result-party {
+    display: inline-flex; align-items: center; padding: 3px 10px;
+    border-radius: 999px; border: 1px solid var(--line);
+    background: var(--surface); font-family: var(--sans); font-weight: 600;
+    font-size: 11.5px; letter-spacing: 0.02em; color: var(--muted); white-space: nowrap;
+}
+.mpp-result-email-value { margin: 10px 0 0; font-family: var(--sans); font-size: 14px; color: var(--muted); word-break: break-all; }
+.mpp-result-cta {
+    flex: 0 0 auto; margin-left: auto; align-self: center;
+    display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+}
+.mpp-result-copyrow { display: flex; align-items: center; gap: 8px; }
+.mpp-result-copy { min-height: 38px; padding: 0 14px; font-size: 13px; }
+.mpp-result-copy svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mpp-result-email-btn { min-height: 44px; padding: 0 22px; font-size: 14.5px; }
+.mpp-result-verify { margin: 2px 0 0; font-size: 13px; }
+.mpp-result-verify a { color: var(--muted); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: color var(--dur) var(--ease-smooth); }
+.mpp-result-verify a:hover { color: var(--ink); }
+@media (max-width: 640px) {
+    .mpp-result { flex-direction: column; align-items: center; text-align: center; }
+    .mpp-result-meta { justify-content: center; }
+    .mpp-result-cta { margin: 4px 0 0; width: 100%; align-items: center; }
+    .mpp-result-email-btn { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .mpp-result { animation: none; }
+}
+
+/* ---------- Step 2 reference note (framing + truncated preview) ---------- */
+.mpp-visually-hidden {
+    position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.mpp-lookup-fallback { margin: 0 0 22px; font-size: 13px; color: var(--quiet); line-height: 1.5; }
+.mpp-lookup-fallback a { color: var(--ink); text-decoration: none; background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 100% 1px; padding-bottom: 1px; transition: color var(--dur) var(--ease-smooth); }
+.mpp-lookup-fallback a:hover { color: var(--amber-bright); }
+@media (max-width: 760px) {
+    .support-toggle > .support-toggle-summary { gap: 14px; }
+    .mpp-lookup-submit { flex: 1 1 100%; }
+}
 
 /* =========================================================================
    STORY FOOTER

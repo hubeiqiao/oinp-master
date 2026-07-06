@@ -5,14 +5,14 @@
     var SHARE_TITLE = "Canada helped Joe become a builder. Does Canada know how to keep builders?";
     var SHARE_TEXT =
         "Canada helped Joe become a builder.\n\n" +
-        "He studied, built, registered a company, and found community here.\n\n" +
+        "He studied, found community, built his first product, and registered a company here.\n\n" +
         "Then the pathway changed. Does Canada know how to keep builders?";
     var NATIVE_TEXT =
-        "Canada helped Joe become a builder. He studied, built, registered a company, and found community here. Then the pathway changed. Does Canada know how to keep builders?";
+        "Canada helped Joe become a builder. He studied, found community, built his first product, and registered a company here. Then the pathway changed. Does Canada know how to keep builders?";
     var EMAIL_SUBJECT = "Canada helped Joe become a builder. Does Canada know how to keep builders?";
     var EMAIL_BODY =
         "Hi,\n\n" +
-        "Sharing Joe Hu\u2019s story from Ottawa. Canada helped him become a builder: he studied here, built products here, registered a company here, and found community here. Then the pathway changed.\n\n" +
+        "Sharing Joe Hu\u2019s story from Ottawa. Canada helped him become a builder: he studied here, found community here, built his first product here, and registered a company here. Then the pathway changed.\n\n" +
         "He is asking a broader question: can Canada retain early-stage contributors it helped train while their value is still emerging and hard to classify?\n\n" +
         "This is not a petition. It is a public-awareness page for people in Canada\u2019s tech, startup, university, media, and policy communities who care about fair transitions, independent graduate pathways, and bridges into Canada\u2019s economy, research, and communities.\n\n" +
         "Take a look:";
@@ -1057,7 +1057,10 @@
                 var head = pcard.querySelector(".portal-head"); if (head) head.hidden = true;
                 var intro = pcard.querySelector(".portal-intro:not(.portal-intro-center)"); if (intro) intro.hidden = true;
                 var lead = document.querySelector("[data-support]"); if (lead) lead.style.display = "none";
-                var divider = document.querySelector(".portal-divider"); if (divider) divider.style.display = "none";
+                // Hide only THIS story card's own divider (the MPP card is now first in the DOM,
+                // so a global querySelector would hide the wrong one). Scope to the story portal.
+                var portalWrap = form.closest("[data-portal]") || pcard;
+                var divider = portalWrap.querySelector(".portal-divider"); if (divider) divider.style.display = "none";
                 var sec = document.querySelector(".support"); if (sec) sec.classList.add("is-success");
                 if (card) { card.hidden = false; try { card.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {} }
             }
@@ -1199,6 +1202,229 @@
 
     /* ---- ask descriptions wrap normally to ~two lines (see CSS) ---- */
 
+    /* ---------- in-page MPP lookup by postal code (OpenNorth Represent API) ---------- */
+    function initMppLookup() {
+        var form = document.getElementById("mppLookupForm");
+        var input = document.getElementById("mppPostalInput");
+        var btn = document.getElementById("mppLookupBtn");
+        var statusEl = document.getElementById("mppLookupStatus");
+        var result = document.getElementById("mppResult");
+        var nameEl = document.getElementById("mppResultName");
+        var ridingEl = document.getElementById("mppResultRiding");
+        var partyEl = document.getElementById("mppResultParty");
+        var emailEl = document.getElementById("mppResultEmail");
+        var photoWrap = document.getElementById("mppResultPhoto");
+        var photoImg = document.getElementById("mppResultImg");
+        var monogramEl = document.getElementById("mppResultMonogram");
+        var emailBtn = document.getElementById("mppEmailBtn");
+        var verifyWrap = document.getElementById("mppResultVerify");
+        var verifyLink = document.getElementById("mppResultLink");
+        var copyBtn = document.getElementById("mppEmailCopyBtn");
+        var copyStatus = document.getElementById("mppEmailCopyStatus");
+        if (!form || !input || !btn || !statusEl || !result || !nameEl || !ridingEl || !emailEl) return;
+
+        var currentEmail = "";
+
+        // Suggested subject + reference note body, shared with the primary Email button.
+        var MPP_SUBJECT = "Transitional protection for people in the OINP graduate-stream process";
+        var MPP_BODY = [
+            "Dear [your MPP],",
+            "",
+            "I am writing as one of your constituents about the June 25 redesign of the Ontario Immigrant Nominee Program. People I know planned multi-year decisions around the published graduate pathways.",
+            "",
+            "I am asking for two things. First, transitional protection, or grandfathering, for people already in the process, so registrations made in good faith are honoured rather than withdrawn. Second, keep independent graduate pathways open, so early talent can build a future here on its own merit.",
+            "",
+            "These are people Ontario helped train, and I hope you will help them stay and keep contributing. One example of who this affects: oinp.hubeiqiao.com",
+            "",
+            "Thank you for your time.",
+            "",
+            "Sincerely,",
+            "[Your name]",
+            "[Your address or riding]"
+        ].join("\r\n");
+
+        function initials(fullName) {
+            var parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+            if (!parts.length) return "MPP";
+            if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+            return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+        }
+        function firstNamePair(fullName) {
+            var parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+            return parts.slice(0, 2).join(" ") || (fullName || "your MPP");
+        }
+
+        function setStatus(msg, kind) {
+            statusEl.textContent = msg || "";
+            statusEl.classList.remove("error", "success");
+            if (kind) statusEl.classList.add(kind);
+        }
+        function setLoading(on) {
+            btn.disabled = on;
+            btn.textContent = on ? "Finding…" : "Find my MPP";
+        }
+        function normalize(v) { return (v || "").replace(/\s+/g, "").toUpperCase(); }
+        function isValid(v) { return /^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(v); }
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var code = normalize(input.value);
+            result.hidden = true;
+            if (!isValid(code)) {
+                setStatus("Please enter a valid Ontario postal code, like K1S 5B6.", "error");
+                return;
+            }
+            setLoading(true);
+            setStatus("Looking up your MPP…");
+
+            fetch("https://represent.opennorth.ca/postcodes/" + code + "/")
+                .then(function (res) {
+                    if (!res.ok) throw new Error("bad status");
+                    return res.json();
+                })
+                .then(function (data) {
+                    var reps = (data && data.representatives_centroid) || [];
+                    var mpp = null;
+                    for (var i = 0; i < reps.length; i++) {
+                        if (reps[i].elected_office === "MPP") { mpp = reps[i]; break; }
+                    }
+                    if (!mpp) {
+                        setStatus("No MPP found for that postal code. Please double-check and try again.", "error");
+                        return;
+                    }
+                    currentEmail = mpp.email || "";
+                    var fullName = mpp.name || "Your MPP";
+                    nameEl.textContent = fullName;
+                    ridingEl.textContent = mpp.district_name || "";
+                    emailEl.textContent = currentEmail || "Email not listed";
+                    if (partyEl) {
+                        var party = mpp.party_name || "";
+                        partyEl.textContent = party;
+                        partyEl.hidden = !party;
+                    }
+                    // Photo with graceful monogram fallback.
+                    if (monogramEl) monogramEl.textContent = initials(fullName);
+                    if (photoImg && monogramEl) {
+                        var photo = mpp.photo_url || "";
+                        photoImg.hidden = true;
+                        monogramEl.hidden = false;
+                        if (photo) {
+                            photoImg.onload = function () { photoImg.hidden = false; monogramEl.hidden = true; };
+                            photoImg.onerror = function () { photoImg.hidden = true; monogramEl.hidden = false; };
+                            photoImg.alt = "Photo of " + fullName;
+                            photoImg.src = photo;
+                        } else {
+                            photoImg.removeAttribute("src");
+                        }
+                    }
+                    var profile = mpp.url || mpp.personal_url || "";
+                    if (profile && verifyWrap && verifyLink) {
+                        verifyLink.href = profile;
+                        verifyWrap.hidden = false;
+                    } else if (verifyWrap) {
+                        verifyWrap.hidden = true;
+                    }
+                    // Primary gold Email button: prefilled mailto with subject + full note.
+                    if (emailBtn) {
+                        if (currentEmail) {
+                            emailBtn.href = "mailto:" + encodeURIComponent(currentEmail) +
+                                "?subject=" + encodeURIComponent(MPP_SUBJECT) +
+                                "&body=" + encodeURIComponent(MPP_BODY);
+                            emailBtn.textContent = "Email " + firstNamePair(fullName);
+                            emailBtn.hidden = false;
+                        } else {
+                            emailBtn.hidden = true;
+                        }
+                    }
+                    result.hidden = false;
+                    setStatus("Found your MPP. Use the gold Email button, or copy their email below.", "success");
+                })
+                .catch(function () {
+                    setStatus("The lookup did not respond. Please use the ola.org link below to find your MPP.", "error");
+                })
+                .finally(function () { setLoading(false); });
+        });
+
+        if (copyBtn) {
+            var copyLabel = copyBtn.querySelector("[data-copy-label]");
+            var copyDefault = copyLabel ? copyLabel.textContent : "";
+            copyBtn.addEventListener("click", function () {
+                if (!currentEmail) return;
+                var done = function () {
+                    if (copyLabel) copyLabel.textContent = "Copied";
+                    if (copyStatus) copyStatus.textContent = "Copied to clipboard";
+                    setTimeout(function () {
+                        if (copyLabel) copyLabel.textContent = copyDefault;
+                        if (copyStatus) copyStatus.textContent = "";
+                    }, 2400);
+                };
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(currentEmail).then(done).catch(function () {
+                        if (copyStatus) copyStatus.textContent = "Press Cmd/Ctrl+C to copy";
+                    });
+                } else if (copyStatus) {
+                    copyStatus.textContent = "Copy manually: " + currentEmail;
+                }
+            });
+        }
+
+        // Step 2: expand/collapse the note preview.
+        var letterToggle = document.getElementById("mppLetterToggle");
+        var letterPreview = document.getElementById("mppLetterPreview");
+        if (letterToggle && letterPreview) {
+            letterToggle.addEventListener("click", function () {
+                var collapsed = letterPreview.getAttribute("data-collapsed") !== "false";
+                letterPreview.setAttribute("data-collapsed", collapsed ? "false" : "true");
+                letterToggle.setAttribute("aria-expanded", collapsed ? "true" : "false");
+                letterToggle.textContent = collapsed ? "Show less" : "Read the full note";
+            });
+        }
+    }
+
+    /* ---------- copy a target field's text (MPP letter, etc.) ---------- */
+    function initCopyTargets() {
+        var buttons = document.querySelectorAll("[data-copy-target]");
+        if (!buttons.length) return;
+        buttons.forEach(function (button) {
+            var label = button.querySelector("[data-copy-label]") || button.querySelector("span");
+            var defaultLabel = label ? label.textContent : null;
+            var statusId = button.getAttribute("data-status-target");
+            var statusEl = statusId ? document.getElementById(statusId) : null;
+
+            button.addEventListener("click", function () {
+                var target = document.getElementById(button.getAttribute("data-copy-target"));
+                if (!target) return;
+                var text = target.value;
+
+                var showSuccess = function () {
+                    button.classList.add("copied");
+                    if (label) label.textContent = "Copied";
+                    if (statusEl) statusEl.textContent = "Copied to clipboard";
+                    setTimeout(function () {
+                        button.classList.remove("copied");
+                        if (label && defaultLabel) label.textContent = defaultLabel;
+                        if (statusEl) statusEl.textContent = "";
+                    }, 2400);
+                };
+                var fallbackCopy = function () {
+                    target.removeAttribute("aria-hidden");
+                    target.focus();
+                    target.select();
+                    var ok = false;
+                    try { ok = document.execCommand && document.execCommand("copy"); } catch (e) { ok = false; }
+                    if (ok) showSuccess();
+                    else if (statusEl) statusEl.textContent = "Press Cmd/Ctrl+C to copy";
+                };
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(showSuccess).catch(fallbackCopy);
+                } else {
+                    fallbackCopy();
+                }
+            });
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         initSmoothScroll();
         initTopmark();
@@ -1218,5 +1444,7 @@
         initTurnstile();
         initSupport();
         initStoryPortal();
+        initMppLookup();
+        initCopyTargets();
     });
 })();
