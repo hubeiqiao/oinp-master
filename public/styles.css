@@ -1259,6 +1259,35 @@ body.film-landscape-lock { overflow: hidden; }
 .consent-check { display: flex; gap: 9px; align-items: flex-start; font-size: 12.5px; color: var(--muted); line-height: 1.45; margin: 2px 0 12px; cursor: pointer; }
 .consent-check input { margin-top: 1px; flex: none; width: 15px; height: 15px; accent-color: var(--amber-bright); cursor: pointer; }
 
+/* ---------- write your MPP (step three) ---------- */
+.mpp { margin-top: 40px; }
+.mpp-find { align-self: flex-start; margin: 4px 0 22px; }
+.mpp-find .btn-arrow { fill: none; stroke: currentColor; }
+.mpp-letter {
+    border-radius: var(--r-sm);
+    border: 1px solid var(--line);
+    background: rgba(5, 5, 5, 0.4);
+    padding: clamp(16px, 2vw, 22px);
+}
+.mpp-letter-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.mpp-letter-label { font-family: var(--sans); font-weight: 600; font-size: 13px; letter-spacing: 0.02em; color: var(--ink); }
+.mpp-copy { min-height: 40px; padding: 0 15px; font-size: 13.5px; }
+.mpp-copy svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mpp-letter-text {
+    width: 100%; box-sizing: border-box; resize: vertical; min-height: 260px;
+    padding: 14px 15px; border-radius: var(--r-sm);
+    border: 1.5px solid var(--line); background: rgba(5, 5, 5, 0.55); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.6;
+    transition: border-color var(--dur) var(--ease-smooth), box-shadow var(--dur) var(--ease-smooth);
+}
+.mpp-letter-text:focus { outline: none; border-color: var(--amber-line); box-shadow: 0 0 0 3px var(--amber-soft); }
+.mpp-hint { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: baseline; margin: 12px 0 0; font-size: 12.5px; color: var(--quiet); line-height: 1.5; }
+.copy-status-inline { font-size: 12.5px; font-weight: 600; color: var(--amber-bright); }
+@media (max-width: 760px) {
+    .mpp-find { align-self: stretch; width: 100%; justify-content: center; }
+    .mpp-copy { flex: none; }
+}
+
 /* =========================================================================
    STORY FOOTER
    ========================================================================= */

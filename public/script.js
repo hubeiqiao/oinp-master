@@ -5,14 +5,14 @@
     var SHARE_TITLE = "Canada helped Joe become a builder. Does Canada know how to keep builders?";
     var SHARE_TEXT =
         "Canada helped Joe become a builder.\n\n" +
-        "He studied, built, registered a company, and found community here.\n\n" +
+        "He studied, found community, built his first product, and registered a company here.\n\n" +
         "Then the pathway changed. Does Canada know how to keep builders?";
     var NATIVE_TEXT =
-        "Canada helped Joe become a builder. He studied, built, registered a company, and found community here. Then the pathway changed. Does Canada know how to keep builders?";
+        "Canada helped Joe become a builder. He studied, found community, built his first product, and registered a company here. Then the pathway changed. Does Canada know how to keep builders?";
     var EMAIL_SUBJECT = "Canada helped Joe become a builder. Does Canada know how to keep builders?";
     var EMAIL_BODY =
         "Hi,\n\n" +
-        "Sharing Joe Hu\u2019s story from Ottawa. Canada helped him become a builder: he studied here, built products here, registered a company here, and found community here. Then the pathway changed.\n\n" +
+        "Sharing Joe Hu\u2019s story from Ottawa. Canada helped him become a builder: he studied here, found community here, built his first product here, and registered a company here. Then the pathway changed.\n\n" +
         "He is asking a broader question: can Canada retain early-stage contributors it helped train while their value is still emerging and hard to classify?\n\n" +
         "This is not a petition. It is a public-awareness page for people in Canada\u2019s tech, startup, university, media, and policy communities who care about fair transitions, independent graduate pathways, and bridges into Canada\u2019s economy, research, and communities.\n\n" +
         "Take a look:";
@@ -1199,6 +1199,50 @@
 
     /* ---- ask descriptions wrap normally to ~two lines (see CSS) ---- */
 
+    /* ---------- copy a target field's text (MPP letter, etc.) ---------- */
+    function initCopyTargets() {
+        var buttons = document.querySelectorAll("[data-copy-target]");
+        if (!buttons.length) return;
+        buttons.forEach(function (button) {
+            var label = button.querySelector("[data-copy-label]") || button.querySelector("span");
+            var defaultLabel = label ? label.textContent : null;
+            var statusId = button.getAttribute("data-status-target");
+            var statusEl = statusId ? document.getElementById(statusId) : null;
+
+            button.addEventListener("click", function () {
+                var target = document.getElementById(button.getAttribute("data-copy-target"));
+                if (!target) return;
+                var text = target.value;
+
+                var showSuccess = function () {
+                    button.classList.add("copied");
+                    if (label) label.textContent = "Copied";
+                    if (statusEl) statusEl.textContent = "Copied to clipboard";
+                    setTimeout(function () {
+                        button.classList.remove("copied");
+                        if (label && defaultLabel) label.textContent = defaultLabel;
+                        if (statusEl) statusEl.textContent = "";
+                    }, 2400);
+                };
+                var fallbackCopy = function () {
+                    target.removeAttribute("aria-hidden");
+                    target.focus();
+                    target.select();
+                    var ok = false;
+                    try { ok = document.execCommand && document.execCommand("copy"); } catch (e) { ok = false; }
+                    if (ok) showSuccess();
+                    else if (statusEl) statusEl.textContent = "Press Cmd/Ctrl+C to copy";
+                };
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(text).then(showSuccess).catch(fallbackCopy);
+                } else {
+                    fallbackCopy();
+                }
+            });
+        });
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         initSmoothScroll();
         initTopmark();
@@ -1218,5 +1262,6 @@
         initTurnstile();
         initSupport();
         initStoryPortal();
+        initCopyTargets();
     });
 })();

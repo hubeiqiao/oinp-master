@@ -45,7 +45,7 @@ This is not a petition, not a fundraiser, and not immigration advice. Joe is not
 
 ## The short version
 
-Canada helped [Joe](https://hubeiqiao.com/) become a builder. Here, he studied, built his first product, registered a company, and found community.
+Canada helped [Joe](https://hubeiqiao.com/) become a builder. Here, he studied, found community, built his first product, and registered a company.
 
 Then the immigration pathway changed. Joe became one story in a broader question: can Canada keep early-stage contributors it helped create?
 
