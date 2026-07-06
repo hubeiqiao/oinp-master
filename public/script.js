@@ -1199,6 +1199,106 @@
 
     /* ---- ask descriptions wrap normally to ~two lines (see CSS) ---- */
 
+    /* ---------- in-page MPP lookup by postal code (OpenNorth Represent API) ---------- */
+    function initMppLookup() {
+        var form = document.getElementById("mppLookupForm");
+        var input = document.getElementById("mppPostalInput");
+        var btn = document.getElementById("mppLookupBtn");
+        var statusEl = document.getElementById("mppLookupStatus");
+        var result = document.getElementById("mppResult");
+        var nameEl = document.getElementById("mppResultName");
+        var ridingEl = document.getElementById("mppResultRiding");
+        var emailEl = document.getElementById("mppResultEmail");
+        var verifyWrap = document.getElementById("mppResultVerify");
+        var verifyLink = document.getElementById("mppResultLink");
+        var copyBtn = document.getElementById("mppEmailCopyBtn");
+        var copyStatus = document.getElementById("mppEmailCopyStatus");
+        if (!form || !input || !btn || !statusEl || !result || !nameEl || !ridingEl || !emailEl) return;
+
+        var currentEmail = "";
+
+        function setStatus(msg, kind) {
+            statusEl.textContent = msg || "";
+            statusEl.classList.remove("error", "success");
+            if (kind) statusEl.classList.add(kind);
+        }
+        function setLoading(on) {
+            btn.disabled = on;
+            btn.textContent = on ? "Finding…" : "Find my MPP";
+        }
+        function normalize(v) { return (v || "").replace(/\s+/g, "").toUpperCase(); }
+        function isValid(v) { return /^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(v); }
+
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var code = normalize(input.value);
+            result.hidden = true;
+            if (!isValid(code)) {
+                setStatus("Please enter a valid Ontario postal code, like K1S 5B6.", "error");
+                return;
+            }
+            setLoading(true);
+            setStatus("Looking up your MPP…");
+
+            fetch("https://represent.opennorth.ca/postcodes/" + code + "/")
+                .then(function (res) {
+                    if (!res.ok) throw new Error("bad status");
+                    return res.json();
+                })
+                .then(function (data) {
+                    var reps = (data && data.representatives_centroid) || [];
+                    var mpp = null;
+                    for (var i = 0; i < reps.length; i++) {
+                        if (reps[i].elected_office === "MPP") { mpp = reps[i]; break; }
+                    }
+                    if (!mpp) {
+                        setStatus("No MPP found for that postal code. Please double-check and try again.", "error");
+                        return;
+                    }
+                    currentEmail = mpp.email || "";
+                    nameEl.textContent = mpp.name || "Your MPP";
+                    ridingEl.textContent = mpp.district_name || "";
+                    emailEl.textContent = currentEmail || "Email not listed";
+                    var profile = mpp.url || mpp.personal_url || "";
+                    if (profile && verifyWrap && verifyLink) {
+                        verifyLink.href = profile;
+                        verifyWrap.hidden = false;
+                    } else if (verifyWrap) {
+                        verifyWrap.hidden = true;
+                    }
+                    result.hidden = false;
+                    setStatus("Found your MPP. Copy their email, then adapt the note below.", "success");
+                })
+                .catch(function () {
+                    setStatus("The lookup did not respond. Please use the ola.org link below to find your MPP.", "error");
+                })
+                .finally(function () { setLoading(false); });
+        });
+
+        if (copyBtn) {
+            var copyLabel = copyBtn.querySelector("[data-copy-label]");
+            var copyDefault = copyLabel ? copyLabel.textContent : "";
+            copyBtn.addEventListener("click", function () {
+                if (!currentEmail) return;
+                var done = function () {
+                    if (copyLabel) copyLabel.textContent = "Copied";
+                    if (copyStatus) copyStatus.textContent = "Copied to clipboard";
+                    setTimeout(function () {
+                        if (copyLabel) copyLabel.textContent = copyDefault;
+                        if (copyStatus) copyStatus.textContent = "";
+                    }, 2400);
+                };
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(currentEmail).then(done).catch(function () {
+                        if (copyStatus) copyStatus.textContent = "Press Cmd/Ctrl+C to copy";
+                    });
+                } else if (copyStatus) {
+                    copyStatus.textContent = "Copy manually: " + currentEmail;
+                }
+            });
+        }
+    }
+
     /* ---------- copy a target field's text (MPP letter, etc.) ---------- */
     function initCopyTargets() {
         var buttons = document.querySelectorAll("[data-copy-target]");
@@ -1262,6 +1362,7 @@
         initTurnstile();
         initSupport();
         initStoryPortal();
+        initMppLookup();
         initCopyTargets();
     });
 })();
