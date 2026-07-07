@@ -131,6 +131,19 @@ test("mobile X and LinkedIn actions prefer app-scheme links with web fallback", 
   assert.match(script, /linkedin:\/\/shareArticle\?mini=true/);
 });
 
+test("primary buttons resist Android forced-dark foreground inversion", async () => {
+  const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+  const htmlRule = styles.match(/html \{([\s\S]*?)\n\}/)?.[1] || "";
+  const primaryRule = styles.match(/\.btn-primary \{([^}]+)\}/)?.[1] || "";
+  const playIconRule = styles.match(/\.btn-primary \.btn-play-ico \{([^}]+)\}/)?.[1] || "";
+
+  assert.match(htmlRule, /color-scheme:\s*dark;/);
+  assert.match(primaryRule, /color:\s*#160d02;/);
+  assert.match(primaryRule, /-webkit-text-fill-color:\s*#160d02;/);
+  assert.match(primaryRule, /color-scheme:\s*only light;/);
+  assert.match(playIconRule, /fill:\s*#160d02;/);
+});
+
 test("mobile footer avoids inherited viewport height and axis-mixed overflow", async () => {
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
   const mobileFooter = styles.match(/\.story-footer\s*{\s*\n\s*min-height: auto !important;[\s\S]*?\n    }/);
