@@ -144,6 +144,15 @@ test("primary buttons resist Android forced-dark foreground inversion", async ()
   assert.match(playIconRule, /fill:\s*#160d02;/);
 });
 
+test("narrow mobile hero actions stack instead of clipping adjacent buttons", async () => {
+  const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
+  const narrowHeroActions = styles.match(/@media \(max-width: 430px\) \{([\s\S]*?)\n\}/)?.[1] || "";
+
+  assert.match(narrowHeroActions, /\.hero-actions\s*\{\s*flex-direction:\s*column;/);
+  assert.match(narrowHeroActions, /\.hero \.btn\s*\{[^}]*width:\s*100%;/);
+  assert.match(narrowHeroActions, /\.hero \.btn-watch\s*\{[^}]*flex:\s*none;/);
+});
+
 test("mobile footer avoids inherited viewport height and axis-mixed overflow", async () => {
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
   const mobileFooter = styles.match(/\.story-footer\s*{\s*\n\s*min-height: auto !important;[\s\S]*?\n    }/);
@@ -158,7 +167,7 @@ test("mobile footer has a runtime tail guard for real iOS WebView layout drift",
   const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
 
-  assert.match(html, /styles\.css\?v=107/);
+  assert.match(html, /styles\.css\?v=108/);
   assert.match(html, /script\.js\?v=48/);
   assert.match(script, /function initFooterTailGuard\(\)/);
   assert.match(script, /footer-tail-trimmed/);
@@ -173,7 +182,7 @@ test("footer probe diagnostics stay invisible in production", async () => {
   const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
 
-  assert.match(html, /styles\.css\?v=107/);
+  assert.match(html, /styles\.css\?v=108/);
   assert.match(html, /script\.js\?v=48/);
   assert.match(script, /window\.__oinpFooterProbe/);
   assert.match(script, /tailChildren/);
@@ -192,7 +201,7 @@ test("mobile footer trim is based on real content tail, not viewport spacer heig
   const script = await fs.readFile(path.join(root, "public", "script.js"), "utf8");
   const styles = await fs.readFile(path.join(root, "public", "styles.css"), "utf8");
 
-  assert.match(html, /styles\.css\?v=107/);
+  assert.match(html, /styles\.css\?v=108/);
   assert.match(html, /script\.js\?v=48/);
   assert.match(script, /function getFooterContentBottom/);
   assert.match(script, /contentTailGap/);

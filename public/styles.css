@@ -2967,6 +2967,19 @@ body.film-landscape-lock { overflow: hidden; }
     }
 }
 
+@media (max-width: 430px) {
+    .hero-actions { flex-direction: column; align-items: stretch; gap: 10px; }
+    .hero .btn {
+        width: 100%;
+        flex: none;
+        min-height: 52px;
+        white-space: normal;
+        line-height: 1.15;
+        text-align: center;
+    }
+    .hero .btn-watch { flex: none; }
+}
+
 @media (max-width: 400px) {
     .hero-content { margin-inline: 20px; }
     .hero-lead { font-size: 14.7px; line-height: 1.48; }
