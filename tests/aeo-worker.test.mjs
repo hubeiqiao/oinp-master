@@ -248,13 +248,18 @@ test("AEO guards: video uploadDate, FAQ count, and markdown twins stay aligned",
   const faq = graph.find((node) => node["@type"] === "FAQPage");
 
   assert.match(page.video.uploadDate || "", /^\d{4}-\d{2}-\d{2}$/, "VideoObject needs uploadDate for video rich results");
-  assert.strictEqual(faq.mainEntity.length, 4, "visible FAQ stays at 4 questions — no job-search FAQ");
+  assert.strictEqual(faq.mainEntity.length, 5, "visible FAQ stays at 5 questions, including submitted-application context");
+  assert.ok(
+    faq.mainEntity.some((entry) => entry.name === "What about people who already submitted applications?"),
+    "FAQPage should include the submitted-application context",
+  );
   assert.doesNotMatch(html, /Is Joe asking for a job\?/);
 
   // the "what this is not" clarification lives ONLY on non-visible surfaces, and both twins carry it
   for (const surface of [llms, workerSrc]) {
     assert.match(surface, /This is not a petition, not a fundraiser, and not immigration advice\./);
     assert.match(surface, /will issue no more invitations/);
+    assert.match(surface, /write their Ontario MPP/);
     assert.match(surface, /the people caught in that gap/);
   }
 });

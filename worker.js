@@ -37,7 +37,7 @@ What the ask is:
 Fair transitions, independent graduate pathways, and bridges into Canada's economy, research, and communities.
 
 How people can help:
-Support the message, share the video with Canada's tech, startup, university, media, or policy communities, or add a story if they are seeing the same pattern.
+Support the message, share the video with Canada's tech, startup, university, media, or policy communities, write their Ontario MPP, or add a story if they are seeing the same pattern.
 
 ## What this is not
 
@@ -65,7 +65,7 @@ Build fair pathways for people already contributing. Job offers and language sco
 
 ## Support
 
-The easiest action is to support the message and share the story with people in Canada's tech, startup, university, media, and policy communities.
+The easiest action is to support the message, write their Ontario MPP, and share the story with people in Canada's tech, startup, university, media, and policy communities.
 
 Canonical URL: ${SITE_ORIGIN}/
 Video: ${SITE_ORIGIN}/media/oinp-feedback-story.mp4
