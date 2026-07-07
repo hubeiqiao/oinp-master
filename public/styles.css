@@ -79,6 +79,7 @@ html {
     scroll-behavior: smooth;
     scroll-padding-top: 28px;
     overscroll-behavior-y: none;
+    color-scheme: dark;
     background: var(--bg);
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
@@ -175,7 +176,13 @@ p { margin: 0; }
         border-color var(--dur) var(--ease-smooth), color var(--dur) var(--ease-smooth), box-shadow var(--dur) var(--ease-smooth);
 }
 .btn:active { transform: scale(0.98); }
-.btn-primary { color: #160d02; background: var(--amber-bright); box-shadow: 0 10px 30px -8px rgba(226,145,44,0.4); }
+.btn-primary {
+    color: #160d02;
+    -webkit-text-fill-color: #160d02;
+    color-scheme: only light;
+    background: var(--amber-bright);
+    box-shadow: 0 10px 30px -8px rgba(226,145,44,0.4);
+}
 .btn-primary:hover { transform: translateY(-2px); background: #f6b450; box-shadow: 0 16px 38px -10px rgba(226,145,44,0.5); }
 .btn-primary:active { transform: scale(0.98); }
 .btn-ghost { color: var(--ink); border-color: var(--line); background: var(--surface); }
@@ -186,6 +193,7 @@ p { margin: 0; }
 .btn-xl { min-height: 60px; padding: 0 34px; font-size: 17px; border-radius: var(--r); }
 .btn .btn-arrow, .btn .ico-heart { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .btn .ico-heart { stroke-width: 1.7; }
+.btn-primary .btn-play-ico { fill: #160d02; }
 .btn-primary .ico-heart { fill: #160d02; stroke: none; }
 
 /* =========================================================================
