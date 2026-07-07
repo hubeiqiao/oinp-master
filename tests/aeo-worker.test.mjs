@@ -99,6 +99,8 @@ test("homepage metadata is aligned for search and answer engines", async () => {
   assert.match(html, /<title>Canada helped Joe become a builder\. Does Canada know how to keep builders\?<\/title>/);
   assert.match(html, /property="og:title" content="Canada helped Joe become a builder\. Does Canada know how to keep builders\?"/);
   assert.match(html, /name="twitter:title" content="Canada helped Joe become a builder\. Does Canada know how to keep builders\?"/);
+  assert.match(html, /https:\/\/www\.googletagmanager\.com\/gtag\/js\?id=G-CCPCH1LGFY/);
+  assert.match(html, /gtag\('config', 'G-CCPCH1LGFY'\);/);
 
   const blocks = [...html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)];
   assert.equal(blocks.length, 1);
