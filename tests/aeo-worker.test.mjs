@@ -56,6 +56,154 @@ test("homepage advertises agent discovery resources with Link headers", async ()
   assert.equal(response.headers.get("Content-Signal"), "ai-train=no, search=yes, ai-input=yes");
 });
 
+test("video assets return partial content for a byte range request", async () => {
+  const worker = await loadWorker();
+  const bytes = new TextEncoder().encode("0123456789");
+  const env = {
+    ASSETS: {
+      fetch() {
+        return new Response(bytes, {
+          headers: {
+            "Content-Type": "video/mp4",
+            ETag: '"video-test"',
+          },
+        });
+      },
+    },
+  };
+
+  const response = await worker.fetch(
+    new Request("https://oinp.hubeiqiao.com/media/story.mp4", {
+      headers: { Range: "bytes=3-6" },
+    }),
+    env,
+    {},
+  );
+
+  assert.equal(response.status, 206);
+  assert.equal(response.headers.get("Accept-Ranges"), "bytes");
+  assert.equal(response.headers.get("Content-Range"), "bytes 3-6/10");
+  assert.equal(response.headers.get("Content-Length"), "4");
+  assert.equal(await response.text(), "3456");
+});
+
+test("video assets advertise byte range support before seeking", async () => {
+  const worker = await loadWorker();
+  const env = {
+    ASSETS: {
+      fetch() {
+        return new Response("video", {
+          headers: { "Content-Type": "video/mp4" },
+        });
+      },
+    },
+  };
+
+  const response = await worker.fetch(
+    new Request("https://oinp.hubeiqiao.com/media/story.mp4"),
+    env,
+    {},
+  );
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("Accept-Ranges"), "bytes");
+});
+
+test("cached video range requests still return partial content", async () => {
+  const worker = await loadWorker();
+  const bytes = new TextEncoder().encode("0123456789");
+  const env = {
+    ASSETS: {
+      fetch(request) {
+        if (request.headers.has("If-None-Match")) {
+          return new Response(null, { status: 304, headers: { ETag: '"video-test"' } });
+        }
+        return new Response(bytes, {
+          headers: { "Content-Type": "video/mp4", ETag: '"video-test"' },
+        });
+      },
+    },
+  };
+
+  const response = await worker.fetch(
+    new Request("https://oinp.hubeiqiao.com/media/story.mp4", {
+      headers: {
+        Range: "bytes=7-9",
+        "If-None-Match": '"video-test"',
+      },
+    }),
+    env,
+    {},
+  );
+
+  assert.equal(response.status, 206);
+  assert.equal(response.headers.get("Content-Range"), "bytes 7-9/10");
+  assert.equal(await response.text(), "789");
+});
+
+test("zero-offset video bootstrap requests keep the full response streamable", async () => {
+  const worker = await loadWorker();
+  const env = {
+    ASSETS: {
+      fetch() {
+        return new Response("video", {
+          headers: { "Content-Type": "video/mp4" },
+        });
+      },
+    },
+  };
+
+  const response = await worker.fetch(
+    new Request("https://oinp.hubeiqiao.com/media/story.mp4", {
+      headers: { Range: "bytes=0-" },
+    }),
+    env,
+    {},
+  );
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("Accept-Ranges"), "bytes");
+  assert.equal(await response.text(), "video");
+});
+
+test("native partial asset responses pass through without rebuilding the video", async () => {
+  const worker = await loadWorker();
+  let fetchCount = 0;
+  const env = {
+    ASSETS: {
+      fetch(request) {
+        fetchCount += 1;
+        assert.equal(request.headers.get("Range"), "bytes=3-6");
+        return new Response("native", {
+          status: 206,
+          headers: {
+            "Content-Type": "video/mp4",
+            "Content-Range": "bytes 3-6/10",
+          },
+        });
+      },
+    },
+  };
+
+  const response = await worker.fetch(
+    new Request("https://oinp.hubeiqiao.com/media/story.mp4", {
+      headers: { Range: "bytes=3-6" },
+    }),
+    env,
+    {},
+  );
+
+  assert.equal(response.status, 206);
+  assert.equal(await response.text(), "native");
+  assert.equal(fetchCount, 1);
+});
+
+test("Wrangler routes media requests through the Worker range handler", async () => {
+  const config = await fs.readFile(path.join(root, "wrangler.toml"), "utf8");
+
+  assert.match(config, /run_worker_first\s*=\s*true/);
+});
+
 test("homepage returns markdown when an agent requests text/markdown", async () => {
   const worker = await loadWorker();
   const response = await worker.fetch(

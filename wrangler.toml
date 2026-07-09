@@ -13,12 +13,11 @@ account_id = "715eeba5ac9c4d46450860c95870f56a"
 # run_worker_first: route requests through worker.js so the AEO layer
 # (markdown negotiation, Content-Signal, Link headers) actually executes.
 # Without it, Workers Assets serves "/" directly and that code never runs.
-# /media/* is excluded so those requests skip the Worker and go straight to
-# Workers Assets — the AEO layer has nothing to add there anyway, and letting
-# Cloudflare serve them directly is what restores HTTP Range (byte-serving)
-# support, which video seeking depends on and which env.ASSETS.fetch() called
-# from inside the Worker does not appear to pass through.
-assets = { directory = "public", binding = "ASSETS", run_worker_first = ["/*", "!/media/*"] }
+# Video requests also pass through the Worker so it can provide the byte-range
+# responses that native media controls require for timeline seeking. Wrangler's
+# local asset server and the ASSETS binding otherwise return the full MP4 with
+# 200 OK even when the browser requests a range.
+assets = { directory = "public", binding = "ASSETS", run_worker_first = true }
 
 # Backend lives in the SAME Worker: worker.js routes /api/* (D1-backed),
 # everything else falls through to the ASSETS (static frontend) binding above.

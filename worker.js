@@ -84,6 +84,7 @@ export default {
         return json({ ok: false, error: "server_error" }, 500);
       }
     }
+    if (isVideoAsset(url.pathname)) return handleVideoAsset(request, env);
     return withAeoHeaders(request, url, await env.ASSETS.fetch(request));
   },
   async scheduled(event, env, ctx) {
@@ -522,6 +523,89 @@ function wantsMarkdown(request, url) {
 
 function isHomePath(pathname) {
   return pathname === "/" || pathname === "/index.html";
+}
+
+function isVideoAsset(pathname) {
+  return pathname.startsWith("/media/") && pathname.toLowerCase().endsWith(".mp4");
+}
+
+async function handleVideoAsset(request, env) {
+  const rangeHeader = request.headers.get("Range");
+  const isZeroOffsetBootstrap = rangeHeader && rangeHeader.trim() === "bytes=0-";
+  if (request.method !== "GET" || !rangeHeader || isZeroOffsetBootstrap) {
+    let assetRequest = request;
+    if (isZeroOffsetBootstrap) {
+      const headers = new Headers(request.headers);
+      headers.delete("Range");
+      assetRequest = new Request(request.url, { method: "GET", headers });
+    }
+    const response = await env.ASSETS.fetch(assetRequest);
+    const headers = new Headers(response.headers);
+    headers.set("Accept-Ranges", "bytes");
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  }
+
+  let assetResponse = await env.ASSETS.fetch(request);
+  if (assetResponse.status === 206) {
+    const headers = new Headers(assetResponse.headers);
+    headers.set("Accept-Ranges", "bytes");
+    return new Response(assetResponse.body, { status: 206, headers });
+  }
+
+  if (!assetResponse.ok) {
+    const assetHeaders = new Headers(request.headers);
+    assetHeaders.delete("Range");
+    assetHeaders.delete("If-Range");
+    assetHeaders.delete("If-None-Match");
+    assetHeaders.delete("If-Modified-Since");
+    assetResponse = await env.ASSETS.fetch(new Request(request.url, {
+      method: "GET",
+      headers: assetHeaders,
+    }));
+  }
+  if (!assetResponse.ok) return assetResponse;
+
+  const bytes = await assetResponse.arrayBuffer();
+  const range = parseByteRange(rangeHeader, bytes.byteLength);
+  const headers = new Headers(assetResponse.headers);
+  headers.set("Accept-Ranges", "bytes");
+
+  if (!range) {
+    headers.set("Content-Range", `bytes */${bytes.byteLength}`);
+    headers.set("Content-Length", "0");
+    return new Response(null, { status: 416, headers });
+  }
+
+  const body = bytes.slice(range.start, range.end + 1);
+  headers.set("Content-Range", `bytes ${range.start}-${range.end}/${bytes.byteLength}`);
+  headers.set("Content-Length", String(body.byteLength));
+  return new Response(body, { status: 206, headers });
+}
+
+function parseByteRange(header, size) {
+  const match = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
+  if (!match || (!match[1] && !match[2]) || size <= 0) return null;
+
+  let start;
+  let end;
+  if (!match[1]) {
+    const suffixLength = Number(match[2]);
+    if (!Number.isSafeInteger(suffixLength) || suffixLength <= 0) return null;
+    start = Math.max(size - suffixLength, 0);
+    end = size - 1;
+  } else {
+    start = Number(match[1]);
+    end = match[2] ? Number(match[2]) : size - 1;
+    if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end)) return null;
+    end = Math.min(end, size - 1);
+  }
+
+  if (start < 0 || start >= size || end < start) return null;
+  return { start, end };
 }
 
 function withAeoHeaders(request, url, response) {
